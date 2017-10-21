@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS和Tcl的Unicode支持</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS和Tcl的Unicode支持</h1><time>21 Oct 2017</time>
 
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>下面的理解应该存在问题，从这个<a href="https://github.com/dram/clips-tcl/commit/13edf10d12cfa727751f8ee3828516024d1cca7f">例子</a>中可以看到，Tcl是可以处理UTF-8字符串的。—— 2017-10-21</p>
+</li>
+</ol>
+</section>
 <p>CLIPS和Tcl对Unicode都有基本的支持，例如IO、索引、计数等。但两者存在一个大的不同，CLIPS内部使用UTF-8存储，而Tcl使用UTF-16存储。这样在两者对接时字符串处理上需要多考虑些。</p>
 <p>当前的方案是沿用CLIPS的UTF-8存储，在Tcl中处理时不做任何转化。例如使用<code>Tcl_WriteRaw</code>的接口处理输入输出。这样只要外围是UTF-8的环境，就不会存在问题。</p>
 </article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
