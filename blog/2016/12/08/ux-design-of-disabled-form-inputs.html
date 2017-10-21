@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>表单禁用输入框的交互设计</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>表单禁用输入框的交互设计</h1><time>08 Dec 2016</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>虽然UI包含很强的交互属性，但好的界面应该是可以“读”出来的，传统的平面设计和排版也可以很好地应用到交互设计中。—— 2017-04-13</p>
+</li>
+</ol>
+</section>
+<p>对于表单中禁用输入框的处理，一般有以下几种方式：</p>
+<ol>
+<li>
+<p>隐藏已禁用的输入框；</p>
+</li>
+<li>
+<p>使已禁用输入框不可编辑（<code>readonly</code>或者<code>disabled</code>）。</p>
+</li>
+</ol>
+<p>这是有一定通用性的问题，但也需要根据不同的业务有不同的考虑。在查看了Gmail, Github和StackOverflow的UI设计之后，发现这些站点几乎不使用“隐藏”的模式。另外这里有一个简短的<a href="https://ux.stackexchange.com/questions/34271/greyed-out-vs-invisible">讨论</a>，总体也是更倾向于禁用，而不是隐藏。</p>
+<p>如果从反面的角度分析，那么在隐藏模式中，一个难点是对隐藏输入框中数据的处理，主要有以下两种模式：</p>
+<ol>
+<li>
+<p>清空：弊端是清空之后，用户重新启用功能无法恢复之前填入的数据；</p>
+</li>
+<li>
+<p>保留：弊端是可能出现信息安全问题，以及在数据不合法时的校验问题。</p>
+</li>
+</ol>
+<p>禁用模式的弊端则是增加页面布局难度，一些无用信息容易干扰用户的注意力。</p>
+<p>但总体来说，禁用的模式更接近于HTML的设计思路，所以在大部分情况下更为适用。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

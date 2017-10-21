@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Swift的Glibc模块</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Swift的Glibc模块</h1><time>14 May 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>Swift强大的C接口能力的另一个例子是Swift Package Manager中<a href="https://github.com/apple/swift-package-manager/blob/master/Documentation/Usage.md#require-system-libraries">对接系统库</a>的示例。—— 2017-05-16</p>
+</li>
+</ol>
+</section>
+<p>Swift语言在整体的设计基调上相对传统，但也不乏创新的点。这里要来说说的是其对C库的支持。</p>
+<p>Swift包括一个Glibc模块，是对Glibc API的封装，而Swift的创新点在于利用clang实现了C头文件的解析和封装，这样接口封装这样繁重的工作可以自动化地完成。</p>
+<p>以下通过Swift中一小段代码来感受下Glibc的便利性，代码摘取自<a href="https://github.com/apple/swift/blob/master/benchmark/utils/DriverUtils.swift">benchmark/utils/DriverUtils.swift</a>：</p>
+<pre><code>import Glibc
+
+typealias TimeT = timespec
+func getTime() -&gt; TimeT {
+  var ticks = timespec(tv_sec: 0, tv_nsec: 0)
+  clock_gettime(CLOCK_REALTIME, &amp;ticks)
+  return ticks
+}</code></pre>
+<p>其中<code>timespec</code>、<code>clock_gettime</code>、<code>CLOCK_REALTIME</code>都是C库原生定义的名称，不需要任何修改就可以直接在Swift代码中使用。另外对于<code>ticks</code>的初始化，是对<code>timespec</code>结构体的实例化，较C代码更为简洁。</p>
+<p>下面再给出一个直接调用<code>time</code>获取时间的示例代码：</p>
+<pre><code>import Glibc
+
+var now = time_t()
+time(&amp;now)
+print(now)</code></pre>
+<p>或者：</p>
+<pre><code>import Glibc
+var now = time(nil)
+print(now)</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

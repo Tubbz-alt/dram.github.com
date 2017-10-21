@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>编译Self</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>编译Self</h1><time>16 Oct 2016</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<p>运行Self可以使用<code>Self -s file.snap</code>命令，另外<code>snap</code>文件本身是可执行文件，可以直接运行，具体细节可以用编辑器打开<code>snap</code>文件查看。—— 2016-11-07</p>
+</section>
+<p>主流计算环境现在大都在往64bit迁移，而Self当前还并不支持64bit。这就导致在编译Self时会遇到一些麻烦。所幸的是各大平台对于multilib的支持都相对完善，所以只需少量额外工作，就可以把Self环境跑起来。</p>
+<section>
+<h2>环境准备</h2>
+<p>编译Self时，主要依赖<code>libX11</code>、<code>libXext</code>和<code>ncurses</code>这几个库，所以主要工作就是在环境中安装这些库的32bit版本。</p>
+<p>以下以Gentoo和Debian为例作简要说明。</p>
+<section>
+<h3>Gentoo</h3>
+<p>在<code>/etc/portage/package.use</code>中加入：</p>
+<pre><code>x11-libs/libX11 abi_x86_32
+x11-libs/libXext abi_x86_32
+sys-libs/ncurses abi_x86_32</code></pre>
+<p>之后运行<code>emerge --update --newuse --deep @world</code>，系统会提示设置其他依赖包的use选项，依照配置即可。</p>
+</section>
+<section>
+<h3>Debian</h3>
+<p>首先是运行<code>dpkg --add-architecture i386</code>启用i386架构，然后安装以下包：</p>
+<pre><code>gcc-multilib g++-multilib
+libx11-dev:i386 libxext-dev:i386 libncurses5-dev:i386</code></pre>
+</section>
+</section>
+<section>
+<h2>编译VM</h2>
+<p>在multilib环境中编译Self也需要作部分特殊处理，具体模式如下：</p>
+<pre><code>mkdir build &amp;&amp; cd build
+CC="gcc -m32" CXX="g++ -m32" cmake ../self/
+cmake --build .</code></pre>
+<p>生成的可执行文件路径为<code>./vm/Self</code>。</p>
+<p>可进一步参考手册的<a href="http://handbook.selflanguage.org/4.5/buildvm.html">详细说明</a>。</p>
+</section>
+<section>
+<h2>构建镜像</h2>
+<p>镜像文件可以参考Self的<a href="https://github.com/russellallen/self/blob/master/release/buildMorphicSnapshot.sh">发布脚本</a>，在Self源码根目录运行如下命令：</p>
+<pre><code>echo "saveAs: 'morphic.snap'. quitNoSave" | ../build/vm/Self -f objects/worldBuilder.self -b objects -o morphic</code></pre>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

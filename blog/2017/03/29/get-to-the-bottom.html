@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>寻根究底</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>寻根究底</h1><time>29 Mar 2017</time>
+
+<p>这几天在讨论一个问题：为什么 <code>prolog::append([a], [b], L)</code>能在Logtalk中成功返回结果。</p>
+<p>在询问Logtalk作者之后得知，Logtalk在找不到<code>object</code>时，会尝试进行Prolog模块。另外他还提到SWI-Prolog在调用不存在的模块时，会自动创建。</p>
+<p>在向SWI-Prolog<a href="https://github.com/SWI-Prolog/swipl-devel/issues/213">提交</a>问题报告之后，SWI-Prolog作者提到另一个问题，<code>append/3</code>会自动载入，这就又引入了一个新的问题。</p>
+<p>之后自己分析确认，两位作者提到的问题都是存在的。这一问题背后隐藏着三个相关问题。也就是说，要让 <code>prolog::append([a], [b], L)</code>有效，依赖以下三个特性：</p>
+<ol>
+<li>
+<p>Logtalk会将<code>::</code>调用退化为模块调用；</p>
+</li>
+<li>
+<p>SWI-Prolog会自动创建<code>prolog</code>模块；</p>
+</li>
+<li>
+<p>SWI-Prolog会自动将<code>append/3</code>载入到<code>prolog</code>模块。</p>
+</li>
+</ol>
+<p>在理解这些之后，我向SWI-Prolog作者建议可以让“自动创建模块”功能可配置。SWI-Prolog作者又进一步提及性能和内存占用问题。autoload机制可以实现按需载入，没有调用到的代码，模块的依赖不需要立即载入到运行环境中。</p>
+<p>之后的讨论进一步发现YAP也会在模块不存在时自动创建。</p>
+<p>从这次问题分析中可以发现，一个问题在寻根究底之后，往往能了解更多更深层次的知识。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

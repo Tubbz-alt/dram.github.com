@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Swift获取随机数</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Swift获取随机数</h1><time>16 May 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>可以直接利用Foundation中的<a href="https://developer.apple.com/reference/foundation/filehandle">FileHandle</a>读取文件，不需要用Glibc。—— 2017-05-18</p>
+</li>
+</ol>
+</section>
+<p>在<a href="/blog/2017/05/14/type-safty-of-numbers.html">数值类型安全</a>中一文中有将Swift获取随机数作为示例呈现，以下代码基于<code>/dev/urandom</code>实现：</p>
+<pre><code>import func Glibc.close
+import func Glibc.open
+import func Glibc.read
+import var Glibc.O_RDONLY
+
+let count = 5
+
+let buffer = UnsafeMutablePointer&lt;Int8&gt;.allocate(capacity: count)
+
+let fd = open("/dev/urandom", O_RDONLY)
+read(fd, buffer, count)
+close(fd)
+
+for i in 0..&lt;count {
+    print(buffer[i])
+}
+
+buffer.deallocate(capacity: count)
+
+</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

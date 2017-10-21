@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>NetHack and Cygwin</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>NetHack and Cygwin</h1><time>18 Sep 2008</time>
+
+<p>Althouth there is a detailed <a href="http://planetexpress.homedns.org/nethack/compile_cygwin.txt">how-to</a> to help with compiling NetHack under Cygwin, I can't get a working NetHack with it. After some experiments, I managed to compile NetHack under Cygwin correctly.</p>
+<p>The packages you need:</p>
+<pre><code>util-linux bison flex gcc-core</code></pre>
+<p>First, run setup.sh from sys/unix.</p>
+<p>Then modify these lines:</p>
+<pre><code>include/config.h
+ 1) Line 288: Uncomment #define STRNCMPI
+ 2) Line 172: Comment out #define COMPRESS "/usr/bin/compress"
+ 3) Line 173: Comment out #define COMPRESS_EXTENSION ".Z"
+ 4) Line 175: Uncomment and change this line to
+		   #define COMPRESS "/usr/bin/gzip"
+ 5) Line 176: Uncomment #define COMPRESS_EXTENSION ".gz"
+
+win/tty/termap.c
+ 1) Line 839: Comment out extern char *tparm();
+
+src/Makefile
+ 1) Line 234: Comment out WINTTYLIB = -ltermlib
+ 2) Line 233: Uncomment # WINTTYLIB = -lncurses
+
+util/Makefile
+ 1) Line 104: Comment out YACC=yacc
+ 2) Line 105: Comment out LEX=lex
+ 3) Line 106: Uncomment YACC=bison -y
+ 4) Line 108: Uncomment LEX=flex
+
+Makefile
+ 1) Line 67: Change to CHOWN = YOUR WINDOWS USER NAME
+ 2) Line 68: Change to CHGRP = None</code></pre>
+<p>Finally, <code>make all</code> and <code>make install</code> in the root dir.</p>
+<p>If everything goes well, execute <code>/usr/games/nethack</code> to run the game.</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

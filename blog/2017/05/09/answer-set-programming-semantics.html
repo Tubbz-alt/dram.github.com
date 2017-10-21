@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>答案集编程语义</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>答案集编程语义</h1><time>09 May 2017</time>
+
+<p>答案集编程并不是通用的编程语言，它主要适用于解决一些组合（combinatorial）问题，例如基于知识表示的事实推理过程。</p>
+<section>
+<h2>求解过程</h2>
+<p>答案集编程包括两个过程，grounding和solving。以以下代码为例：</p>
+<pre><code>num(1..2).
+
+queen(X, Y) :- not free(X, Y), num(X), num(Y).
+free(X, Y) :- not queen(X, Y), num(X), num(Y).</code></pre>
+<p>grounding的结果（执行<code>clingo --text example.lp</code>）是：</p>
+<pre><code>num(1).
+num(2).
+queen(1,1):-not free(1,1).
+queen(2,1):-not free(2,1).
+queen(1,2):-not free(1,2).
+queen(2,2):-not free(2,2).
+free(1,1):-not queen(1,1).
+free(2,1):-not queen(2,1).
+free(1,2):-not queen(1,2).
+free(2,2):-not queen(2,2).</code></pre>
+<p>grounding去处了所有的变量，体现在Prolog中的choice point在这里已经在grounding阶段处理，所有的choice point都包含在grounding的结果中。</p>
+<p>如果grounding结果中不包含negation，那么求解结果只有一个<a href="https://en.wikipedia.org/wiki/Stable_model_semantics">stable模型</a>，如果包含negation，那么就会出现多个stable模型。</p>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>学习Python: enumerate</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>学习Python: enumerate</h1><time>30 Aug 2008</time>
+
+<p>以前为在遍历一个列表的同时得到索引号，我会这样做：</p>
+<pre><code>for i in range(len(alist)):
+    print i, alist[i]</code></pre>
+<p>但利用enumerate，可以这样：</p>
+<pre><code>for i, x in enumerate(alist):
+    print i, x</code></pre>
+<p>这是在Python2.3中加入的，关于为什么加入这个builtin函数，以及它的一些取舍，甚至为什么取这个名字，这一系列问题都可以从<a href="http://www.python.org/dev/peps/pep-0279/">PEP 279</a>中找到答案。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

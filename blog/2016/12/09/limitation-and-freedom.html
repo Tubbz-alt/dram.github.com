@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>限制与自由</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>限制与自由</h1><time>09 Dec 2016</time>
+
+<p><a href="https://github.com/trealla-lang/trealla">Trealla</a>由于处于发展初期，很多功能还没有实现，特别是与操作系统相关功能，例如获取命令行参数、获取环境变量参数、完善的外部命令调用机制等，这样在作为日常脚本语言使用时存在障碍。</p>
+<p>对于这个问题的解决方案，有以下几种：</p>
+<ol>
+<li>
+<p>通过编写Trealla扩展实现需要的功能，这是最为直接的方式，同时Trealla是基于C实现的解释器，扩展实现的难度不大；</p>
+</li>
+<li>
+<p>通过网络调用另一专用的命令服务，类似于Erlang 19中新增的模式；</p>
+</li>
+<li>
+<p>基于shell实现，Prolog生成整合所有相关命令的shell脚本，再调用<code>sh</code>执行。</p>
+</li>
+<li>
+<p>在shell脚本中内嵌Prolog代码。shell实质上起到了胶水语言的作用，以文本及文件作为关联各个组件的数据通道。</p>
+</li>
+</ol>
+<p>Trealla的作者在最近增加了<a href="https://github.com/trealla-lang/trealla/issues/38">从stdin读取Prolog代码</a>的功能，使第四种方案成为可能。甚至图形界面也可以通过这一模式整合Tcl的<code>wish</code>实现。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

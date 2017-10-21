@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Graphviz使用指南</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Graphviz使用指南</h1><time>12 Dec 2016</time>
+
+<p><a href="http://www.graphviz.org/">Graphviz</a>是较为常用的图形可视化工具，解析<a href="https://en.wikipedia.org/wiki/DOT_language">DOT语言</a>描述的图形内容，并最终生成SVG、PNG等格式文件。</p>
+<p>Graphviz本身存在多种布局引擎，不同引擎在使用时在语言细节上存在一定差异，可以分别参考各自的手册，例如<a href="http://www.graphviz.org/pdf/dot.1.pdf">dot(1)</a>、<a href="http://www.graphviz.org/pdf/neato.1.pdf">neato(1)</a>等。</p>
+<p>以下以dot引擎为例，这是使用较多的一种布局引擎。</p>
+<section>
+<h2>DOT语言</h2>
+<section>
+<h3>有向图（digraph）</h3>
+<p>有方向的图，基本的语法为：</p>
+<pre><code>digraph {
+    A -&gt; {B C};
+    B -&gt; C;
+}</code></pre>
+</section>
+<section>
+<h3>无向图（graph）</h3>
+<p>有方向的图，基本的语法为：</p>
+<pre><code>graph {
+    A -- {B C};
+    B -- C;
+}</code></pre>
+</section>
+</section>
+<section>
+<h2>生成</h2>
+<p>以下为使用<code>dot</code>命令生成PNG图片文件的示例：</p>
+<pre><code>dot file.dot -Tpng -o file.png
+</code></pre>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

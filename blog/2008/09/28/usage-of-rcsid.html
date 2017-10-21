@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>rcsid的用途</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>rcsid的用途</h1><time>28 Sep 2008</time>
+
+<p>在看BSD的代码时，会发现在很多地方都会出现<code>static char rcsid[] = "$OpenBSD ... $"</code>这样的东东，一直不清楚它是做什么用的。</p>
+<p>在google上找了好久，总算找到了<a href="http://math.arizona.edu/~swig/documentation/rcs/">一个</a>。</p>
+<p>上面的页面是讲解RCS版本控制系统的，看一下Magic Keywords这一节就可以了。RCS是CVS的前身，不过rcsid的用法没什么改变，所以虽然现在BSD的代码都是用CVS管理了，但还是可以看到rcsid这东东。</p>
+<p>通常在BSD的代码中，第一行会有和rcsid字符串差不多的注释。这和rcsid字符串一样，都是由CVS自动生成更新的，主要用来保存文件最后更改的时间、作者等信息。在文件首行加个注释很好理解，而将其放在字符串中则是为了在将文件编译为二进制文件之后依然可以保留这些信息。为此还专门有一个命令来检测这个串，叫<code>ident</code>。</p>
+<p>另外在代码中还可以看到sccsid，是更早的一个版本控制系统SCCS使用的，不过是被<code>#if 0</code>注释掉了。</p>
+<p>再有在NetBSD的代码中还可以看到<code>__COPYRIGHT</code>，它也有类似的作用，用<code>what</code>可以查看这个字符串。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

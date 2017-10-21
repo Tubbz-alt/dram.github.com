@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>C语言中的system函数接口</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>C语言中的system函数接口</h1><time>08 Sep 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>CLIPS先前的<code>system</code>接口没有返回值，最近<a href="https://sourceforge.net/p/clipsrules/tickets/26/">完善</a>了这个接口。但有一点需要注意的是，<code>system()</code>的返回值并不是<code>exit()</code>接口指定的值，而是<code>waitpid</code>获取的值，其中包含了更多的信息，详见<a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/waitpid.html">POSIX标准</a>。—— 2017-09-17</p>
+</li>
+</ol>
+</section>
+<p><code>system</code>函数是C语言中的一个经典接口，很多基于C实现的编程语言也沿用了这一接口。</p>
+<p>虽然有如此的广泛性，但<code>system</code>有几点不足：</p>
+<ol>
+<li>
+<p>命令间接交由SHELL执行，性能有所损失；</p>
+</li>
+<li>
+<p>接口存在<a href="https://en.wikipedia.org/wiki/Code_injection#Shell_injection">shell injection</a>安全风险；</p>
+</li>
+<li>
+<p>不能直接处理基于管道的输入输出重定向。</p>
+</li>
+</ol>
+<p>正因为这些原因，很多高级语言也都有封装另外的用于命令调用的接口。</p>
+<p>我们先回头看看C语言在设计<code>system</code>时的考虑。在<a href="http://www.open-std.org/jtc1/sc22/wg14/www/C99RationaleV5.10.pdf">Rationle for C99</a> 7.20.4.6节中，总结了C程序与外部命令交互的几种方式：</p>
+<ul>
+<li>
+<p>向外部命令传送数据包括三种机制：命令行参数、环境变量、文件；</p>
+</li>
+<li>
+<p>从外部命令获取数据包括两种机制：命令返回值、文件。</p>
+</li>
+</ul>
+<p>该文档中还特别强调，两种情况下可移植性最强的都是利用文件。</p>
+<p>再回过来看看<code>system</code>接口的三点不足：</p>
+<ol>
+<li>
+<p>对于性能要求并不苛刻的程序，这一点可以不用太过在意；</p>
+</li>
+<li>
+<p>可以通过封装接口，并转义特殊字符规避；</p>
+</li>
+<li>
+<p>可以通过临时文件及SHELL的重定向规避。</p>
+</li>
+</ol>
+<p>由此可见，<code>system</code>可以满足大部分需求。其中一个重点是要对SHELL的特性善加利用，例如管道、重定向、各类常用命令等。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

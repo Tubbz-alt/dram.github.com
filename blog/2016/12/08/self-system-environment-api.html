@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Self系统环境接口</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Self系统环境接口</h1><time>08 Dec 2016</time>
+
+<ul>
+<li>
+<p>获取环境变量</p>
+<ul>
+<li>
+<p><code>os environmentAt:</code></p>
+</li>
+<li>
+<p><code>os environmentAt:IfFail:</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>命令行参数</p>
+<ul>
+<li>
+<p><code>_CommandLine</code> —— 返回以vector组织的命令行参数</p>
+</li>
+</ul>
+</li>
+<li>
+<p>执行外部命令</p>
+<ul>
+<li>
+<p><code>os command:</code></p>
+</li>
+<li>
+<p><code>os command:IfFail:</code></p>
+</li>
+<li>
+<p><code>os command:Executing:IfFail:</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>读写文件</p>
+<ul>
+<li>
+<p><code>os_file openForReading:</code></p>
+</li>
+<li>
+<p><code>os_file openForWriting:</code></p>
+</li>
+<li>
+<p><code>f close</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>日志记录</p>
+<ul>
+<li>
+<p><code>log info:</code></p>
+</li>
+<li>
+<p><code>log error:</code></p>
+</li>
+</ul>
+</li>
+<li>
+<p>日期时间</p>
+<ul>
+<li>
+<p><code>time current</code> - 当前时间，其中<code>year</code>为年份，<code>month</code>为月份，<code>date</code>为日期</p>
+</li>
+</ul>
+</li>
+<li>
+<p>目录操作</p>
+<ul>
+<li>
+<p><code>os mkdir:Mode</code> - 创建目录，例如<code>os mkdir: 'foo' Mode: 8r755</code></p>
+</li>
+</ul>
+</li>
+</ul>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

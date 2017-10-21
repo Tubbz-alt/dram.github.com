@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>代码注释与文学编程</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>代码注释与文学编程</h1><time>08 Jan 2017</time>
+
+<p><a href="http://www.literateprogramming.com/">文学编程</a>最早由Donald Knuth提出，具体的实现为<a href="https://en.wikipedia.org/wiki/WEB">WEB</a>系统，最初版本支持Pascal语言（另有对C语言支持的<a href="http://www-cs-faculty.stanford.edu/~uno/cweb.html">CWEB</a>）。该文学编程系统在Knuth的多个软件中有实践，例如著名的TeX。</p>
+<p>现代文学编程的例子有：<a href="https://wiki.haskell.org/Literate_programming">Haskell</a>和<a href="http://docs.witheve.com/handbook/literate-programming/">Eve</a>，Eve团队另有一篇对文学编程的<a href="http://witheve.com/deepdives/literate.html">讨论</a>。</p>
+<p>文学编程主要的意图是希望能提起一种态度的转变：程序不只用于机器执行，还有一大责任是承担思想的沟通。代码注释也部分承担了这样的功能，但总体来说注释关注细节，而文学编程则兼顾了整体组织和细节实现。</p>
+<p>最近在阅读一篇Peter Seibel讨论代码阅读的<a href="http://www.gigamonkeys.com/code-reading/">文章</a>时，想到了一些问题：</p>
+<ol>
+<li>
+<p>文学编程与<a href="/blog/2016/10/31/layered-service-oriented-architecture.html">模块化编程</a>有哪些相通性？</p>
+</li>
+<li>
+<p>在<a href="/blog/2016/12/09/joy-of-technology.html">系统设计</a>中是否可以采用文学编程和TLA+及伪代码结合的模式？</p>
+</li>
+<li>
+<p>是否可以考虑通过<a href="/blog/2016/09/15/sam-plugin-for-pelican.html">SAM文档格式</a>实现文学编程？</p>
+</li>
+</ol>
+<p>以上问题有些发散，但最终的目的都是为实现可维护性、可读性高的代码。这就必须同时在宏观和微观上保证思路的清晰可见，这同时对代码的整体组织以及细节的注释提出了要求。</p>
+<p>而另外一点是，对可读性的强调可以积极地反作用于程序实现思路的梳理。全局性的设计思路通过系统设计可以保证，而细节则有赖于实现阶段的把控，这样注释代码有利于梳理函数和模块的功能。某种意义上，代码注释的清晰程度可以反映出模块和函数功能划分的合理程度。比如在一个函数实现后，对其的注释非常复杂，甚至无从描述，很可能是因为多个功能杂揉导致，这样的问题可以通过拆分解决。可以参考每个函数只作一件事、只包含一层抽象等<a href="https://github.com/ryanmcdermott/clean-code-javascript#functions">原则</a>。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

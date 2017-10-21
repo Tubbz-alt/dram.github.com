@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Self中的序列对象</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Self中的序列对象</h1><time>29 Oct 2016</time>
+
+<p>在程序设计中，序列是一种基本的数据类型。大部分编程语言都包含有对序列的支持。只是各自在命名和形式上有所差异。例如在<a href="http://www.json.org/">JSON</a>中，将这些类型统一表示为<em>an ordered list of values</em>，涵盖了各类语言中的<em>array</em>，<em>vector</em>，<em>list</em>或<em>sequence</em>数据类型。</p>
+<p>而在Self中，对于序列的表述，同时包含有vector，list和sequence三类对象。这就要求理解其中的共性和个性，才能够加以合理利用。</p>
+<p>下图为各traits的继承树：</p>
+<pre><code>traits collection
+|-- traits indexable
+|   `-- traits mutableIndexable
+|       |-- traits sequence
+|       `-- traits vector
+`-- traits list</code></pre>
+<p>从图中可以获得以下信息：</p>
+<ol>
+<li>
+<p>vector，list和sequence都为集合（collection）对象；</p>
+</li>
+<li>
+<p>sequence、vector与list的区别在于，前两者的序列元素可以通过整数快速索引（indexable），这一点可以参考<a href="http://www.scheme-reports.org/">Scheme</a>中list与vector的区别。</p>
+</li>
+</ol>
+<p>至于sequence和vector的差异，无法在继承树中获知。通过对sequence实现的大体分析，可以发现sequence是基于vector的封装。</p>
+<p>vector本身更为底层，空间大小在对象创建之后是固定不变的。</p>
+<p>而sequence基于vector实现了可动态调整存储空间的序列。在sequence的traits中包含有方法<code>desiredMinCapacity:</code>，用于调整存储空间大小，具体的机制是创建新的vector对象，替换原有对象。</p>
+<p>后续会对vector，list和sequence分别予以详细介绍。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

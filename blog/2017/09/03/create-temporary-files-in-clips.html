@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>在CLIPS中创建临时文件</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>在CLIPS中创建临时文件</h1><time>03 Sep 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>对于C语言中与临时文件处理相关的接口，可详见<a href="/blog/2010/08/15/tmpfile-in-c.html">这里</a>的整理。—— 2017-09-08</p>
+</li>
+</ol>
+</section>
+<p>由于CLIPS对系统编程支持不强，常需要借助于外部命令实现功能。而自身提供的<code>(system)</code>函数不支持输入输出管道，所以只能借助于临时文件（利用有名管道可能可以减少临时文件的使用）。</p>
+<p>C语言中可以通过<code>tmpfile</code>创建临时文件，但CLIPS没有封装该接口。</p>
+<p>以下代码是一种结合SHELL的变通方案：</p>
+<pre><code>TMP=$(mktemp -d /tmp/clips.XXXX)
+trap "rm -r $TMP" EXIT
+
+echo "(defglobal ?*temporary-directory* = $TMP)" &gt;&gt;$TMP/start.clp
+echo "(deffunction generate-temporary-filename () (str-cat $TMP / (gensym*)))" &gt;&gt;$TMP/start.clp
+
+clips -l $TMP/start.clp -f2 file.clp</code></pre>
+<p>这样CLIPS中<code>(generate-temporary-filename)</code>可以满足大部分对于临时文件的需求。对于特殊需求，也可以直接使用<code>?*temporary-directory*</code>全局变量。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

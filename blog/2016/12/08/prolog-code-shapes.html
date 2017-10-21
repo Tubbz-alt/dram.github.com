@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Prolog代码的形态</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Prolog代码的形态</h1><time>08 Dec 2016</time>
+
+<p>初看这个标题可能会觉得有点奇怪，暂时没有想出比“形态”更为合适的词。每种语言由于语法和语义上的不同，最终代码会呈现不同的形态，而Prolog的代码也有其自身的特点。</p>
+<p>之前在<a href="/blog/2016/11/20/loops-in-prolog.html">Prolog中的循环</a>中已有对于回溯的应用，从中可以发现，其他语言中需要双层循环解决的问题，在Prolog中以完全不同的模式呈现。Prolog的代码层次，相对于其他语言来说，总体是较为平整的。</p>
+<p>这里主要有以下几个原因：</p>
+<ol>
+<li>
+<p>Prolog没有其他语言的函数返回值的模式，代码全部以联合的模式组织，所以没有函数嵌套的方式，函数嵌套容易产生多层次的代码；</p>
+</li>
+<li>
+<p>Prolog<a href="/blog/2016/12/08/backtracking-in-prolog.html">回溯</a>的模式避免了循环以及多层循环嵌套的形式；</p>
+</li>
+</ol>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

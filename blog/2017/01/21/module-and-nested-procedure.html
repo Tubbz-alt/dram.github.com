@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>模块和过程嵌套</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>模块和过程嵌套</h1><time>21 Jan 2017</time>
+
+<p>除去当前主流语言中常包含的<a href="https://en.wikipedia.org/wiki/Closure_">闭包</a>特性，模块和嵌套的过程存在一定的相似性，都可以作为一种封装机制。</p>
+<p>但两者同时又有明显的不同，例如：</p>
+<ol>
+<li>
+<p>过程只有单一入口，模块有多个入口（另一角度来说，模块涵盖了<a href="https://en.wikipedia.org/wiki/Namespace">名字空间</a>的功能特性）；</p>
+</li>
+<li>
+<p>过程具有入口参数，模块不具备（但模块内的全局变量可以替代入口参数的功能）；</p>
+</li>
+<li>
+<p>过程无状态，模块可以通过全局变量包含持久化的状态属性（过程可以通过结合内嵌过程以及入口参数实现临时持久化）。</p>
+</li>
+</ol>
+<p>总体说来，模块的一些特性接近于“<a href="https://en.wikipedia.org/wiki/Object_">对象</a>”的概念。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

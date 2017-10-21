@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS连接PostgreSQL数据库</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS连接PostgreSQL数据库</h1><time>12 Sep 2017</time>
+
+<p>CLIPS自身由于考虑可移植性，并没有包含网络接口，这增加了极大的不便利性。但和<a href="/blog/2017/09/03/clips-web-service.html">这里</a>的思路类似，可以通过socat规避。</p>
+<p>具体实现见如下示例代码：</p>
+<pre><code>#!/bin/sh
+
+ROOT="$(dirname "$(readlink -f "$0")")"
+
+PG_DATA="$ROOT/data"
+
+socat -d -d -v -x "PIPE:pg-out.pipe,nonblock!!PIPE:pg-in.pipe" "UNIX-CONNECT:$PG_DATA/.s.PGSQL.5432"
+
+echo "Connection closed"</code></pre>
+<p>其中<code>-d -d</code>选项用于显示调试信息，<code>-v -x</code>显示数据交互。另外<code>nonblock</code>参数是为让<code>socat</code>预先将<code>pg-in.pipe</code>管道也创建好，而不是等待在<code>pg-out.pipe</code>对端连接。</p>
+<p>之后CLIPS先打开<code>pg-out.pipe</code>管道，写入启动信息，之后PostgreSQL服务端响应后，CLIPS可以打开<code>pg-in.pipe</code>管道并读取。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

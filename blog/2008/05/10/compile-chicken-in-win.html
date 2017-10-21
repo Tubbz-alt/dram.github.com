@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Win下编译Chicken</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Win下编译Chicken</h1><time>10 May 2008</time>
+
+<p>由于想对Chicken的错误显示格式稍作调整，所以需要自己编译Chicken。</p>
+<p>先是用cmd + MinGW来处理，编译通过，但安装时出现了问题，可能是由于Makefile里是用mkdir来新建文件夹，但在cmd下没有这个命令的原因。不想改Makefile，所以又安装了msys，编译、安装顺利进行，就下面两个命令就可以了：</p>
+<pre><code>make PLATFORM=mingw-msys PREFIX=d:/chicken
+make PLATFORM=mingw-msys PREFIX=d:/chicken install</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

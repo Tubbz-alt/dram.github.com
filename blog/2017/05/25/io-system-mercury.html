@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Mercury的IO系统</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Mercury的IO系统</h1><time>25 May 2017</time>
+
+<p>之前我觉得Mercury的IO系统在实现上可能类似于Haskell，要全然掌握门槛较高，想着待对语言有一定了解后再看，没有深究。但最近有两个示例让我其产生了好奇。</p>
+<p>一是Peter Wang在<a href="https://github.com/Mercury-Language/mercury/wiki/Hello,-world!#exercises">Mercury Wiki</a>编写的教程里，有一个练习：如果更换包含状态变量的语句顺序，会有怎样的结果？例如：</p>
+<pre><code>main(IO0, IO) :-
+       write_string("dear ", IO1, IO2),
+       write_string("Hello, ", IO0, IO1),
+       write_string("world!\n", IO2, IO).</code></pre>
+<p>输出的结果和正常的顺序相同，没有变化：</p>
+<pre><code>Hello, dear world!</code></pre>
+<p>由此可以猜测Mercury会基于状态变量的实例化（instantiation）情况重新组织语句。</p>
+<p>再一个例子是Mercury自带的C接口调用的简单<a href="https://github.com/Mercury-Language/mercury/blob/master/samples/c_interface/short_example.m">示例</a>。其中对<code>io::di</code>和<code>io::uo</code>变量没有太多操作，和我以前猜测的复杂数据结构封装相去甚远。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

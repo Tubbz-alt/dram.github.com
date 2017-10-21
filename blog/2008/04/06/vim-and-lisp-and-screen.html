@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>VIM &amp; Lisp &amp; Screen配合使用</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>VIM &amp; Lisp &amp; Screen配合使用</h1><time>06 Apr 2008</time>
+
+<p>主要需要完成的功能就是在VIM中将代码（比如一个defun）通过screen传到另一窗口的程序（比如SBCL）中执行。</p>
+<p>之前用过一个通过python-pexpect来包装sbcl，再通过pipe传入的脚本，也是比较方便的。但那里的包装代码看起来比较复杂，而这个用screen的方法比较简洁。</p>
+<p>当然，这方法不是我想出来的。:P，我只是稍微修改了一下。参考了下面两篇文章：</p>
+<ul>
+<li>
+<p><a href="http://technotales.wordpress.com/2007/10/03/like-slime-for-vim/">Like Slime, for Vim</a></p>
+</li>
+<li>
+<p><a href="http://www.jerri.de/blog/archives/2006/05/02/scripting_screen_for_fun_and_profit/">Scripting screen for fun and profit...</a></p>
+</li>
+</ul>
+<p>方法很简单，用screen建一个名为sbcl的窗口，然后将下面的代码放到<code>~/.vim/ftplugin/lisp.vim</code>中。（下面的代码同时也贴出了其他一些Lisp的设置和按键绑定）。之后<code>\rr</code>可以求值一个表达式，而<code>\rx</code>则是load当前buffer。</p>
+<pre><code>setl expandtab
+setl shiftwidth=1
+setl foldmethod=indent
+setl foldnestmax=1
+"setl lispwords=def,mac,fn,with,when,if
+
+nmap  [[ [(
+nmap  ]] ])
+nmap  [{ 99[(
+nmap  [} 99])
+nmap  == 99[(=%
+
+nmap    rr      :call VimLisp_eval_defun()
+nmap    rx      :call VimLisp_send_sexp("(load \"" . expand("%:p") . "\")\n")
+
+fun! VimLisp_send_sexp(sexp)
+       let ss = escape(a:sexp, '\"')
+       call system("screen -p sbcl -X stuff \"" . ss . "\n\"")
+endfun
+
+fun! VimLisp_eval_defun()
+       let pos = getpos('.')
+       silent! exec "normal! 99[(yab"
+       call VimLisp_send_sexp(@")
+       call setpos('.', pos)
+endfun</code></pre>
+<p>当然，这是一个通用的方法，完全可以使用到其他一些语言的interpreter上。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

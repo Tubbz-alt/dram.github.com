@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS连接PostgreSQL数据库（续）</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS连接PostgreSQL数据库（续）</h1><time>09 Oct 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>借鉴<a href="/blog/2017/10/09/sqlite3-jq-and-json.html">这里</a>SQLite3的示例，CLIPS和PostgreSQL的对接也可以考虑命令行的模式对接psql命令，而不是直接基于网络协议对接。—— 2017-10-09</p>
+</li>
+</ol>
+</section>
+<p>前阵子有<a href="/blog/2017/09/12/run-multiple-postgresql-instances.html">介绍</a>过基于socat实现CLIPS连接PostgreSQL，但只是建立了TCP连接，并没有介绍数据交互。以下代码是数据交互相关的示例。</p>
+<p>主要参考了PostgreSQL <a href="https://www.postgresql.org/docs/10/static/protocol.html">Frontend/Backend Protocol</a>一章以及这份<a href="https://www.pgcon.org/2014/schedule/attachments/330_postgres-for-the-wire.pdf">演示文档</a>的介绍。</p>
+<p>由于CLIPS不支持位运算，所以部分代码实现并不完善。</p>
+<p>另外，和<a href="/blog/2017/10/03/clips-web-service-with-c.html">基于C的CLIPS Web服务</a>，socat可以考虑用C扩展替换。</p>
+<pre><code>(deffunction pg-send-32-bits-integer (?f ?i)
+  (if (&lt; ?i 0) then (bind ?i (+ ?i (* 256 256 256 256))))
+  (put-char ?f (div ?i (* 256 256 256)))
+  (put-char ?f (div ?i (* 256 256)))
+  (put-char ?f (div ?i 256))
+  (put-char ?f (mod ?i 256)))
+
+(deffunction pg-receive-32-bits-integer (?f)
+  (bind ?i (get-char ?f))
+  (bind ?negative (&gt; ?i 127))
+  (bind ?i (+ (* ?i 256) (get-char ?f)))
+  (bind ?i (+ (* ?i 256) (get-char ?f)))
+  (bind ?i (+ (* ?i 256) (get-char ?f)))
+  (if ?negative then (- ?i (* 256 256 256 256)) else ?i))
+
+(deffunction pg-receive-16-bits-integer (?f)
+  (bind ?i (get-char ?f))
+  (bind ?negative (&gt; ?i 127))
+  (bind ?i (+ (* ?i 256) (get-char ?f)))
+  (if ?negative then (- ?i (* 256 256)) else ?i))
+
+(deffunction pg-receive-n-bytes (?f ?n)
+  (bind ?result (create$))
+  (while (&gt; ?n 0)
+    (bind ?result ?result (get-char ?f))
+    (bind ?n (- ?n 1)))
+  ?result)
+
+(deffunction pg-receive-string (?f)
+  (bind ?s "")
+  (while (&lt;&gt; 0 (bind ?c (get-char ?f)))
+    (bind ?s (format nil "%s%c" ?s ?c)))
+  ?s)
+
+(deffunction pg-receive-n-length-string (?f ?n)
+  (bind ?s "")
+  (loop-for-count ?n
+    (bind ?s (format nil "%s%c" ?s (get-char ?f))))
+  ?s)
+
+(deffunction pg-receive-message (?f)
+  (bind ?tag (format nil "%c" (get-char ?f)))
+  (bind ?length (- (pg-receive-32-bits-integer ?f) 4))
+
+  (switch ?tag
+    (case "C" ; CommandComplete
+     then (create$ C (pg-receive-n-length-string ?f ?length)))
+    (case "D" ; DataRow
+     then (bind ?fields (pg-receive-16-bits-integer ?f))
+          (bind ?result (create$ D ?fields))
+          (loop-for-count ?fields
+            (bind ?field-length (pg-receive-32-bits-integer ?f))
+            (bind ?field
+              (if (= -1 ?field-length)
+               then NULL
+               else (pg-receive-n-length-string ?f ?field-length)))
+            (bind ?result ?result ?field-length ?field))
+          ?result)
+    (case "E" ; ErrorResponse
+     then (bind ?result (create$ E))
+          (bind ?message "")
+          (loop-for-count ?length
+            (if (= 0 (bind ?c (get-char ?f)))
+             then (bind ?result ?result ?message)
+                  (bind ?message "")
+             else (bind ?message (format nil "%s%c" ?message ?c))))
+          ?result)
+    (case "S" ; ParameterStatus
+     then (bind ?result (create$ S))
+          (bind ?parameter "")
+          (loop-for-count ?length
+            (if (= 0 (bind ?c (get-char ?f)))
+             then (bind ?result ?result ?parameter)
+                  (bind ?parameter "")
+             else (bind ?parameter (format nil "%s%c" ?parameter ?c))))
+          ?result)
+    (case "T" ; RowDescription
+     then (bind ?fields (pg-receive-16-bits-integer ?f))
+          (bind ?result (create$ D ?fields))
+          (loop-for-count ?fields
+            (bind ?column (pg-receive-string ?f))
+            (bind ?table-oid (pg-receive-32-bits-integer ?f))
+            (bind ?column-number (pg-receive-16-bits-integer ?f))
+            (bind ?type-oid (pg-receive-32-bits-integer ?f))
+            (bind ?type-length (pg-receive-16-bits-integer ?f))
+            (bind ?type-modifier (pg-receive-32-bits-integer ?f))
+            (bind ?format (pg-receive-16-bits-integer ?f))
+            (bind ?result ?result
+                   ?column ?table-oid ?column-number
+                   ?type-oid ?type-length ?type-modifier ?format))
+          ?result)
+    (case "Z" ; ReadyForQuery
+     then (create$ Z (format nil
+                             "%c" (expand$ (pg-receive-n-bytes ?f ?length)))))
+    (default
+      (create$ (sym-cat (format nil "%c" ?tag))
+               (pg-receive-n-bytes ?f ?length)))))
+
+(deffunction pg-send-startup-message (?f ?parameters)
+  (bind ?length 9)
+
+  (foreach ?a ?parameters (bind ?length (+ 1 ?length (str-length ?a))))
+
+  (pg-send-32-bits-integer ?f ?length)
+  (pg-send-32-bits-integer ?f (* 3 256 256)) ; protocol version 3
+  (foreach ?a ?parameters (printout ?f ?a) (put-char ?f 0))
+  (put-char ?f 0)
+
+  ;; flush output
+  (printout ?f ""))
+
+(deffunction pg-send-query-message (?f ?query)
+  (bind ?length (+ 5 (str-length ?query)))
+
+  (printout ?f Q)
+  (pg-send-32-bits-integer ?f ?length)
+  (printout ?f ?query)
+  (put-char ?f 0)
+
+  ;; flush output
+  (printout ?f ""))
+
+(deffunction pg-startup (?user ?database)
+  (open pg-out.pipe pg-out "w")
+
+  (pg-send-startup-message pg-out (create$ "user" ?user "database" ?database))
+
+  (open pg-in.pipe pg-in)
+
+  (while (and (bind ?message (pg-receive-message pg-in))
+              (printout t ?message crlf)
+              (neq Z (nth$ 1 ?message)))
+    (if (eq E (nth$ 1 ?message)) then (exit))))
+
+(deffunction pg-query (?query)
+  (pg-send-query-message pg-out ?query)
+
+  (while (and (bind ?message (pg-receive-message pg-in))
+              (printout t ?message crlf)
+              (neq Z (nth$ 1 ?message)))
+    (if (eq E (nth$ 1 ?message)) then (exit))))
+
+(pg-startup "user" "database")
+
+(pg-query "SELECT 100 + 1;")
+
+(exit)</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

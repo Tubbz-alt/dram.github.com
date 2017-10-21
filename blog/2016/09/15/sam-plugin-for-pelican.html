@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>自定义Pelican标记语言支持（SAM插件）</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>自定义Pelican标记语言支持（SAM插件）</h1><time>15 Sep 2016</time>
+
+<p>Pelican默认支持的标记语言种类不多（reStructuredText和Markdown），但它提供了简洁的插件机制，可以方便添加新的标记语言支持。</p>
+<p>在介绍如果添加插件之前，先来分析下Pelican中对标记语言源文件处理的基本工作流程：</p>
+<ol>
+<li>
+<p>遍历源文件目录，根据扩展名调用不同的解析器（reader）；</p>
+</li>
+<li>
+<p>从解析器中获得页面元数据（标题、日期等）和内容信息；</p>
+</li>
+</ol>
+<p>可以据此推导出标记语言插件需要具备的功能：</p>
+<ul>
+<li>
+<p>指定支持的扩展名；</p>
+</li>
+<li>
+<p>提供源文件解析接口，返回元数据和页面内容；</p>
+</li>
+</ul>
+<p>具体来说，Pelican的插件通过继承<code>pelican.readers.BaseReader</code>类来实现。其中定义有<code>file_extensions</code>属性，实现<code>read</code>方法。<code>read</code>方法返回一个元组，包含页面内容和元数据。</p>
+<p>插件的注册是通过在插件文件中定义<code>register</code>函数实现。该函数在Pelican解析器初始化中挂载钩子，钩子的功能是向Pelican添加以上实现的新标记语言的解析类。</p>
+<p>详细的内容，可以参考Pelican的<a href="http://docs.getpelican.com/en/3.6.3/plugins.html">Plugins文档</a>以及这里的<a href="https://github.com/dram/dram.github.com/blob/master/sam_reader.py">SAM插件</a>。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

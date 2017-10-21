@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>miniKanren学习</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>miniKanren学习</h1><time>12 Mar 2017</time>
+
+<p>基于<a href="/blog/2017/03/12/prolog-in-scheme.html">在Scheme中实现Prolog</a>的讨论，开始学习miniKanren，虽然miniKanren的<a href="http://minikanren.org/">资料</a>非常丰富，但入门的门槛依然有点高。可能是以下原因：</p>
+<ul>
+<li>
+<p>缺乏入门资料；</p>
+</li>
+<li>
+<p>需要有一定的逻辑编程基础；</p>
+</li>
+<li>
+<p>有较多的实现，需要选择（miniKanren最开始在Scheme中实现，而当前Scheme中及有多个<a href="http://minikanren.org/#implementations">实现版本</a>，基于其他语言的实现更是丰富）。</p>
+</li>
+</ul>
+<section>
+<h2>入门材料</h2>
+<p>以下是我整理的入门材料（前提是具备Scheme和Prolog基础）：</p>
+<ul>
+<li>
+<p>miniKanren作者William E. Byrd当前的<a href="https://github.com/webyrd/miniKanren-with-symbolic-constraints">实现</a>；</p>
+</li>
+<li>
+<p>Byrd的<a href="http://io.livecode.ch/learn/webyrd/webmk">交互教程</a>；</p>
+</li>
+<li>
+<p>Byrd的<a href="https://github.com/webyrd/dissertation-single-spaced">博士论文</a>。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>陷阱</h2>
+<p>几个容易踩的坑：</p>
+<ul>
+<li>
+<p>论文中的<code>exist</code>已经被替换为<code>fresh</code>，具体原因还有待研究；</p>
+</li>
+<li>
+<p>论文中通过文字排版简化了quote，在转化为代码时需要重新加上，可以参考交互教程；</p>
+</li>
+<li>
+<p><code>run</code>的结果<code>(_.0)</code>并非pair类型的<code>(_ . 0)</code>，而是单元素<code>_.0</code>的列表。</p>
+</li>
+</ul>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

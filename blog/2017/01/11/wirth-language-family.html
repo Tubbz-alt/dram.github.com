@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Wirth语言家族</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Wirth语言家族</h1><time>11 Jan 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>重新引入Pascal中<code>FUNCTION</code>的概念，只是语义上更为严格，在不允许赋值非本地变量的基础上，同时也不能在函数体中调用其他<code>PROCEDURE</code>、不能包含<code>VAR</code>参数。—— 2017-01-12</p>
+</li>
+<li>
+<p>设计原则上确保只做有意义的更改，例如不考虑语法层面无谓的改动。—— 2017-01-12</p>
+</li>
+<li>
+<p>借鉴Component Pascal中的<code>IN</code>和<code>OUT</code>参数的机制。在<code>IN</code>参数不能更改和<code>OUT</code>需要未初始化的基础上，去处<code>VAR</code>变量。这样传参包括三种方式：值传递、只读引用、可写引用。这样也部分实现了<a href="https://en.wikipedia.org/wiki/Assignment_%28computer_science%29#Single_assignment">单次赋值</a>的机制。增加这些限制后，如果有需要对数据多次处理的情况，不能再多次传入过程，可以借助子过程规避，对子过程来说，外层参数不是入参，可以在多个子过程中对其处理。—— 2017-01-12</p>
+</li>
+<li>
+<p>前期也可以考虑基于P5实现，ACK的Pascal作为bootstrap使用。—— 2017-01-15</p>
+</li>
+<li>
+<p>从对<a href="/blog/2017/01/21/module-and-nested-procedure.html">模块和过程嵌套</a>的讨论以及和<a href="/blog/2016/10/31/layered-service-oriented-architecture.html">分层化面向服务架构设计</a>的结合分析中可以看出，模块并非构建复杂系统的必要元素，更多的是需要一种合理的名字空间机制。大范围的状态化反而会影响对系统的理解。—— 2017-01-21</p>
+</li>
+<li>
+<p>名字空间有这样一种简单的机制：所有可以被外部访问的过程在定义时必须带有名字空间前缀（一层或多层），否则作为内部过程。并在申明段中新增<code>ALIAS</code>段，用于为外部（或自身外部可引用的）过程或者外部名字空间（或自身名字空间）取别名。实现上看是否可以通过简单的<a href="https://en.wikipedia.org/wiki/Name_mangling">name mangling</a>处理？。—— 2017-01-21</p>
+</li>
+<li>
+<p>根据这几天<a href="/blog/2017/01/22/designing-a-pascal-code-formatter.html">Pascal代码格式化工具设计</a>的尝试，可以考虑基于Prolog实现Modo。流程如下：Prolog-based Pascal formatter -&gt; Prolog-based Pascal P-code compiler -&gt; Prolog-based Pascal LLVM compiler -&gt; Embed Prolog into Pascal -&gt; Prolog-based bootstrapped self-host Pascal LLVM compiler -&gt; Modo-related etc. —— 2017-01-26</p>
+</li>
+<li>
+<p>补遗2中对于<code>FUNCTION</code>的约束，类似于C中<code>pure</code>函数的申明，以及Mercury中的<code>func</code>。Prolog中compound term在Mercury不是单纯的数据，其可以包含有由<code>func</code>体现的运算表达式。一个典型的例子是Prolog中<code>(is)/2</code>承载的数值运算在Mercury中是以<code>func</code>实现的，如整数的加法为<code>(int.+)/2</code>。—— 2017-01-31</p>
+</li>
+</ol>
+</section>
+<p>Pascal的设计者Niklaus Wirth设计过多种编程语言，但设计的思路是<a href="/blog/2017/01/11/about-conceptual-integrity.html">一以贯之</a>的。详细的列表可以参考<a href="https://www.inf.ethz.ch/personal/wirth/projects.html">这里</a>。</p>
+<p>另外还有一块是直接基于Wirth的语言发展设计的语言。例如ISO Pascal、ISO Extended Pascal、ISO Modula-2、Modula-3、Oberon-2、Component-Pascal等。</p>
+<p>每一种语言都有它特定的理念和目标领域。我现在考虑是否可以在Modula-2的基础上设计新的语言（暂命名为Modo），主要基于以下想法：</p>
+<ol>
+<li>
+<p>继承Wirth语言安全性的特性（据此Modula-2 variant record的特性是否需要保留需要考虑下，可以借鉴<a href="http://www.softwarepreservation.org/projects/lang/mesa">Mesa</a>对此的处理，另外Algol-68以及新近语言多有采用的类型枚举机制也可以考虑）；</p>
+</li>
+<li>
+<p>继承Wirth语言简洁的特性（直观、易于学习、易于全然掌握，据此倾向于使用传统的命令式语言，而不引入复杂的类型系统、函数式、以及面向对象特性，也因此不采用Oberon中的可扩展结构体的对象特性）；</p>
+</li>
+<li>
+<p>贯彻自顶向下的编程模式（所以继承Modula-2模块定义和实现分离的模式，而不采用Oberon中两者整合的方式）；</p>
+</li>
+<li>
+<p>保持一定的便捷性（例如可以便捷地对数组和结构体赋值，可以参考Algol-68、Mesa、ISO Pascal、ISO Modula-2的设计，再如可以在文件中包含多个模块，只有模块定义文件中包含的模块为对外可见，其他为私有模块，再如增加STRING类型）。</p>
+</li>
+</ol>
+<p>实现方面，暂时考虑基于NuttX项目的<a href="https://bitbucket.org/nuttx/pascal">Pascal</a>，并借鉴参考ACK中的<a href="https://github.com/davidgiven/ack">Modula-2</a>以及<a href="https://sourceforge.net/projects/pascalp5/">Pascal-P5</a>实现。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

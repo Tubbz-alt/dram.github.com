@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>AtomMorph example</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>AtomMorph example</h1><time>02 Oct 2009</time>
+
+<p>有了之前的基础，现在总算是可以理解<code>AtomMorph class&gt;&gt;example</code>了。代码很简单，先把它全贴出来。</p>
+<pre><code>AtomMorph class&gt;&gt;example
+	|a|
+	a := AtomMorph new openInWorld.
+	a color: Color random.
+	[
+		1000 timesRepeat: [
+			a bounceIn: World bounds.
+			(Delay forMilliseconds: 50) wait.
+		].
+		a delete.
+	] fork.</code></pre>
+<p>其它也没什么好说的，主要是来看看它是如何来实现移动的。这是通过timesRepeat:和bounceIn:这两个相结合实现的。</p>
+<p>bounceIn:利用position和position:方法将点移动velocity距离，主要的代码都用于判断边界情况。也就是一个反弹操作。反弹时除了要对坐标进行特殊计算外，还需要对速度重新设置它的正负。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

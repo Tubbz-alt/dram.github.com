@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>PostgreSQL多实例运行</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>PostgreSQL多实例运行</h1><time>12 Sep 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>PostgreSQL在初始化的时候会生成一个默认数据库<code>postgres</code>（另外还有两个模板库<code>template0</code>和<code>template1</code>，可以通过<code>psql -l</code>查看。详见<a href="https://www.postgresql.org/docs/10/static/manage-ag-templatedbs.html">文档</a>），所以如果只是生成单数据库环境，初始化时可以省去<code>createdb</code>的过程。—— 2017-09-15</p>
+</li>
+<li>
+<p>在Cygwin环境中运行PostgreSQL依赖于Cygserver提供的共享内存服务，如何配置详见<a href="https://cygwin.com/cygwin-ug-net/using-cygserver.html">文档</a>（注意需要以管理员身份运行Terminal后执行相关命令）。—— 2017-09-15</p>
+</li>
+<li>
+<p>利用环境变量<code>PGDATA</code>和PostgreSQL配置文件，可以简化下面的脚本，详见<a href="/data/2017-10-09-postgresql-playground-service.sh">这里</a>。—— 2017-10-09</p>
+</li>
+</ol>
+</section>
+<p>虽然众多RDBMS设计之初就是向着多数据库多用户的方向发展的（SQLite是一个例外），但并不是说不能各用户独立实例使用。例如KDE就可以使用MySQL存储用户数据。</p>
+<p>以下脚本是对在Debian中运行多实例PostgreSQL功能的简单封装，其他平台应该做小的调整也可使用。</p>
+<pre><code>#!/bin/sh
+
+ROOT="$(dirname "$(readlink -f "$0")")"
+
+DATABASE=foo
+
+PG_BIN=/usr/lib/postgresql/9.6/bin/
+PG_DATA="$ROOT/data"
+PG_LOG="$PG_DATA/postgresql.log"
+PG_OPTIONS="-c listen_addresses= -c unix_socket_directories='$PG_DATA'"
+
+case $1 in
+    init)
+	$PG_BIN/pg_ctl init -D "$PG_DATA"
+	$PG_BIN/pg_ctl start -D "$PG_DATA" -l "$PG_LOG" -o "$PG_OPTIONS"
+	while [ ! -S "$PG_DATA/.s.PGSQL.5432" ]
+	do
+	    sleep 1
+	done
+	$PG_BIN/createdb -h "$PG_DATA" $DATABASE
+	;;
+    shell)
+	$PG_BIN/psql -h "$PG_DATA" $DATABASE
+	;;
+    start)
+	$PG_BIN/pg_ctl start -D "$PG_DATA" -l "$PG_LOG" -o "$PG_OPTIONS"
+	;;
+    stop)
+	$PG_BIN/pg_ctl stop -D "$PG_DATA"
+	;;
+    *)
+	echo "Unknown command"
+	;;
+esac</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

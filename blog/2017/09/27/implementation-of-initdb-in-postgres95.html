@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Postgres95 initdb实现</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Postgres95 initdb实现</h1><time>27 Sep 2017</time>
+
+<p>initdb是初始化PostgreSQL cluster的命令，PG95由SHELL脚本<a href="https://github.com/postgres/postgres/blob/PG95-1_01/src/bin/initdb/initdb.sh">实现</a>，是对<code>postgres -boot</code>命令的封装，具体流程如下：</p>
+<ul>
+<li>
+<p>创建<code>$PGDATA/base</code>和<code>$PGDATA/base/template1</code>目录，用于存放数据库文件；</p>
+</li>
+<li>
+<p>基于<code>local1_template1.bki</code>和<code>global1.bki</code>文件初始化<code>template1</code>数据库（这两个文件由<code>backend/catalog/genbki.sh</code>脚本基于<code>backend/catalog/</code>目录中的各头文件生成，主要是各系统内部表结构）；</p>
+</li>
+<li>
+<p>调用<code>pg_version</code>命令生成版本标识文件；</p>
+</li>
+<li>
+<p>在<code>pg_database</code>数据表中注册<code>template1</code>；</p>
+</li>
+<li>
+<p>执行<code>vacuum</code>命令回收资源。</p>
+</li>
+</ul>
+<p>在代码中可以看到，<code>postgres</code>也能够直接执行命令，例如<code>open</code>、<code>insert</code>，还有刚才提及的<code>vacuum</code>，但感觉与<code>psql</code>不同，这留待以后分析。</p>
+<p>有一个细节，<code>backend/catalog/</code>各头文件的结构体和<code>/bin/pg_dump/pg_dump.h</code>并不一致，总体感觉<code>pg_dump.h</code>中表结构的定义也可以基于<code>backend/catalog/</code>目录中的内容通过脚本生成。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

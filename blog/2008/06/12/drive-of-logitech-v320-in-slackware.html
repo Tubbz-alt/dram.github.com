@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Slackware下驱动罗技V320</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Slackware下驱动罗技V320</h1><time>12 Jun 2008</time>
+
+<p>V320的中键还有向左向右点击的功能，Windows下可以通过简单的安装SetPoint来设置，而在Linux则需要一些设置。</p>
+<p>其实并不麻烦，只需将下面这段代码加到<code>/etc/X11/xorg.conf</code>中即可。</p>
+<pre><code>Section "InputDevice"
+Identifier "Mouse0"
+Driver "evdev"
+Option "Device" "/dev/input/event1"
+Option "Name" "Logitech USB Receiver"
+Option "HWHEELRelativeAxisButtons" "7 6"
+EndSection</code></pre>
+<p>当然，首先你需要安装xf86-input-evdev包。</p>
+<p>另外/dev/input/event1可以需要做一些尝试，如event0, event1, event2等。</p>
+<p>这样就可以在xev中检测到点击事件了。</p>
+<p>接下来需要作的事就是在你的WM中对键进行设置。比如在Openbox就是用Button6，Button7来表示这两个按键的。</p>
+<p>另外，你还可以通过xmodmap对按键进行调整。比如V320的中间比较难按，而Linux经常需要用他来粘贴，可以通过如下命令将中间向下按与向左按交换。</p>
+<pre><code>xmodmap -e "pointer = 1 7 3 4 5 6 2"</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

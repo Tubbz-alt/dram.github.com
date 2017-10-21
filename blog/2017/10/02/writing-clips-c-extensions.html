@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>编写CLIPS C扩展</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>编写CLIPS C扩展</h1><time>02 Oct 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>从<code>OBJS</code>变量中删除<code>userfunctions.o</code>可以用<code>filter-out</code>函数替代<code>patsubst</code>。—— 2017-10-11</p>
+</li>
+</ol>
+</section>
+<p>关于如何在CLIPS编写C扩展，在Advanced Programming Guide中已经有详细的介绍。这里只举一个简单的例子。</p>
+<p>整体目录结构如下：</p>
+<pre><code>foo/
+	├── clips -&gt; link/to/clips-code/
+	├── foo_clips.c
+	└── Makefile</code></pre>
+<p>其中<code>clips</code>链接到CLIPS源码目录（64x分支），<code>foo_clips.c</code>包含一个简单的扩展实例，<code>Makefile</code>做为编译过程封装。</p>
+<p>以下为各文件的具体内容。</p>
+<p><code>foo_clips.c</code>：</p>
+<pre><code>#include "clips/clips.h"
+
+#include &lt;math.h&gt;
+
+static void Bar(Environment *env, UDFContext *udfc, UDFValue *out)
+{
+	UDFValue arg;
+
+	UDFFirstArgument(udfc, NUMBER_BITS, &amp;arg);
+
+	out-&gt;integerValue = CreateInteger(env, arg.integerValue-&gt;contents + 1);
+}
+
+void UserFunctions(Environment *env)
+{
+	AddUDF(env, "bar", "l", 1, 1, "l", Bar, "Bar", NULL);
+}</code></pre>
+<p><code>Makefile</code>：</p>
+<pre><code>NAME = foo
+LIB_NAME = $(NAME)_clips
+
+$(LIB_NAME): $(LIB_NAME).o
+	gcc -s -o $@ $^ $($(NAME)_OBJS) $($(NAME)_LIBS)
+
+clean-$(NAME):
+	rm -f $(LIB_NAME) $(LIB_NAME).o
+
+include clips/makefile
+
+CC=cc
+
+CLIPS_OBJS = $(patsubst %, clips/%, $(OBJS) main.o)
+$(NAME)_OBJS = $(patsubst clips/userfunctions.o, , $(CLIPS_OBJS))
+$(NAME)_LIBS = -lm
+
+$(LIB_NAME).o: $(LIB_NAME).c
+	$(CC) -Wall -c -o $@ $&lt;</code></pre>
+<p>从例子中可以看到，与Lua的<a href="/blog/2017/10/02/writing-lua-c-modules.html">扩展模块</a>不同，CLIPS的扩展是全局的，不是模块化的。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

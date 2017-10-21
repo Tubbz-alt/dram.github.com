@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>邮件记事存储系统实现</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>邮件记事存储系统实现</h1><time>20 Nov 2016</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<p>可以研究下使用gnus替代MH-E的可行性，看能否规避MH-E存在的问题。gnus支持通过<code>nnmail-spool-file</code>读取本地邮件文件。MIME标准为文本编辑器支持邮件编辑创造了有利条件（可基于标准将二进制文件文本化），所以这一方案值得研究。—— 2016-12-10</p>
+</section>
+<p>在前些天的<a href="/blog/2016/11/10/designing-email-notes-and-storage-system.html">邮件记事存储系统构想</a>一文中，简要说明了如果以邮件的形式组织笔记以及存储资料，今天想要来说说这一构想的具体实现。</p>
+<p>当前有很多免费的邮件服务，在稳定性和易用性上都非常出色，可以从中加以选择，由于这一方式使用简便，这里不再详细讨论。下面想要说明的是基于Linux系统本地邮件服务的方案实现。</p>
+<p>本地邮件服务的服务端在大多数Linux发行版都有初始配置，以下主要以Debian系统为例说明两款客户端的配置。</p>
+<section>
+<h2>KMail</h2>
+<p>KMail是KDE的默认邮件客户端，由于是图形化的交互界面，配置相对简单，具体流程如下：</p>
+<ol>
+<li>
+<p>在帐号配置的“收件”标签页中添加“Mbox格式”邮箱，并指定路径为<code>/var/spool/mail/&lt;username&gt;</code>；</p>
+</li>
+<li>
+<p>在帐号设置的“发件”标签页，添加sendmail发件模式。</p>
+</li>
+</ol>
+<p>另外有一点需要补充说明的是，由于KMail对于邮件地址检查较为严格，需要设置系统主机名为完整的域名，例如<code>debian.localdomain</code>。</p>
+</section>
+<section>
+<h2>MH-E</h2>
+<p><a href="https://en.wikipedia.org/wiki/MH_Message_Handling_System">MH</a>是一种命令行模式的邮件客户端，而MH-E则是Emacs中基于MH的扩展。关于MH的资料，可以查看<a href="https://www.gnu.org/software/emacs/manual/mh-e.html">MH-E文档</a>、<a href="https://www.freebsd.org/cgi/man.cgi?query=nmh">nmh的手册</a>以及<a href="http://mailutils.org/manual/">mailutils文档</a>，其中nmh和mailutils-mh是MH的两个实现，在这里使用的是mailutils-mh，nmh只作为文档参考。</p>
+<p>结合MH-E和mailutils-mh可以实现在Emacs中收发邮件，但由于存在转发邮件时无法处理Unicode字符编码的问题，在此并不大适用，以下内容只作为参考。（希望编码问题可以在以后解决，另外也可以考虑基于<a href="http://www.gnus.org/">Gnus</a>实现）</p>
+<p>mailutils-mh需要添加以下配置：</p>
+<ul>
+<li>
+<p>在<code>$HOME/.mh_profile</code>中添加加<code>Charset: UTF-8</code>，这样MH-E在列表页面可以显示Unicode标题。（但内容仍然不支持）</p>
+</li>
+<li>
+<p>在<code>$HOME/.mtstailor</code>中加入<code>x-mailer: no</code>，可以去除<code>X-Mailer:</code>邮件头。</p>
+</li>
+</ul>
+<p>另外在Emacs中需要对MH-E做如下设置：</p>
+<ul>
+<li>
+<p><code>(setq mh-insert-x-mailer-flag nil)</code>：不添加自定义X-Mailer；</p>
+</li>
+<li>
+<p><code>mh-scan-format-nmh</code>：设置该变量，可以设置列表页不显示邮件的内容摘要，具体模式可参考<a href="https://www.gnu.org/software/emacs/manual/html_node/mh-e/Scan-Line-Formats.html">文档</a>。</p>
+</li>
+</ul>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

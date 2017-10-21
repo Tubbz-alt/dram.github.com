@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Modula-2和Oberon-07比较</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Modula-2和Oberon-07比较</h1><time>04 Jan 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>Oberon调整数值型字符常量的后缀为<code>X</code>，Modula-2为<code>C</code>。—— 2017-01-05</p>
+</li>
+<li>
+<p>Oberon去除八进制数值后缀<code>B</code>。—— 2017-01-05</p>
+</li>
+<li>
+<p>Oberon去除<code>CARDINAL</code>类型，相应的也不需要说明符号整数和无符号整数类型兼容性问题。—— 2017-01-07</p>
+</li>
+<li>
+<p>Oberon去除subrange类型。—— 2017-01-07</p>
+</li>
+</ol>
+</section>
+<p>N. Wirth设计的三大编程语言Pascal (1970)，Modula-2 (1979)，Oberon (1988)，当前虽然没有大范围的应用，但依然有一定活跃度。Pascal自不用多说，Modula-2在嵌入式领域依然有广泛的应用，N. Wirth自己则依然专注于对Oberon语言和Oberon System的完善。</p>
+<p>这里想就Modula-2 <a href="http://link.springer.com/book/10.1007/978-3-642-83565-0">PIM4</a>和<a href="https://www.inf.ethz.ch/personal/wirth/Oberon/Oberon07.Report.pdf">Oberon-07</a>作比较说明（PIM4的语言规范可以在链接中Back Matter部分PDF中找到），以此可以看到语言设计的一些思路。看似差异不大的两个语言，或大或小的差异有很多。</p>
+<section>
+<h2>新增（或更新）特性</h2>
+<ol>
+<li>
+<p>结构体支持可扩展，该特性源于对面向对象范式的支持；</p>
+</li>
+<li>
+<p>结构体中字段支持可见性申明；</p>
+</li>
+<li>
+<p><code>PROCEDURE</code>如果有返回值，必须在结尾处定义（这一特性取代了之前任意放置<code>RETURN</code>语句的模式）；</p>
+</li>
+<li>
+<p><code>WHILE</code>语句增加<code>ELSIF</code>子句（这一特性取代了之前<code>LOOP</code>和<code>EXIT</code>语句组合的模式）；</p>
+</li>
+<li>
+<p>允许对结构体和数组赋值（这一特性取代了<code>COPY</code>过程，虽然更加简洁，但这一某种程度上让使用者无法感知拷贝结构体和数组的隐含成本）；</p>
+</li>
+<li>
+<p>不允许对结构体或者数组的值参数（value parameter）赋值（对于这一点，觉得可以更严格些，要求对于所有值参数都不允许赋值，这样可以允许编译器对所有值参数的传入做优化处理。不过这样在并发的环境中如果有竞争关系的数据需要显式传入）；</p>
+</li>
+<li>
+<p>不允许对导入的变量赋值；</p>
+</li>
+<li>
+<p>新增<code>ASSERT</code>过程（非常有用的方法，可以类似C语言中宏的实现，可以在错误提示中打印涉及的代码以及代码位置）；</p>
+</li>
+<li>
+<p>新增<code>FLOOR</code>过程（取代<code>MathLib0.entier</code>过程）；</p>
+</li>
+<li>
+<p>限制指针只能指向结构体（从Wirth的论文<a href="http://e-collection.library.ethz.ch/view/eth:3168">Data Structures and Algorithms</a>中也可以看到，指针主要用于组建复杂结构体）。</p>
+</li>
+</ol>
+</section>
+<section>
+<h2>删除特性</h2>
+<ol>
+<li>
+<p>去除<code>RETURN</code>语句；</p>
+</li>
+<li>
+<p>去除<code>EXIT</code>语句；</p>
+</li>
+<li>
+<p>去除<code>LOOP</code>语句；</p>
+</li>
+<li>
+<p>去除字符串不能包含换行符的限制，这一点在<a href="/blog/2017/01/02/newline-in-string-literal.html">字符串字面值中的换行符</a>有讨论；</p>
+</li>
+<li>
+<p>去除<code>/</code>不能用于整型的限制（这个限制感觉是有用的，应用于整数的结果依然是整数，这样就可能需要有浮点数转整型的过程，这一过程存在多种模式）；</p>
+</li>
+<li>
+<p>数组不支持指定开始下标；</p>
+</li>
+<li>
+<p>去除枚举类型；</p>
+</li>
+<li>
+<p>去除<code>WITH</code>语句；</p>
+</li>
+<li>
+<p>去除<code>COPY</code>过程；</p>
+</li>
+<li>
+<p>去除<code>HALT</code>过程（由<code>ASSERT(FALSE)</code>代替，但这样就需要另外找一个正常退出系统的方式）；</p>
+</li>
+<li>
+<p>删除<code>MIN</code>、<code>MAX</code>；</p>
+</li>
+<li>
+<p>删除<code>CAP</code>过程。</p>
+</li>
+</ol>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

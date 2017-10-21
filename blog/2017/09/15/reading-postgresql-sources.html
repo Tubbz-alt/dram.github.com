@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>阅读PostgreSQL代码</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>阅读PostgreSQL代码</h1><time>15 Sep 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>实际上PostgreSQL仓库中有部分代码是第三方代码，例如这个<a href="https://github.com/postgres/postgres/commit/47f849a3c9005852926dca551d70ad8111f09f3a">提交</a>中涉及到的<code>tzcode</code>。—— 2017-09-22</p>
+</li>
+</ol>
+</section>
+<p>PostgreSQL的代码可读性很高，文档和代码注释也很详尽，另外社区发展也很健康，所以考虑读一读代码。</p>
+<p>统计了当前版本（REL_10_BETA4）的代码量，C代码有70万行，非常庞大的。考虑看早期版本（PG95-1_01），因为从版本发布说明来看，早期版本也已经有很高的成熟度，很多工具和概念一直沿用至今，这个版本的C代码量为9万行。</p>
+<p>PG95的目录结构很清晰（当前版本与此没有大的改动），主要包括以下几部分：</p>
+<ul>
+<li>
+<p><code>backend/</code> - 服务端代码；</p>
+</li>
+<li>
+<p><code>bin/</code> - 客户端工具代码及维护工具；</p>
+</li>
+<li>
+<p><code>interfaces/</code> - 接口库；</p>
+</li>
+<li>
+<p><code>test/</code> - 测试代码。</p>
+</li>
+</ul>
+<p>从<a href="https://www.postgresql.org/docs/10/static/history.html">历史说明</a>中可以看到，<code>psql</code>工具是Postgres95引入的，替换了之前的客户端工具<code>monitor</code>，那么代码阅读也可以由此开始。阅读时可以参考早期的<a href="https://www.postgresql.org/docs/6.5/static/app-psql.htm">psql</a>文档。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

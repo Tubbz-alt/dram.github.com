@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Prolog中的term expansion</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Prolog中的term expansion</h1><time>24 May 2017</time>
+
+<p>SWI-Prolog <a href="http://www.pathwayslms.com/swipltuts/html/">Web开发教程</a>有用到<code>http_dispatch:http_handler</code>，从<a href="http://www.swi-prolog.org/pldoc/doc_for?object=http_handler/3">文档</a>中可知该指令使用了term expansion特性。</p>
+<p>但有个奇怪的问题，对于以下代码：</p>
+<pre><code>:- use_module(library(http/http_dispatch)).
+:- use_module(library(http/thread_httpd)).
+
+% :- http_handler(/, say_hi, []).
+:- http_dispatch:http_handler(/, user:say_hi, []).
+
+say_hi(_Request) :-
+    format('Content-type: text/plain~n~n'),
+    format('Hello World!~n').
+
+main :- http_server(http_dispatch, [port(8000)]).</code></pre>
+<p>如果在调用<code>http_handler</code>加了<code>http_dispatch</code>前缀，那么之后的<code>say_hi/1</code>也会被追加<code>http_dispatch</code>前缀。</p>
+<p>具体可以查看Paul Moura的<a href="http://blog.logtalk.org/2011/03/a-more-sane-implementation-of-the-term-expansion-mechanism/">讨论</a>。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

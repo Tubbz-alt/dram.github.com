@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Prolog和Forth的相似性</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Prolog和Forth的相似性</h1><time>09 Dec 2016</time>
+
+<p>Prolog和Forth是差异很大的两种语言，但在语言设计中也有其相似性。</p>
+<section>
+<h2>数据库与字典</h2>
+<p>Prolog中的数据库与Forth的字典是类似的，都是用于存储“代码”，Prolog中对应于语句（clauses），Forth中对应于词（words）。</p>
+<ul>
+<li>
+<p>Prolog可以用<code>asserta/1</code>、<code>assertz/1</code>添加语句，<code>clause/2</code>查询语句，<code>abolish/1</code>、<code>retract/1</code>删除语句；</p>
+</li>
+<li>
+<p>Forth则是用<code>:</code>添加词，用<code>FORGET</code>删除词。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>选择结构</h2>
+<p>Prolog和Forth的选择结构的形式虽然不同，但都是通过语言层面更基础的组件实现。</p>
+<ul>
+<li>
+<p>Prolog通过组合<code>-&gt;</code>和<code>;</code>运算符实现；</p>
+</li>
+<li>
+<p>Forth通过组合<code>IF</code>、<code>ELSE</code>和<code>THEN</code>这三个词实现。</p>
+</li>
+</ul>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

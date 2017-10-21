@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Self嵌套对象定义</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Self嵌套对象定义</h1><time>23 Oct 2016</time>
+
+<p>昨天在<a href="/blog/2016/10/15/self-first-impressions.html">Self初印象</a>中添加了补遗，补充了对Self语言优势的描述。现在想就其中的“对象可以嵌套定义”这一点作展开说明，后续文章将对Self其他特性也加以详细介绍。</p>
+<section>
+<h2>代码封装</h2>
+<p>在介绍Self这一机制之前，我们先有必要考察下当下主流的几种代码封装方式，包括：类、函数、模块。</p>
+<p>比如Python主要通过结合模块和类来实现接口封装（虽然Python支持类型嵌套定义，但应为并不广泛）。而<a href="http://www.newspeaklanguage.org/">Newspeak</a>作为Smalltalk的直系后代，在保留其诸多特性的基础上，去除了类不能嵌套定义的限制，并将此发挥到极致，使嵌套类同时承载了模块的功能。</p>
+<p>再如在诸多函数式编程语言中，则更多的以模块、函数以及抽象数据类型的组合应用来封装接口。</p>
+<p>而Self则主要是以嵌套对象的模式来组织封装。</p>
+</section>
+<section>
+<h2>示例</h2>
+<p>以上介绍可能过于抽象，下面我们以一个解析式语言解析器代码组织为例加以说明。</p>
+<p>Python基于类的代码框架如下：</p>
+<pre><code>class Lexer:
+    ...
+class Parser:
+    ...
+class Evaluator:
+    ...
+class Interpreter:
+    lexer = Lexer(...)
+    parser = Parser(...)
+    evaluator = Evaluator(...)
+    ...</code></pre>
+<p>Scheme基于函数的代码框架如下：</p>
+<pre><code>(define (tokenize ...) ...)
+(define (parse ...) ...)
+(define (eval ...) ...)
+(define (interprete ...)
+  (... (eval ... (parse ... (tokenize ...) ... ) ...) ...))</code></pre>
+<p>Self基于对象的代码框架如下：</p>
+<pre><code>(|
+  lexer = (| ... |)
+  parser = (| ... |)
+  evaluator = (| ... |)
+  interpreter = (
+    ... lexer ...
+    ... parser ...
+    ... evaluator ...
+  )
+|)</code></pre>
+</section>
+<section>
+<h2>比较分析</h2>
+<p>从变量的命名中就可以看出，Scheme是以动作作为封装实体，而Self和Python则是基于名词性的角色进行封装。Scheme的代码依然是过程式的，而Self和Python包含了一层抽象。</p>
+<p>而比较Self和Python的不同可以发现，Python代码中有类和对象这两个概念的转化，而Self中则更为直接。从抽象的层次来说，Python的抽象得更高。</p>
+<p>不同的语言、不同的抽象方式适用于不同的场景和应用，很难绝对性得说哪种优哪种劣，但通过比较分析各种模式的异同，可以加深对其的理解。</p>
+</section>
+<section>
+<h2>备注</h2>
+<p>由于语言设计与实现上的限制，在应用Self嵌套对象时，需要注意以下几点：</p>
+<ol>
+<li>
+<p>Self对象嵌套定义时，父层和子层的变量作用域相互独立，这一特性既带来了一定的不便利性，同时也降低了代码阅读的障碍；</p>
+</li>
+<li>
+<p>虽然Self对方法和对象在概念上做了一定的统一，但当前Self不支持方法的嵌套定义；</p>
+</li>
+<li>
+<p>但在Self中基于块的闭包只在所属方法执行期间才有效，这一特性限制了块的应用范围，通用性不如函数式编程语言中的闭包。</p>
+</li>
+</ol>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

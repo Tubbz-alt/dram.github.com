@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Squeak的包和Self的模块</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Squeak的包和Self的模块</h1><time>30 Oct 2016</time>
+
+<p>在对Squeak的<a href="http://wiki.squeak.org/squeak/5712">包机制</a>和Self的模块机制的比较中，可以清晰地看到功能设计上后期附加和设计之初就考虑的差异，同时也可以多方面体会到Self的模块机制和语言以及开发环境的融合性及整体一致性。</p>
+<p>首先需要说明的是，两者都是用于处理代码导出的机制，但在具体实现以及结果形式上有很大的差异，现试列举如下：</p>
+<ol>
+<li>
+<p>Squeak中指定包归属的最小单位是类及方法组（category），Self是slot，比较而言，Self的粒度更细；</p>
+</li>
+<li>
+<p>Squeak以方法和类的组名称确定属于哪个包，因此在组命名上附加了诸多约定，Self是通过slot的属性（annotation）指定；</p>
+</li>
+<li>
+<p>最终导出结果，Squeak为zip压缩包（.mcz），其中包含代码文件以及元信息，Self为单一文本文件，这一差异曾在<a href="/blog/2016/10/15/self-first-impressions.html">Self初印象</a>中提及。</p>
+</li>
+</ol>
+<p>以上几点，导致两者在代码管理体验上有较大差异。而另一点值得注意的是，得益于这些特性，当前Self和版本管理工具git有较好的<a href="https://github.com/russellallen/self">融合</a>，而Squeak则延续着<a href="http://squeaksource.com/">SqueakSource</a>的机制，不过衍生自Squeak的<a href="https://github.com/Cuis-Smalltalk">Cuis Smalltalk</a>对此有新的尝试。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

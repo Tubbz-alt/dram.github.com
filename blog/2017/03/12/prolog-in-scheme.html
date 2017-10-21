@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>在Scheme中实现Prolog</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>在Scheme中实现Prolog</h1><time>12 Mar 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>还可以参考<a href="http://picolisp.com">PicoLisp</a>与数据库和查询相关的设计与实现。—— 2017-03-12</p>
+</li>
+<li>
+<p>可以参考Racket的<a href="https://docs.racket-lang.org/datalog/">Datalog</a>和Common Lisp的多个<a href="http://www.cliki.net/Prolog">Prolog实现</a>。另外Racket的<a href="http://docs.racket-lang.org/racklog/">Racklog</a>作为Schelog的移植版本，也可以参考。—— 2017-03-13</p>
+</li>
+<li>
+<p>Prolog和Scheme的一点区别是：对于非专业人士或者初学者来说，Prolog更易于猜测和理解。如果需要在设计中引入编程语言表达严谨的复杂逻辑，可读性和易于理解都非常重要。—— 2017-03-17</p>
+</li>
+</ol>
+</section>
+<p>在对<a href="/blog/2017/03/11/modules-in-logtalk.html">Logtalk</a>和<a href="/blog/2017/03/11/modules-in-prolog.html">Prolog</a>模块的讨论中，暴露出Prolog模块存在的一些问题，特别是模块名称冲突问题，在当前的生态环境下，并没有好的解决方案。</p>
+<p>另一方面，Prolog过渡依赖于运算符的语法模式在一定程度上影响了初学者对代码的理解。还有逻辑和控制部分的耦合也并不十分理想。</p>
+<p>基于以上的原因，考虑是否能够在Scheme中实现类似Prolog中数据表示和搜索的机制。正如George F. Luger在《人工智能》中所说的，这是AI最为基本的两个功能，以此作为对Scheme的补充。</p>
+<p>以下是零碎的想法，想在研究<a href="http://minikanren.org/">miniKanren</a>和<a href="https://ds26gte.github.io/schelog/index.html">Schelog</a>之前记录下来。</p>
+<ul>
+<li>
+<p>基本的组件：<code>define-logic</code>, <code>logic-query</code>, <code>make-logic-database</code>, <code>current-logic-database</code>（parameter类型）；</p>
+</li>
+<li>
+<p><code>define-logic</code>可以定义fact（单参数）或者rule（双参数）；</p>
+</li>
+<li>
+<p>以<code>?</code>前缀区分变量和atom。</p>
+</li>
+</ul>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

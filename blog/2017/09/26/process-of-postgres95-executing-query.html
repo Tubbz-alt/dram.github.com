@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Postgres95查询的执行流程</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Postgres95查询的执行流程</h1><time>26 Sep 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p><code>handleCopyOut</code>和<code>handleCopyIn</code>对应的分别是<code>COPY ... TO</code>和<code>COPY ... FROM</code>语句，而非<code>COPY OUT</code>和<code>COPY IN</code>。—— 2017-09-27</p>
+</li>
+</ol>
+</section>
+<p>PG95查询的执行代码逻辑从<a href="https://github.com/postgres/postgres/blob/PG95-1_01/src/bin/psql/psql.c">bin/psql/psql.c</a>的<code>MainLoop</code>开始，以下罗列其中的几个关键步骤：</p>
+<ul>
+<li>
+<p>首先通过<code>GetNextLine</code>从标准输入（或者<code>\i</code>指令指定文件）获取单行内容；</p>
+</li>
+<li>
+<p>再略过注释（以<code>--</code>起始的输入行）；</p>
+</li>
+<li>
+<p>检查行尾是否以<code>;</code>或者<code>\g</code>结束，如果是，则置位<code>send_query</code>；</p>
+</li>
+<li>
+<p>判断行首是否以<code>\</code>起始，如果是，则表示为指令行，调用<code>HandleSlashCmds</code>处理，如果不是，则拼装query buffer，在<code>send_query</code>置位时调用<code>SendQuery</code>发送查询到后端。</p>
+</li>
+</ul>
+<p>对于<code>HandleSlashCmds</code>中的处理机制，这里不展开说，主要包括以下几类命令：</p>
+<ul>
+<li>
+<p><code>\a</code>、<code>\f</code>等配置类命令，设置<code>settings</code>对应配置项后直接返回；</p>
+</li>
+<li>
+<p><code>\d</code>相关命令以及<code>\l</code>，查询显示数据库元信息，针对这类命令，<code>HandleSlashCmds</code>会组装相应的查询语句，调用<code>PGexec</code>并显示结果，其中设计到<code>pg_database</code>、<code>pg_class</code>、<code>pg_user</code>、<code>pg_attribute</code>、<code>pg_type</code>等内部表；</p>
+</li>
+<li>
+<p><code>\c</code>更改数据库，这个命令的处理详见<a href="/blog/2017/09/17/process-of-postgres95-connecting-to-database.html">这里</a>；</p>
+</li>
+<li>
+<p><code>\i</code>指令，读取psql脚本文件，通过递归调用<code>MainLoop</code>实现；</p>
+</li>
+<li>
+<p><code>\!</code>指令，调用<code>system</code>执行系统命令，有一个细节，如果<code>\!</code>没有跟随执行的系统命令，会开启一个临时的SHELL交互环境，退出后回到psql环境。</p>
+</li>
+</ul>
+<p>查询和结果显示都是在<code>SendQuery</code>中处理，以下详细说明：</p>
+<ul>
+<li>
+<p>调用<code>PQexec</code>将查询发送给后端执行，返回值为查询结果；</p>
+</li>
+<li>
+<p>通过<code>PGerrorMessage</code>判断是否出错；</p>
+</li>
+<li>
+<p>通过<code>PGresultStatus</code>解析结果类型并对应处理，例如调用<code>PQdisplayTuples</code>显示查询结果（tuple和row的概念相同，详见<a href="https://www.postgresql.org/message-id/C05E7DA1218ED411BF8A00105AC95A8E0599DE96%40sv-cntrmail.emis.local">这里</a>的讨论）、调用<code>handleCopyOut</code>和<code>handleCopyIn</code>处理<code>COPY OUT</code>和<code>COPY IN</code>语句等，<code>handleCopyOut</code>批量读取后端返回的数据并打印到标准输出，<code>handleCopyIn</code>从标准输入批量读取数据并发送给后端；</p>
+</li>
+<li>
+<p>调用<code>PQnotifies</code>检查是否有异步通知。</p>
+</li>
+</ul>
+<p>最后，再说一个细节，在<code>PQdisplayTuples</code>中（代码在<a href="https://github.com/postgres/postgres/blob/PG95-1_01/src/interfaces/libpq/fe-exec.c">interfaces/libpq/fe-exec.c</a>），会查询<code>PAGER</code>环境变量，直接调用<code>popen</code>启动该环境变量的值，以此显示结果。另外，还需要忽略<code>SIGPIPE</code>信号。这就是<code>PAGER</code>的典型用法，Git关于pager的<a href="https://github.com/git/git/blob/v2.14.1/pager.c">实现</a>则要复杂得多。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

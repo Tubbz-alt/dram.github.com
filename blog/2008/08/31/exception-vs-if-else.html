@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>异常vs.判断</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>异常vs.判断</h1><time>31 Aug 2008</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>对于类似运维类需要快速编写且很快丢弃的代码来说，异常处理是必须的。不然，业务逻辑代码中需要添加大量错误判断、错误提示以及错误处理代码，非常影响代码编写的速度。如果不加错误处理相关代码，则程序出错时无从分析。—— 2017-09-28</p>
+</li>
+<li>
+<p>可靠性要求较高的业务场景，对于异常有不同的态度。一种是Go的思路，错误显式处理，不支持异常。另一种是Erlang的思路，有异常机制，通过supervisor机制保证进程群整体可靠性。—— 2017-09-28</p>
+</li>
+</ol>
+</section>
+<p>这两天python-list上有条关于什么时候用异常的讨论线索，<a href="http://www.gossamer-threads.com/lists/python/python/675364">在这</a>。</p>
+<p>不长，稍微整理了一下。</p>
+<p>几个缩写语：</p>
+<ul>
+<li>
+<p>EAFP: Easier to ask forgiveness than permission</p>
+</li>
+<li>
+<p>LBYL: Look before you leap</p>
+</li>
+<li>
+<p>DFTCFE: Don't forget to check for errors</p>
+</li>
+</ul>
+<p>异常的一些好处：</p>
+<pre><code>try:
+    x = 3 / y
+except ZeroDivisionError:
+    x = 0
+
+if y != 0:
+    x = 3 / y
+else:
+    x = 0</code></pre>
+<p>如果除以0的操作出现得不频繁的话，速度上异常会快一点，因为它少了一步判断操作。</p>
+<pre><code>if os.path.exists(filename):
+    f = open(filenmae)</code></pre>
+<p>上面的代码中，在if判断和open函数打开文件之间，可能文件被删除，从这一点上说，异常更加保险。</p>
+<p>如果我们乘坐google这架时光机器，我们还可以去旁听一下2003年的那场<a href="http://mail.python.org/pipermail/python-list/2003-May/205182.html">讨论</a>。</p>
+<p>如果耐心看下去，你会看到如下代码，哈。</p>
+<pre><code>try:
+    igniteKerosene()
+except ExplosionError:
+    handleExplosionCase()</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Trealla源码分析：整体执行流程</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Trealla源码分析：整体执行流程</h1><time>06 Dec 2016</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<p>在添加<a href="https://github.com/trealla-lang/trealla/issues/38">直接从STDIN解析代码</a>功能中，<code>lexer_consult</code>被<a href="https://github.com/trealla-lang/trealla/commit/f7b32a9ae0bc3b6fad6f3072163c31a2d7e3831e">分拆</a>为<code>lexer_consult_file</code>和<code>lexer_consult_fp</code>两个函数，<code>trealla_consult_file</code>调用的是前者。—— 2016-12-16</p>
+</section>
+<p><a href="https://github.com/trealla-lang/trealla">Trealla</a>是一个Prolog语言实现，有大量借鉴Erlang的思想，轻量级线程等。</p>
+<p><code>tpl.c</code>是Trealla的入口文件（猜测tpl是Trealla Prolog的缩写，类似于SWI Prolog对主程序swipl的命名思路）。</p>
+<p>从总体来看，Trealla的执行代码包括两种方式：一是执行（consult）文件，再是执行查询（query）。两者都可以在<code>tpl.c</code>中找到相应入口。</p>
+<p>执行查询的逻辑体现在对<code>--goal</code>参数以及REPL的处理中，主要包括以下流程：</p>
+<ol>
+<li>
+<p><code>trealla_create_query</code>创建查询；</p>
+</li>
+<li>
+<p><code>query_parse</code>解析查询；</p>
+</li>
+<li>
+<p><code>query_run</code>执行查询；</p>
+</li>
+<li>
+<p>通过<code>query_choices</code>判断如果可能存在多个结果，则会提示下一步动作，例如利用<code>query_trace</code>切换是否打印trace，<code>query_continue</code>获取可能存在的下一个结果；</p>
+</li>
+<li>
+<p><code>query_destroy</code>回收资源。</p>
+</li>
+</ol>
+<p>而执行文件的入口函数则是在<code>tpl.c</code>中调用的<code>trealla_consult_file</code>函数，<code>tpl</code>以此处理在命令行中指定的文件。函数的具体实现在<code>src/trealla.c</code>中，其中包括如下操作：</p>
+<ol>
+<li>
+<p>创建并经由<code>lexer_init</code>初始化词法解析器；</p>
+</li>
+<li>
+<p>调用<code>lexer_consult</code>解析源码文件；</p>
+</li>
+<li>
+<p>经由<code>add_clauses</code>将解析所得语句加入数据库；</p>
+</li>
+<li>
+<p>如果Trealla解释器的<code>init</code>属性在词法解析过程中经由<code>initialization</code>指令设置，则作为查询语句调用<code>trealla_run_query</code>执行；</p>
+</li>
+<li>
+<p><code>lexer_done</code>回收解析器资源。</p>
+</li>
+</ol>
+<p><code>trealla_run_query</code>的流程与上述查询的执行流程基本一致，最大的差异是没有交互式选择choice的过程。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

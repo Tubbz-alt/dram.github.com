@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Pascal代码格式化工具设计</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Pascal代码格式化工具设计</h1><time>22 Jan 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>在格式化时，如果注释与代码同行，则其为对该行的注释，在输出时需要保持。这就需要词法解析保留“行”信息。有两种方式：记录每个token的行号；将换行符作为独立token。如果是编译器，则更适合用第一种方式，而作为格式化工具，第二种方式更为简洁。由此想到的，对于方案优劣性的评价，需要放置到具体的应用场景中考虑。—— 2017-01-24</p>
+</li>
+<li>
+<p>由于回溯和有IO操作结合存在一些不易预知的<a href="/blog/2016/12/08/backtracking-in-prolog.html">问题</a>，所以在词法解析之前，将文件所有内容一齐读入内存。—— 2017-01-25</p>
+</li>
+<li>
+<p>对未完成的代码做了整理<a href="https://github.com/dram/prolog-pascal-formatter">提交</a>，还遗留较多问题，等后续再补充。—— 2017-01-28</p>
+</li>
+</ol>
+</section>
+<p>出于以下几方面考虑，想设计一个代码格式化工具：</p>
+<ol>
+<li>
+<p>阅读<a href="https://sourceforge.net/p/pascalp5/">Pascal-P5</a>代码（Pascal代码的整体可读性不如Modula-2，如果有格式化工具可以减轻障碍）；</p>
+</li>
+<li>
+<p>作为<a href="/blog/2017/01/11/wirth-language-family.html">Modo</a>语言设计实现的前期准备（词法和语法分析部分）；</p>
+</li>
+<li>
+<p>进一步熟悉Pascal语言。</p>
+</li>
+</ol>
+<p>考虑基于Prolog实现该格式化工具，大体分为三个模块：<code>lexer</code>、<code>parser</code>和<code>formatter</code>，下面详细介绍各模块的功能。</p>
+<section>
+<h2>词法解析器（lexer）</h2>
+<p><code>lexer</code>将代码文本流转化为token列表。</p>
+</section>
+<section>
+<h2>语法解析器（parser）</h2>
+<p><code>parser</code>将token列表转化为代码树。</p>
+</section>
+<section>
+<h2>格式化器（formatter）</h2>
+<p><code>formatter</code>将代码树重新格式化生成文本流。</p>
+</section>
+<p>这里包括几个重要的数据：</p>
+<ol>
+<li>
+<p>文本流（文本流直接以文件体现）；</p>
+</li>
+<li>
+<p>token列表（基于Prolog的列表表达）；</p>
+</li>
+<li>
+<p>代码树（基于Prolog的组合term表达）。</p>
+</li>
+</ol>
+<p>示例代码如下：</p>
+<pre><code>lexer:analyze(in, TokenList),
+parser:analyze(TokenList, SyntaxTree),
+formatter:write(SyntaxTree, out).</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

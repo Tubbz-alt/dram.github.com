@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>命名的重要性</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>命名的重要性</h1><time>17 Sep 2017</time>
+
+<p>在读<a href="/blog/2017/09/15/reading-postgresql-sources.html">Postgres早期代码</a>时，发现C字符串处理上的一个小问题（后续应该已经修复了），在<a href="https://github.com/postgres/postgres/blob/PG95-1_01/src/bin/psql/psql.c#L418-L423">这几行代码</a>中，<code>line[MAX_QUERY_BUFFER-1]</code>被置为<code>0</code>，那么<code>strlen(line)</code>不可能会等于<code>MAX_QUERY_BUFFER</code>。</p>
+<p>另外<code>line[MAX_QUERY_BUFFER-1]</code>置位本身也是冗余的，因为<code>gets</code>会确保结果字符串以<code>\0</code>结束。</p>
+<p>不过这里要说的主要不是以上问题，而是关于<code>gets</code>这个接口的命名。由于很长时间没有编写和阅读大量C代码，在这一次看到<code>gets</code>时，已经想不起这个接口是阅读单行数据的，误以为是阅读指定大小的字符串（<code>fread</code>的功能）。由此想到的就是<code>gets</code>（get-string）的命名，并没有清晰地表达按行读取的意图，不同于<code>getc</code>（get-character），读取单个字符的意思很清晰。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

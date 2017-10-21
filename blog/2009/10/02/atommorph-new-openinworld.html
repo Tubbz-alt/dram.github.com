@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>AtomMorph new openInWorld</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>AtomMorph new openInWorld</h1><time>02 Oct 2009</time>
+
+<p>一个简单的使用AtomMorph的例子，</p>
+<pre><code>5000 timesRepeat: [
+	atom := AtomMorph new openInWorld.
+	atom color: Color random.
+	].</code></pre>
+<p>这样会在Pharo中出现5000个彩点。位置是随机的，但是被框定在一个有限的范围内。一开始以为Morph的初始位置是openInWorld做的处理，之后才发现是在AtomMorph new时，调用了randomPositionIn:maxVelocity:方法。</p>
+<p>要删除这些点，可以运行下面的代码。</p>
+<pre><code>AtomMorph allInstances do: [:each | each delete].</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

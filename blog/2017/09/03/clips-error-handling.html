@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS错误处理</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS错误处理</h1><time>03 Sep 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>在规避使用salience时，<code>forall</code>很有价值，可以基于此实现对批量任务的等待动作，类似于多线程编程中的join概念。—— 2017-09-04</p>
+</li>
+<li>
+<p>在《专家系统原理与编程》中，作者提到，专家系统的其中一个特点是“可靠性”，这也可能是CLIPS采用这样一种错误处理方式的原因之一。—— 2017-09-05</p>
+</li>
+</ol>
+</section>
+<p>不同于其他高阶编程语言，CLIPS并不支持异常机制，这导致在错误处理上，CLIPS有些捉襟见肘。可供利用的只有<code>(exit)</code>退出程序、以及<code>(halt)</code>停止规则执行。</p>
+<p>但CLIPS和其他语言一大不同点在于数据驱动。通过合理的程序和数据组织，可以依托数据来实现流程控制。</p>
+<p>举例来说，通过使用流程控制的fact，可以限制相应规则的执行。如果需要退出程序，则不生成相应fact，使得<code>(run)</code>提前结束即可。</p>
+<p>但这一机制和salience机制存在冲突，一旦程序中用<code>salience</code>控制执行流程，则简单的不产生fact无法终止部分已具备执行条件但salience较低的规则的执行，这时需要借助<code>(halt)</code>，或者利用流程控制fact替代salience的使用。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

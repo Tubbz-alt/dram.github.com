@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>基于C的CLIPS Web服务</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>基于C的CLIPS Web服务</h1><time>03 Oct 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>虽然在CLIPS中<code>open</code>接口不支持以读写方式打开文件，但是在用C创建router时并没有约束，可以直接将读写句柄赋值给<code>router-&gt;stream</code>，所以以下代码可以简化。—— 2017-10-04</p>
+</li>
+<li>
+<p>router相关的代码是参考<a href="https://github.com/dram/clips-mirror/blob/03593bee8ef2c15815ce585c18e30f7f1e54f269/branches/64x/core/filertr.c">filertr.c</a>中的<code>OpenAFile</code>函数实现的。—— 2017-10-04</p>
+</li>
+<li>
+<p>如果要保持与CLIPS<code>close</code>接口的兼容性，<code>logicalName</code>需要基于<code>gm2</code>申请内存，因为<code>CloseFile</code>包含有释放该内存的动作。—— 2017-10-04</p>
+</li>
+<li>
+<p>如果需要更严谨些，在程序结束时，<code>net-in</code>和<code>net-out</code>需要调用<code>CloseFile</code>关闭以回收内存。—— 2017-10-04</p>
+</li>
+<li>
+<p>以读写的方式<code>fdopen</code> socket句柄不具可移植性，在Cygwin中没有问题，但在Linux下会出现Illegal seek错误，详见<a href="https://stackoverflow.com/a/10257164/5180632">这里</a>。—— 2017-10-09</p>
+</li>
+<li>
+<p>代码中存在<code>conn</code>文件句柄被重复关闭的情况，需要在其中一个<code>fdopen</code>调用前<code>dup</code>。—— 2017-10-10</p>
+</li>
+</ol>
+</section>
+<p>前阵子有<a href="/blog/2017/09/03/clips-web-service.html">介绍</a>基于socat工具搭建CLIPS Web服务，但依赖第三方工具，且依赖proc系统以及固定的fd编号，总体并不灵活。</p>
+<p>以下介绍使用CLIPS的C接口实现简易Web服务，代码目录结构如下：</p>
+<pre><code>serve-web/
+├── clips -&gt; link/to/clips/code/
+├── main.clp
+├── Makefile
+└── serve.c</code></pre>
+<p>其中<code>serve.c</code>为C接口代码，<code>main.clp</code>为主体服务代码，<code>Makefile</code>为编译过程封装。以下为具体内容：</p>
+<p><code>serve.c</code>：</p>
+<pre><code>#include &lt;netinet/in.h&gt;
+#include &lt;sys/socket.h&gt;
+
+#include "clips/clips.h"
+
+int main(int argc, char *argv[])
+{
+	int sock;
+	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
+		goto error;
+	
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_addr.s_addr = INADDR_ANY;
+	addr.sin_port = htons(5000);
+	if (bind(sock, (struct sockaddr *)&amp;addr, sizeof(addr)) == -1)
+		goto error;
+
+	if (listen(sock, 5) == -1)
+		goto error;
+
+	Environment *env = CreateEnvironment();
+	RerouteStdin(env, argc, argv);
+
+	struct fileRouter *in_router = get_struct(env, fileRouter);
+	in_router-&gt;logicalName = "net-in";
+	struct fileRouter *out_router = get_struct(env, fileRouter);
+	out_router-&gt;logicalName = "net-out";
+	in_router-&gt;next = out_router;
+	out_router-&gt;next = FileRouterData(env)-&gt;ListOfFileRouters;
+	FileRouterData(env)-&gt;ListOfFileRouters = in_router;
+
+	BatchStar(env, "main.clp");
+
+	int conn;
+	while ((conn = accept(sock, NULL, NULL)) != -1) {
+		Reset(env);
+
+		in_router-&gt;stream = fdopen(conn, "r");
+		out_router-&gt;stream = fdopen(conn, "w");
+
+		Run(env, -1);
+
+		fclose(in_router-&gt;stream);
+		fclose(out_router-&gt;stream);
+	}
+
+error:
+	perror("main");
+
+	DestroyEnvironment(env);
+
+	return 1;
+}</code></pre>
+<p><code>main.clp</code>：</p>
+<pre><code>(defrule parse-request
+ =&gt;
+  (assert (request-line (readline net-in))))
+
+(defrule process-request
+  (request-line ?)
+ =&gt;
+  (bind ?body "&lt;p&gt;Hello, world&lt;/p&gt;")
+
+  (format net-out
+          "HTTP/1.1 200 OK%r
+Content-Type: text/html%r
+Content-Length: %d%r
+%r
+%s" (str-length ?body) ?body))
+
+(watch activations)
+(watch facts)
+(watch rules)</code></pre>
+<p><code>Makefile</code>：</p>
+<pre><code>.PHONY: clean
+
+serve: serve.o
+	make PLATFORM=Linux -C clips libclips.a
+	$(CC) -s -o $@ $^ clips/libclips.a -lm
+
+serve.o: serve.c
+
+clean:
+	rm -f serve serve.o</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于Unicode Normalization</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于Unicode Normalization</h1><time>27 Sep 2017</time>
+
+<p>最近<a href="http://perl11.org/cperl/">cperl</a>在<a href="https://github.com/perl11/cperl/issues/334">优化</a>UTF-8 normalization的性能。</p>
+<p>那么什么是normalization呢？可以看看Unicode官方的<a href="http://www.unicode.org/faq/normalization.html">说明</a>。简单说，显示相同的字符在Unicode中可能存在多种编码，而normalization就是统一化的过程。</p>
+<p>如果缺失normalization这一过程，在字符串比较、代码变量名一致性等情况下都会存在问题，Programming Perl（p.61）中对此也有说明。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

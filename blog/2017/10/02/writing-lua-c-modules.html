@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>编写Lua C模块</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>编写Lua C模块</h1><time>02 Oct 2017</time>
+
+<p>在Lua的lua-users wiki中，包含有<a href="http://lua-users.org/wiki/BindingCodeToLua">两篇</a>与C模块编写<a href="http://lua-users.org/wiki/BuildingModules">相关</a>的文章，描述得并不清楚，另外使用的是共享链接的模式。</p>
+<p>以下介绍静态链接Lua C模块编写方法，整体目录结构如下：</p>
+<pre><code>foo/
+├── foo_lua_lib.c
+├── foo_lua_lib.h
+├── lua -&gt; link/to/lua-code/
+└── Makefile</code></pre>
+<p>其中<code>lua</code>链接到Lua源码目录，<code>foo_lua_lib.c</code>和<code>foo_lua_lib.h</code>参考<a href="http://lua-users.org/wiki/BindingCodeToLua">Binding Code To Lua</a>的内容，<code>Makefile</code>做了编译过程封装。</p>
+<p>以下为各文件的具体内容。</p>
+<p><code>foo_lua_lib.c</code>：</p>
+<pre><code>#include "lua/lua.h"
+#include "lua/lauxlib.h"
+
+#include "foo_lua_lib.h"
+
+static int bar(lua_State *L) {
+	lua_pushnumber(L, luaL_checknumber(L, 1) + 1);
+	return 1;
+}
+
+static const luaL_Reg functions[] = {
+	{"bar", bar},
+	{NULL, NULL}
+};
+
+int luaopen_foo(lua_State *L) {
+	luaL_newlib(L, functions);
+	lua_pushnumber(L, 123);
+	lua_setfield(L, -2, "baz");
+	return 1;
+}</code></pre>
+<p><code>foo_lua_lib.h</code>：</p>
+<pre><code>#ifndef foo_lua_lib_h
+#define foo_lua_lib_h
+
+#include "lua/lua.h"
+
+int luaopen_foo(lua_State *L);
+
+#endif</code></pre>
+<p><code>Makefile</code>：</p>
+<pre><code>NAME = foo
+FULL_NAME = $(NAME)_lua
+LIB_NAME = $(FULL_NAME)_lib
+LINIT_NAME = $(FULL_NAME)_linit
+
+$(FULL_NAME): $(LINIT_NAME).o $(LIB_NAME).o
+	gcc -s -o $@ $^ $($(NAME)_OBJS) $($(NAME)_LIBS)
+
+clean-$(NAME):
+	rm -f $(FULL_NAME) $(LINIT_NAME).* $(LIB_NAME).o
+
+include lua/makefile
+
+CC=cc
+
+LUA_OBJS = $(patsubst %, lua/%, $(CORE_O) $(AUX_O) $(LIB_O) $(LUA_O))
+$(NAME)_OBJS = $(patsubst lua/linit.o, , $(LUA_OBJS))
+$(NAME)_LIBS = $(MYLIBS)
+
+$(LIB_NAME).o: $(LIB_NAME).c $(LIB_NAME).h
+
+$(LINIT_NAME).c: lua/linit.c
+	sed \
+		-e 's|#include "|#include "lua/|' \
+		-e 's|\(lauxlib.h"\)|\1\n\n#include "$(LIB_NAME).h"|' \
+		-e 's|\(luaopen_debug.*\)|\1 {"$(NAME)", luaopen_$(NAME)},|' \
+	$&lt; &gt;$@
+
+$(LINIT_NAME).o: $(LINIT_NAME).c</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

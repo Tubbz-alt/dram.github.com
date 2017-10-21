@@ -1,0 +1,225 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Self数据结构</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Self数据结构</h1><time>07 Dec 2016</time>
+
+<p>之前已对<a href="/blog/2016/10/29/sequences-in-self.html">Self中的序列对象</a>和<a href="/blog/2016/11/08/self-data-structures-collector.html">Self数据类型之收集器</a>有简单介绍，以下对Self各数据类型做汇总整理。</p>
+<section>
+<h2>布尔（boolean）</h2>
+<p>布尔型是非常基本的类型，在Self及Smalltalk中，更是有其特别的用途。</p>
+<p>传统结构化编程中的分支结构，在Self中通过<code>true</code>和<code>false</code>对象以及boolean特性（traits）实现，而Smalltalk中则通过<code>True</code>和<code>False</code>这两个<code>Boolean</code>子类实现。</p>
+<p>在boolean特性中，定义有以下方法：</p>
+<ul>
+<li>
+<p><code>ifTrue:</code> —— 为真时执行参数（代码块）；</p>
+</li>
+<li>
+<p><code>ifFalse:</code> —— 为假时执行参数（代码块）；</p>
+</li>
+<li>
+<p><code>ifFalse:True:</code> —— 选择性执行参数（代码块）。</p>
+</li>
+</ul>
+<p>以上方法基于<code>true</code>和<code>false</code>对象中的<code>ifTrue:False:</code>实现。</p>
+<p>另外<code>true</code>和<code>false</code>都定义有以下方法：</p>
+<ul>
+<li>
+<p><code>&amp;&amp;</code> —— 逻辑与；</p>
+</li>
+<li>
+<p><code>||</code> —— 逻辑或。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>数值（number）</h2>
+<ul>
+<li>
+<p><code>predecessor</code> (<code>pred</code>) —— 前一数值；</p>
+</li>
+<li>
+<p><code>successor</code> (<code>succ</code>) —— 后一数值；</p>
+</li>
+<li>
+<p><code>negate</code> —— 正负取反；</p>
+</li>
+<li>
+<p><code>absoluteValue</code> —— 绝对值；</p>
+</li>
+<li>
+<p><code>double</code> —— 倍数；</p>
+</li>
+<li>
+<p><code>half</code> —— 半数；</p>
+</li>
+<li>
+<p><code>square</code> —— 平方；</p>
+</li>
+<li>
+<p><code>power:</code> —— 幂；</p>
+</li>
+<li>
+<p><code>min:</code> —— 校小值；</p>
+</li>
+<li>
+<p><code>max:</code> —— 较大值。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>整数（integer）</h2>
+<ul>
+<li>
+<p><code>do:</code> —— 对<code>0..n</code>的数遍历；</p>
+</li>
+<li>
+<p><code>reverseDo:</code> —— 反向遍历；</p>
+</li>
+<li>
+<p><code>asVector</code> —— 快速创建<code>n</code>大小的向量，并且填充元素，值与索引号相同；</p>
+</li>
+<li>
+<p><code>to:Do:</code> —— 遍历从<code>n</code>到<code>m</code>的数；</p>
+</li>
+<li>
+<p><code>to:By:Do:</code> —— 按<code>step</code>遍历从<code>n</code>到<code>m</code>的数。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>浮点数（float）</h2>
+<ul>
+<li>
+<p><code>ceil</code> —— 向上取整；</p>
+</li>
+<li>
+<p><code>floor</code> —— 向下取整；</p>
+</li>
+<li>
+<p><code>round</code> —— 取相近整数，如果是半数，则靠近偶数；</p>
+</li>
+<li>
+<p><code>truncate</code> —— 删去小数位。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>集合（collection）</h2>
+<p>集合特性包含有序列类以及键值对类的子特性，详细介绍参考<a href="/blog/2016/10/29/sequences-in-self.html">Self中的序列对象</a>。需要注意的一点是，在使用<code>do:</code>遍历集合时，以<code>:value</code>、<code>:key</code>的顺序传入遍历块，由于Self中支持忽略传入块的多余参数，所以在遍历序列时不需要关心第二个参数。实际上，在序列中，可以认为每个元素的<code>key</code>和<code>value</code>是相同的，都为其本身。</p>
+<ul>
+<li>
+<p><code>do:</code> —— 遍历集合元素，但很多类型都重载了遍历的实现；</p>
+</li>
+<li>
+<p><code>keys</code> —— 获取字典中的所有键名；</p>
+</li>
+<li>
+<p><code>mapBy:</code> —— 遍历集合元素，并重新组合结果；</p>
+</li>
+<li>
+<p><code>mapBy:Into:</code> —— 遍历集合元素，并将结果添加到另一集合；</p>
+</li>
+<li>
+<p><code>filterBy:Into:</code> —— 过滤集合元素，并将结果添加到另一集合；</p>
+</li>
+<li>
+<p><code>isPrefixOf:</code> —— 前缀判断；</p>
+</li>
+<li>
+<p><code>isSuffixOf:</code> —— 后缀判断。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>索引（indexable）</h2>
+<p>indexable是键为整型的集合，详细介绍参考<a href="/blog/2016/10/29/sequences-in-self.html">Self中的序列对象</a>。</p>
+<ul>
+<li>
+<p><code>copyAtMost:</code> —— 拷贝限定大小的序列，不超出原序列大小；</p>
+</li>
+<li>
+<p><code>copySize:</code> —— 拷贝限定大小的序列，如果超出原序列大小，则自动填充；</p>
+</li>
+<li>
+<p><code>copyWithoutFirst:</code> —— 拷贝序列，不包括第一个元素；</p>
+</li>
+<li>
+<p><code>copyWithoutLast:</code> —— 拷贝序列，不包括最后一个元素；</p>
+</li>
+<li>
+<p><code>copyFrom:</code> —— 指定开始拷贝的索引号；</p>
+</li>
+<li>
+<p><code>copyFrom:UpTo:</code> —— 指定拷贝开始和结束索引号，超出范围会抛出异常；</p>
+</li>
+<li>
+<p><code>copyFrom:Size:</code> —— 指定开始和大小拷贝序列，超出范围会抛出异常；</p>
+</li>
+<li>
+<p><code>splitOn:</code> —— 序列切割；</p>
+</li>
+<li>
+<p><code>replace:With:</code> —— 替换；</p>
+</li>
+<li>
+<p><code>findSubstring:IfPresent:IfAbsent:</code> —— 子串查找；</p>
+</li>
+<li>
+<p><code>replaceAllSatisfying:With:</code> —— 基于判断的替换；</p>
+</li>
+<li>
+<p><code>joinUsing:</code> —— 序列拼接。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>向量（vector）</h2>
+<p>从vector的prototype可以看出vector是较为底层的特性，除parent和数据外，他自身并不包含任何额外的slot。</p>
+</section>
+<section>
+<h2>序列（sequence）</h2>
+<p>sequence是基于vector实现的可动态调整存储空间的序列。vector是固定大小的。在traits sequence中包含方法<code>desiredMinCapacity:</code>，用于调整大小。另外dictionary也是基于vector实现的。</p>
+<p>如果考虑JSON序列化问题，在Self众多序列对象中，总体sequence较为合适。</p>
+<ul>
+<li>
+<p><code>filterBy:</code> —— 过滤。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>字符串（string）</h2>
+<p>字符串的主体原型链为：<code>traits string</code> -&gt; <code>traits byteVector</code> -&gt; <code>traits mutableIndexable</code>，后续的原型在<a href="/blog/2016/10/29/sequences-in-self.html">Self中的序列对象</a>中已有说明。</p>
+<ul>
+<li>
+<p><code>shrinkwrapped</code> —— 去首尾空白符；</p>
+</li>
+<li>
+<p><code>matchesPattern:</code> —— 通配符匹配。</p>
+</li>
+</ul>
+<p>以下是一段字符串处理的示例代码，实现了简单的字符串格式化功能：</p>
+<pre><code>format: format With: arguments = (|parts|
+  parts: sequence copy.
+  (format splitOn: '&lt;&gt;')
+    with: ((arguments copyAddLast: '') mapBy: [|:a| a asString])
+      Do: [|:s1. :s2| (parts add: s1) add: s2].
+  parts joinUsing: ''
+).</code></pre>
+</section>
+<section>
+<h2>列表（list）</h2>
+<p>list是不可索引的序列。</p>
+<ul>
+<li>
+<p><code>filterBy:</code> —— 过滤。</p>
+</li>
+</ul>
+</section>
+<section>
+<h2>字典（dictionary）</h2>
+<p>在维基百科中，对于字典（或关联数组、映射）的<a href="https://en.wikipedia.org/wiki/Associative_array">定义</a>为：</p>
+<blockquote>
+<p>An associative array, map, symbol table, or dictionary is an abstract data type composed of a collection of (key, value) pairs, such that each possible key appears at most once in the collection.</p>
+</blockquote>
+<p>在这个定义中，有两个关键点：字典是键值对的集合，键在集合中有唯一性。针对字典的操作，有创建、获取值、添加或更新值、遍历等，例如在Squeak中，对应于<code>class&gt;&gt;new</code>和<code>class&gt;&gt;newFromPairs:</code>、<code>at:</code>和<code>at:ifAbsent:</code>、<code>at:put:</code>和<code>at:ifAbsentPut:</code>、<code>do:</code>。</p>
+<p>而在Self中，部分功能在上层特性中实现，例如集合中的<code>keys</code>和<code>do:</code>，<code>abstractSetOrDictionary</code>中的<code>at:Put:</code>等。</p>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>快速搭建简单的HTTP服务</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>快速搭建简单的HTTP服务</h1><time>28 Oct 2012</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>在Python 3中，<code>SimpleHTTPServer</code>模块调整为<code>http.server</code>。—— 2017-10-12</p>
+</li>
+</ol>
+</section>
+<p>在局域网内分享文件，常需要借助于FTP，Samba共享或是专门的分享软件或即时通讯软件。而另一种选择是搭建HTTP服务，这种形式的一个好处是对接收端没有太多要求，只需要有一个浏览器就可以了，比如将PC数据分享到移动终端。</p>
+<p>这里并不是要使用Apache、nginx等专业的HTTP服务软件，而是介绍一些轻量级的工具，这些工具虽然在性能、安全性上不如专业软件，但优点是非常容易搭建，适合于临时性地分享安全性要求不高的数据。</p>
+<p>首先要介绍的是<a href="http://docs.python.org/library/simplehttpserver.html">SimpleHTTPServer</a>。它并不是一个独立的软件，而是Python的一个标准模块。由于现在大部分发行版都有预装Python，所以可以在不需要安装任何软件的情况下快速搭建一个HTTP服务。</p>
+<p>只需要在准备共享的目录运行以下命令，Python将会监听8000端口。</p>
+<pre><code>python -m SimpleHTTPServer</code></pre>
+<p>上面的方法虽然简单，但有一个问题是没有处理文本文件。如果点击文本文件，浏览器会下载该文件而不是直接在浏览器中打开，这在共享文本文件时显得不是很方便。</p>
+<p>接下来介绍<a href="http://www.eterna.com.au/bozohttpd/">bozohttpd</a>，这个工具相对来说复杂一点，但使用上还是比较简单的，并且支持文本文件。使用方法如下：</p>
+<pre><code>bozohttpd -b -X -I 8000 file-path</code></pre>
+<p>关于各参数的说明以及其他功能，可以参看<a href="http://www.eterna.com.au/bozohttpd/bozohttpd.8.html">bozohttpd(8)</a>。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

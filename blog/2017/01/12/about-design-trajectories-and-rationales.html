@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于设计的轨迹和原理</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于设计的轨迹和原理</h1><time>12 Jan 2017</time>
+
+<p>在《设计原本》第16章中，Frederick Brooks强调了记录设计轨迹及其背后原理的重要性。</p>
+<p>这一点非常重要，但真要实施起来却也非常困难。例如在开源项目中，大量的知识和信息都隐藏在项目发展的过程中。虽然借助于版本管理、项目管理、bug跟踪等工具和系统，有部分信息被记录了下来，但依然有很大的遗漏，另外记录的信息也是相对零散的。</p>
+<p>在<a href="/blog/2016/11/10/designing-email-notes-and-storage-system.html">邮件记事存储系统构想</a>中，也曾提到借由“补遗”记录过程的方式。但总体感觉这种方式更适合于个人使用。</p>
+<p>这里举一个记录历史的重要性的例子。当前<a href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful API</a>的使用已经非常广泛，在RESTful中，将传统的<a href="https://en.wikipedia.org/wiki/Create,_read,_update_and_delete">CRUD</a>操作映射到HTTP的<code>POST</code>、<code>GET</code>、<code>PUT</code>、<code>DELETE</code>方法。</p>
+<p>由于没有系统性学习过RESTful，一直以来我认为在RESTful中<code>PUT</code>方法被设定为支持部分更新。而实际上RESTful的设计者Roy Fielding是将<code>PUT</code>指定为<a href="http://stackoverflow.com/a/19736570">全量更新</a>，而HTTP/1.1新增的<code>PATCH</code>方法也是Roy Fielding提出的，正是作为<code>PUT</code>的补充。</p>
+<p>所幸的是，这一重要历史信息被记录在RFC 5789的<a href="https://tools.ietf.org/html/rfc5789#appendix-A">附录</a>中。由此可以对<code>PUT</code>和<code>PATCH</code>在RESTful API中的应用有更深入的理解。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

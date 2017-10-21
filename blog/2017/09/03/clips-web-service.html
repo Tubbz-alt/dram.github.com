@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS搭建Web服务</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS搭建Web服务</h1><time>03 Sep 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>本以为<code>fdopen</code>是C标准定义的接口，实则是POSIX<a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdopen.html">定义</a>的。如果CLIPS支持<code>fdopen</code>，可以先由外围程序建立socket连接，之后<code>fork</code>&amp;<code>exec</code>创建CLIPS进程，CLIPS再用<code>fdopen</code>打开继承的socket句柄，实现网络通信。—— 2017-09-25</p>
+</li>
+<li>
+<p>可以借助FFI机制（多数语言都有实现，例如LuaJIT的<a href="http://luajit.org/ext_ffi.html">FFI库</a>、Perl 6的Native Call Interface <a href="https://docs.perl6.org/language/nativecall">1</a>, <a href="http://www.evanmiller.org/a-review-of-perl-6.html">2</a>），直接调用动态库整合CLIPS。IO由外围语言处理，并通过facts实现与CLIPS交互。—— 2017-09-25</p>
+</li>
+</ol>
+</section>
+<p>CLIPS自身对于网络并没有支持（这可能出于可移植性的考虑，另外需求不充分也可能是原因之一），所以如果想以CLIPS搭建服务器，需要借助与CGI的结合，或者利用netcat等简易的网络工具。</p>
+<p>但除去没有对网络的支持外，CLIPS在脚本化上的支持也不尽完善。例如虽然<code>-f2</code>参数可以载入文件，但如果没有显式调用<code>exit</code>，则会进入REPL环境，再如<a href="https://sourceforge.net/p/clipsrules/discussion/776946/thread/2373fbbe/">错误信息都直接输出到stdout</a>，这些都为与CGI的整合带来障碍。</p>
+<p>以下介绍的是CLIPS结合<a href="http://www.dest-unreach.org/socat/">socat</a>实现相对完善的Web服务。</p>
+<p>首先来看一下相关代码和命令。</p>
+<p>CLIPS代码如下：</p>
+<pre><code>(open /proc/self/fd/128 in)
+(open /proc/self/fd/129 out "w")
+
+(format out "HTTP/1.1 200 OK%r%n")
+(format out "Content-Type: text/html%r%n")
+(format out "Content-Length: 3%r%n")
+(format out "%r%n")
+(format out "Hi!")
+
+(exit)</code></pre>
+<p>监听网络服务并调用CLIPS的socat命令如下：</p>
+<pre><code>socat -d -d TCP-LISTEN:8000,bind=127.0.0.1,fork EXEC:"clips -f file.clp",pipes,fdin=128,fdout=129</code></pre>
+<p>其中关键的一点是socat通过<code>EXEC</code>地址的<code>fdin</code>和<code>fdout</code>参数指定文件描述符，CLIPS再通过<code>/proc/self/fd/</code>打开对应文件，这样socat和CLIPS之间的通信就不依赖于stdin和stdout了。</p>
+<p>通过以上配置，CLIPS所有的输入输出依然可用，甚至REPL也是依然可用的。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

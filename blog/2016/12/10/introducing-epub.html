@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>EPUB介绍</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>EPUB介绍</h1><time>10 Dec 2016</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<p><a href="https://www.gnu.org/software/texinfo/">Texinfo</a>文档可以以DocBook作为中间格式转化到EPUB，利用<code>makeinfo</code>的<code>--docbook</code>参数实现，详见<a href="https://github.com/ikrukov/epub">这里</a>的示例。另外<code>--ifinfo</code>可用于包含默认只在生成<code>info</code>格式文件时显示的内容。—— 2016-12-12</p>
+</section>
+<p>EPUB作为兼容性较强的电子图书格式，各类系统对此都有较好的支持，例如DocBook、Sphinx等。</p>
+<p>EPUB 3是最近更新（2014年）的版本，在多个方面做了优化完善。EPUB本身为一ZIP压缩包，具体的内容和格式可以参考Wikipedia的<a href="https://en.wikipedia.org/wiki/EPUB#Implementation">介绍</a>，主要内容包括：</p>
+<ol>
+<li>
+<p><code>mimetype</code> —— 文件类型说明；</p>
+</li>
+<li>
+<p><code>META-INF</code> —— 内容元数据；</p>
+</li>
+<li>
+<p><code>OEBPS</code> —— 主体内容。</p>
+</li>
+</ol>
+<p>其中<code>OEBPS</code>是<code>Open eBook Publication Structure</code>的缩写，详见Wikipedia的<a href="https://en.wikipedia.org/wiki/Open_eBook">说明</a>。</p>
+<p>以下介绍基于DocBook生成EPUB文件的方法。</p>
+<p>在DocBook的<a href="https://github.com/docbook/xslt10-stylesheets">XSLT Stylesheets</a>中已经包含有对EPUB 3的支持，详细的使用说明可以参考<a href="https://github.com/docbook/xslt10-stylesheets/blob/master/xsl/epub3/README">README</a>中的内容，概括来说包括以下几步：</p>
+<ol>
+<li>
+<p>基于<code>epub3/chunk.xsl</code>样式表转化DocBook文件，如：</p>
+<pre><code>xsltproc --xinclude --stringparam base.dir epub/OEBPS/ /path/to/epub3/chunk.xsl book.xml</code></pre>
+<p>注意：新旧版本对<code>base.dir</code>的处理略有不同，新版本不需要指定<code>OEBPS</code>子目录。</p>
+</li>
+<li>
+<p>将内容打包，如：</p>
+<pre><code>bsdtar -acf book.epub --format zip META-INF OEBPS mimetype</code></pre>
+</li>
+</ol>
+<p>Sphinx在1.5版本默认使用EPUB 3作为EPUB格式的输出，使用<code>make epub</code>生成。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

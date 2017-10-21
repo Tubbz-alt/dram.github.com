@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Self数据类型之收集器（collector）</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Self数据类型之收集器（collector）</h1><time>08 Nov 2016</time>
+
+Self
+<p>Self中没有针对collection（包括vector, sequence和dictionary）设定语法，这在一定程度上导致代码的繁琐。不过取而代之的，Self提供了收集器（collector）对象类型，并针对它定义有<code>&amp;</code>方法，经由它可以组织任意多个对象为收集器。</p>
+<p>以下从生成、应用两个角度详细介绍收集器的设计及应用。</p>
+<section>
+<h2>生成收集器</h2>
+<p>和收集器相关性最大的是<code>lobby defaultBehavior</code>中定义的<code>&amp;</code>，以及<code>traits collector</code>中定义的<code>&amp;</code>，依托这两个运算符，可以灵活地生成收集器。</p>
+<p>以下详细介绍<code>&amp;</code>的实现逻辑。通过排列组合，我们可以得出四种情况：</p>
+<dl>
+
+<dt><code>object &amp; object</code></dt>
+<dd>基于第一对象创建收集器，并将第二对象在之后追加，得到新收集器；</dd>
+
+
+<dt><code>object &amp; collector</code></dt>
+<dd>基于对象创建收集器，并将收集器中所有元素依序在之后追加，得到新收集器；</dd>
+
+
+<dt><code>collector &amp; object</code></dt>
+<dd>将对象追加到收集器，得到新收集器；</dd>
+
+
+<dt><code>collector &amp; collector</code></dt>
+<dd>将第二收集器中所有元素依序追加到第一集合器之后，得到新收集器。</dd>
+
+</dl>
+<p>从以上描述中不难看出，集合器是一个逆序链表。另外Self还在链表每个节点维护索引号。索引号的作用是可以据此快速得到集合器中的元素个数。这样例如在将集合器转化为向量时可以确定向量大小，另外<code>statePrintString</code>中也有用到，用于在界面中呈现集合器的元素个数。</p>
+<p>以上说明省略了对辅助函数<code>appendToCollector:</code>的说明，其中有double dispatch机制的应用，具体请阅读相关代码。</p>
+</section>
+<section>
+<h2>收集器应用</h2>
+<p>Self并未对收集器定义过多的方法，从中可以看出收集器只是作为中间数据结构。除了<code>reverseDo:</code>之外，大部分方法都用于将收集器转化为其他序列类型。</p>
+<p>细分的话，转化方法分为两大类：直接转化和平整转化，对应于<code>conversions</code>和<code>flattening</code>这两个方法类别。直接转化包括<code>asList</code>、<code>asSequence</code>、<code>asSet</code>、<code>asString</code>和<code>asVector</code>等，平整转化包括<code>flatList</code>、<code>flatSet</code>、<code>flatString</code>、<code>flatVector</code>等。对这些方法善加利用，很多时候可以简化序列的处理。</p>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

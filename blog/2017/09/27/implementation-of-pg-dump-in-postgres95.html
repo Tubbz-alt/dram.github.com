@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Postgres95 pg_dump实现</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Postgres95 pg_dump实现</h1><time>27 Sep 2017</time>
+
+<p>在Postgres95 1.01代码库中，包含有<a href="https://github.com/postgres/postgres/tree/PG95-1_01/src/bin/pg_dump">pg_dump</a>的代码，以及<a href="https://github.com/postgres/postgres/tree/PG95-1_01/src/bin/pg4_dump">pg4_dump</a>的代码。</p>
+<p>猜测pg4_dump是为兼容导出POSTGRES数据用的，这里只就pg_dump展开分析，以下为具体流程：</p>
+<ol>
+<li>
+<p>连接数据库；</p>
+</li>
+<li>
+<p>调用<code>findLastBuiltinOid</code>获取系统内部使用的最近oid，代码中是直接查询<code>pg_database</code>表中<code>datname</code>为<code>template1</code>的<code>oid</code>，但从<a href="https://www.postgresql.org/docs/7.1/static/catalog-pg-database.html">后期版本的文档</a>看，这一字段可能已经更改为<code>datlastsysoid</code>（待确认）；</p>
+</li>
+<li>
+<p>调用<code>dumpSchema</code>导出元数据，具体实现包括：</p>
+<ol>
+<li>
+<p>调用<code>getTypes</code>、<code>getFuncs</code>、<code>getAggregates</code>、<code>getOperators</code>、<code>getTables</code>、<code>getIndices</code>函数，获取数据库中相应系统数据表中的信息，并存储为C结构体实例；</p>
+</li>
+<li>
+<p>调用对应的<code>dumpTypes</code>、<code>dumpTables</code>等函数，输出可用于恢复数据的SQL语句，例如<code>CREATE TYPE</code>、<code>CREATE TABLE</code>等；</p>
+</li>
+</ol>
+</li>
+<li>
+<p>调用<code>dumpClasses</code>导出数据，其中会用到上一步骤获取的元数据信息。导出采用<code>COPY</code>命令，最终恢复数据命令也是使用<code>COPY</code>。</p>
+</li>
+</ol>
+<p>有一个细节，<code>getTypes</code>等函数在获取数据时，先后执行了<code>begin</code>和<code>end</code>查询，不知是否是表示事务？但其中只有一个查询，为何需要事务？其中原因有待确定。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Mercury的模态系统</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Mercury的模态系统</h1><time>04 Feb 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>Prolog的类型与模态系统，是否可以考虑基于其自身的数据库实现？例如定义事实（fact）<code>type(foo, deterministic([int, list(int)]))</code>。类似与Lisp的宏系统，只是宏用于生成代码，这里用于检查类型。—— 2017-02-14</p>
+</li>
+</ol>
+</section>
+<p>Mercury的模态系统有一定复杂性，这从<a href="http://mercurylang.org/information/doc-latest/mercury_ref/index.html#SEC_Contents">手册</a>中所占的篇幅就可见一斑（包括modes、unique modes和determinism三章）。</p>
+<p>但总体上基本的使用并不复杂，这里主要讲两点应用。</p>
+<section>
+<h2>IO系统</h2>
+<p>在<a href="http://mercurylang.org/documentation/papers/book.pdf">教程</a>的第一个例子中，可以看到对<code>main</code>谓词的声明为：</p>
+<pre><code>:- pred main(io::di, io::uo) is det.</code></pre>
+<p>其中<code>di</code>和<code>uo</code>是模态的声明，<code>det</code>是确定性的声明，这表明<code>main</code>谓词的两个输入参数类型都为<code>io.io</code>，模态分别为销毁型输入（destructive input）和唯一型输出（unique output）。Mercury以此实现了对输入输出的纯函数化（pure functional）处理。</p>
+</section>
+<section>
+<h2>多模态谓词</h2>
+<p>和Prolog类似，Mercury的参数在不同的模态中可以作为输入或输出参数，关于这一点，手册中有详细的<a href="http://mercurylang.org/information/doc-latest/mercury_ref/Different-clauses-for-different-modes.html">说明</a>。另外<a href="http://lists.mercurylang.org/archives/users/2017-February/008212.html">这里</a>有与此相关的一些讨论。</p>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

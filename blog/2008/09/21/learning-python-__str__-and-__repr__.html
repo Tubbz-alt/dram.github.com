@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>学习Python: str和repr</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>学习Python: str和repr</h1><time>21 Sep 2008</time>
+
+<p>在翻Python for Unix and Linux System Administration这本书时，作者在IPython部分讲到了<code>__str__和__repr__</code>，非常详细，清晰。</p>
+<p>下面是是那本书上的例子：</p>
+<pre><code>&gt;&gt;&gt; class DoubleRep(object):
+...     def __str__(self):
+...         return "a __str__"
+...     def __repr__(self):
+...         return "a __repr__"
+...
+&gt;&gt;&gt; dr = DoubleRep()
+&gt;&gt;&gt; print dr
+a __str__
+&gt;&gt;&gt; dr
+a __repr__
+&gt;&gt;&gt; "%s" % dr
+'a __str__'
+&gt;&gt;&gt; "%r" % dr
+'a __repr__'</code></pre>
+<p>相信无需解释。</p>
+<p>再贴上Python文档上的说明：</p>
+<pre><code>__str__( self) Called by the str() built-in function and by the print
+statement to compute the ``informal'' string representation of an object.
+This differs from __repr__() in that it does not have to be a valid Python
+expression: a more convenient or concise representation may be used instead.
+The return value must be a string object. __repr__( self) Called by the repr()
+built-in function and by string conversions (reverse quotes) to compute the
+``official'' string representation of an object. If at all possible, this
+should look like a valid Python expression that could be used to recreate an
+object with the same value (given an appropriate environment). If this is not
+possible, a string of the form "" should be returned. The return value must be
+a string object. If a class defines __repr__() but not __str__(), then
+__repr__() is also used when an ``informal'' string representation of instances
+of that class is required. This is typically used for debugging, so it is
+important that the representation is information-rich and unambiguous.</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

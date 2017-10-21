@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Modula-2编译器</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Modula-2编译器</h1><time>01 Jan 2017</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>编译ACK依赖yacc工具，主要老版本Bison存在<a href="https://github.com/davidgiven/ack/issues/39">兼容性问题</a>，建议使用byacc。—— 2017-01-15</p>
+</li>
+<li>
+<p><a href="https://github.com/davidgiven/ack/commit/fd83b09c587b4a2d92102cc4f734b12087d6cb25">最近版本</a>已不需要显式指定<code>ACKDIR</code>环境变量。—— 2017-01-15</p>
+</li>
+</ol>
+</section>
+<p>Modula-2作为上世纪七十年代的语言，由于未能成为主流，现在要找到一个可用的编译器并不容易。当前在维护的项目有<a href="http://nongnu.org/gm2/">GNU Modula-2</a>，以及在<a href="https://github.com/davidgiven/ack/">ACK</a>（Amsterdam Compiler Kit）中包含的Modula-2实现。</p>
+<p>以下介绍ACK的编译和使用。</p>
+<p>在<code>git clone</code>项目之后，首先需要调整其中的<code>Makefile</code>文件：</p>
+<ol>
+<li>
+<p>例如在Linux平台中，需要将<code>DEFAULT_PLATFORM</code>设置为<code>linux386</code>；</p>
+</li>
+<li>
+<p>[可选]调整<code>ACK_TEMP_DIR</code>为<code>$(PWD)</code>，该配置指定生成的可执行程序放于仓库根目录。</p>
+</li>
+</ol>
+<p>之后运行<code>make</code>编译，完成后可在仓库根目录找到<code>ack-build/staging/bin/ack</code>等文件。</p>
+<p>有一点需要注意的是，在运行<code>ack</code>命令时需要指定<code>ACKDIR</code>环境变量，例如：</p>
+<pre><code>ACKDIR=ack-build/staging ack-build/staging/bin/ack -o foo Foo.mod</code></pre>
+<p>另外，如果系统是64位环境，需确保编译内核时<code>CONFIG_IA32_EMULATION</code>打开，当前ACK在Linux下只支持32位环境。</p>
+<p>值得一提的是，除了C、Modula-2之外，ACK还支持Pascal、Basic等语言，可以作为了解早期编程语言很好的环境。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

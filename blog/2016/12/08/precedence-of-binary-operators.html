@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>二元运算符优先级</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>二元运算符优先级</h1><time>08 Dec 2016</time>
+
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>虽然与二元运算符无关，但值得一提的是，Self和Smalltalk有另外一个区别：Self的关键词消息只有第一部分是小写，其他需要以大写开始，这可以减少一些不必要的括号。例如：<code>1 min: 2 max: 3 &lt;=&gt; 1 min: (2 max: 3)</code>。—— 2016-12-12</p>
+</li>
+<li>
+<p>Prolog的运算符系统非常复杂，一些直觉上更容易被认为是语法结构的表达，实则是运算符。例如<a href="https://github.com/trealla-lang/trealla/issues/80">这里</a>涉及到的<code>:/2</code>。—— 2017-01-23</p>
+</li>
+</ol>
+</section>
+<p>对于二元运算符的优先级问题，在程序语言处理上，一般有这样几种情况：</p>
+<ol>
+<li>
+<p>C语系，定义有复杂的优先级；</p>
+</li>
+<li>
+<p>Smalltalk，所有二元运算符有相同的优先级，解析从左到右（详见Blue Book p.28）；</p>
+</li>
+<li>
+<p>Self，所有二元运算符有相同的优先级，解析时如果不同运算符连续使用，必须用括号标定；</p>
+</li>
+<li>
+<p>Prolog，运算符优先级可完全自定义（Prolog中大量语言结构以运算符模式呈现）。</p>
+</li>
+</ol>
+<p>如果考虑自定义运算符的情况，除去算术运算之外，还需要考虑运算符承载其他功能时的呈现。这种情况下，Smalltalk模式从左到右的阅读比较自然。Prolog模式有最大的灵活性，但不便于记忆。而Self模式在多类运算符混用时则需要大量的括号。</p>
+<p>当然，Self模式的优点也非常明显，可以规避优先级理解错误导致的问题，比如<code>1 + 2 * 3</code>这样的表达式在Self中是不合法的。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
