@@ -1,5 +1,9 @@
 article: CLIPS-Tcl中接口返回值设计
 
+	topic: 补遗
+
+		1. 可以对`NULL`做特殊处理，将`NULL`转化成符号`nil`，这样有个好处，在传入其他函数时，会作为类型不匹配而报错，可以避免内存错误，详见这个{提交}(https://github.com/dram/clips-tcl/commit/83801008a1d3d669cc3cf1086d95f7ce3b1c44e1)。—— 2017-10-21
+
 	由于发现与布尔值相关接口（例如`Tcl_GetBoolean`），之前将布尔值作为CLIPS-Tcl状态返回值的机制不再试用，做了重新{调整}(https://github.com/dram/clips-tcl/commit/9c3d5c7f571acac06d068ae81b47a4030ef12241)。
 
 	由于CLIPS不支持多值返回，也不能像C语言一样指针传入，所以在对接这类接口时遇到困难。

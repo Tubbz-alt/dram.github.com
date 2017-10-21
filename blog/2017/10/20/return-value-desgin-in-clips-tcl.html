@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS-Tcl中接口返回值设计</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS-Tcl中接口返回值设计</h1><time>20 Oct 2017</time>
 
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>可以对<code>NULL</code>做特殊处理，将<code>NULL</code>转化成符号<code>nil</code>，这样有个好处，在传入其他函数时，会作为类型不匹配而报错，可以避免内存错误，详见这个<a href="https://github.com/dram/clips-tcl/commit/83801008a1d3d669cc3cf1086d95f7ce3b1c44e1">提交</a>。—— 2017-10-21</p>
+</li>
+</ol>
+</section>
 <p>由于发现与布尔值相关接口（例如<code>Tcl_GetBoolean</code>），之前将布尔值作为CLIPS-Tcl状态返回值的机制不再试用，做了重新<a href="https://github.com/dram/clips-tcl/commit/9c3d5c7f571acac06d068ae81b47a4030ef12241">调整</a>。</p>
 <p>由于CLIPS不支持多值返回，也不能像C语言一样指针传入，所以在对接这类接口时遇到困难。</p>
 <p>当前是采用类似<code>/ok/</code>、<code>/error/</code>、<code>/0/</code>、<code>/-1/</code>这样的符号类型表示，借助与类型将异常状态返回值与函数主返回值区分开。这样处理有几点好处：</p>
