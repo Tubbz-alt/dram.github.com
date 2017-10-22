@@ -29,12 +29,19 @@
         (tcl-decr-ref-count ?returns)
         FALSE))
 
-(deffunction tcl/s ($?arguments)
+(deffunction tcl/b ($?arguments)
   (if (bind ?result (tcl (expand$ ?arguments)))
    then (tcl-incr-ref-count ?result)
-        (bind ?s (tcl-get-string ?result))
+        (bind ?b (tcl-get-boolean-from-obj ?result))
         (tcl-decr-ref-count ?result)
-        ?s))
+        ?b))
+
+(deffunction tcl/l ($?arguments)
+  (if (bind ?result (tcl (expand$ ?arguments)))
+   then (tcl-incr-ref-count ?result)
+        (bind ?l (tcl-get-long-from-obj ?result))
+        (tcl-decr-ref-count ?result)
+        ?l))
 
 (deffunction tcl/m ($?arguments)
   (if (bind ?result (tcl (expand$ ?arguments)))
@@ -42,6 +49,13 @@
         (bind ?m (tcl-split-list ?*tcl* (tcl-get-string ?result)))
         (tcl-decr-ref-count ?result)
         ?m))
+
+(deffunction tcl/s ($?arguments)
+  (if (bind ?result (tcl (expand$ ?arguments)))
+   then (tcl-incr-ref-count ?result)
+        (bind ?s (tcl-get-string ?result))
+        (tcl-decr-ref-count ?result)
+        ?s))
 
 (deffunction run-process ($?command)
   (tcl-close ?*tcl* (tcl-open-command-channel ?*tcl* ?command /)))
@@ -77,18 +91,6 @@
 
 (deffunction format-string (?format $?arguments)
   (format nil ?format (expand$ ?arguments)))
-
-(deffunction get-modification-time (?path)
-  (bind ?o (tcl-new-string-obj ?path -1))
-  (tcl-incr-ref-count ?o)
-  (bind ?stat (tcl-alloc-stat-buf))
-  (bind ?result
-    (if (= (tcl-fs-stat ?o ?stat) 0)
-     then (tcl-get-modification-time-from-stat ?stat)
-     else -1))
-  (tcl-free ?stat)
-  (tcl-decr-ref-count ?o)
-  ?result)
 
 ;;; END OF HELPER FUNCTIONS
 
@@ -140,7 +142,8 @@
   (bind ?target (str-cat ?*output-directory*
                          (sub-string 2 (str-length ?uri) ?uri)))
 
-  (if (> (get-modification-time ?source) (get-modification-time ?target))
+  (if (or (not (tcl/b "file" "exists" ?target))
+          (> (tcl/l "file" "mtime" ?source) (tcl/l "file" "mtime" ?target)))
    then
      (run-process "python3"
                   "tools/sam/samparser.py" ?source
