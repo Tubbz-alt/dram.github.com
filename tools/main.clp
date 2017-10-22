@@ -207,11 +207,8 @@
   <uri>%s</uri>
 </post>
 "
-                                      (tcl/s "regsub"
-                                             "-all"
-                                             "&"
-                                             (fact-slot-value ?post title)
-                                             "&amp;")
+                                      (tcl/s "string" "map" "& &amp;"
+                                             (fact-slot-value ?post title))
                                       (fact-slot-value ?post creation-date)
                                       (fact-slot-value ?post uri))
                        -1))
