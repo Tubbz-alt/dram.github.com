@@ -64,6 +64,7 @@
   (bind ?channel (tcl-open-command-channel ?*tcl*
                                            ?command
                                            ?flags))
+  (tcl-set-channel-option ?*tcl* ?channel "-encoding" "utf-8")
   (bind ?result (funcall (nth$ 1 ?function-call)
                          ?channel
                          (expand$ (rest$ ?function-call))))
@@ -87,7 +88,7 @@
   ?lines)
 
 (deffunction format-out (?channel ?format $?arguments)
-  (tcl-write-raw ?channel (format nil ?format (expand$ ?arguments)) -1))
+  (tcl-write-chars ?channel (format nil ?format (expand$ ?arguments)) -1))
 
 (deffunction format-string (?format $?arguments)
   (format nil ?format (expand$ ?arguments)))
