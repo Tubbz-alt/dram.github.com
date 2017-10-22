@@ -244,7 +244,8 @@
   (bind ?target (str-cat ?*output-directory*
                          (sub-string 2 (str-length ?uri) ?uri)))
 
-  (if (> (get-modification-time ?source) (get-modification-time ?target))
+  (if (or (not (tcl/b "file" "exists" ?target))
+          (> (tcl/l "file" "mtime" ?source) (tcl/l "file" "mtime" ?target)))
    then
      (run-process "python3"
                   "tools/sam/samparser.py" ?source
