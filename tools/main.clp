@@ -6,70 +6,71 @@
 ;;; BEGIN OF HELPER FUNCTION DEFINIATIONS
 ;;;
 
-(defglobal ?*tcl* = (tcl-create-interp))
-
-(deffunction tcl ($?arguments)
-  (bind ?argument-objs (tcl-new-obj))
-  (tcl-incr-ref-count ?argument-objs)
-  (foreach ?argument ?arguments
-    (tcl-list-obj-append-element ?*tcl*
-                                 ?argument-objs
-                                 (tcl-new-string-obj ?argument -1)))
-  (bind ?result
-    (tcl-eval-objv ?*tcl*
-                   (tcl-list-obj-get-elements ?*tcl*
-                                              ?argument-objs)
-                   /))
-  (tcl-decr-ref-count ?argument-objs)
-  (if (eq ?result /ok/)
-   then (tcl-get-obj-result ?*tcl*)
-   else (bind ?returns (tcl-get-return-options ?*tcl* ?result))
+(deffunction tcl ($?words)
+  (bind ?word-objs (tcl-new-obj))
+  (tcl-incr-ref-count ?word-objs)
+  (foreach ?word ?words
+    (tcl-list-obj-append-element ?word-objs
+                                 (tcl-new-string-obj ?word -1)))
+  (bind ?code
+    (tcl-eval-objv (tcl-list-obj-get-elements ?word-objs) /))
+  (tcl-decr-ref-count ?word-objs)
+  (if (eq ?code /ok/)
+   then (tcl-get-obj-result)
+   else (bind ?returns (tcl-get-return-options ?code))
         (tcl-incr-ref-count ?returns)
         (tcl-write-obj (tcl-get-std-channel /stderr/) ?returns)
         (tcl-decr-ref-count ?returns)
         FALSE))
 
-(deffunction tcl/b ($?arguments)
-  (if (bind ?result (tcl (expand$ ?arguments)))
+(deffunction tcl/b ($?words)
+  (if (bind ?result (tcl (expand$ ?words)))
    then (tcl-incr-ref-count ?result)
         (bind ?b (tcl-get-boolean-from-obj ?result))
         (tcl-decr-ref-count ?result)
-        ?b))
+        ?b
+   else FALSE))
 
-(deffunction tcl/l ($?arguments)
-  (if (bind ?result (tcl (expand$ ?arguments)))
+(deffunction tcl/l ($?words)
+  (if (bind ?result (tcl (expand$ ?words)))
    then (tcl-incr-ref-count ?result)
         (bind ?l (tcl-get-long-from-obj ?result))
         (tcl-decr-ref-count ?result)
-        ?l))
+        ?l
+   else FALSE))
 
-(deffunction tcl/m ($?arguments)
-  (if (bind ?result (tcl (expand$ ?arguments)))
+(deffunction tcl/m ($?words)
+  (if (bind ?result (tcl (expand$ ?words)))
    then (tcl-incr-ref-count ?result)
-        (bind ?m (tcl-split-list ?*tcl* (tcl-get-string ?result)))
+        (bind ?m (tcl-split-list (tcl-get-string ?result)))
         (tcl-decr-ref-count ?result)
-        ?m))
+        ?m
+   else FALSE))
 
-(deffunction tcl/s ($?arguments)
-  (if (bind ?result (tcl (expand$ ?arguments)))
+(deffunction tcl/s ($?words)
+  (if (bind ?result (tcl (expand$ ?words)))
    then (tcl-incr-ref-count ?result)
         (bind ?s (tcl-get-string ?result))
         (tcl-decr-ref-count ?result)
-        ?s))
+        ?s
+   else FALSE))
 
 (deffunction run-process ($?command)
-  (tcl-close ?*tcl* (tcl-open-command-channel ?*tcl* ?command /)))
+  (tcl-close (tcl-open-command-channel ?command /)))
 
 (deffunction with-process (?command ?function-call ?flags)
-  (bind ?channel (tcl-open-command-channel ?*tcl*
-                                           ?command
-                                           ?flags))
-  (tcl-set-channel-option ?*tcl* ?channel "-encoding" "utf-8")
-  (bind ?result (funcall (nth$ 1 ?function-call)
-                         ?channel
-                         (expand$ (rest$ ?function-call))))
-  (tcl-close ?*tcl* ?channel)
-  ?result)
+  (bind ?channel (tcl-open-command-channel ?command ?flags))
+  (if (eq ?channel nil)
+   then (bind ?returns (tcl-get-return-options /error/))
+        (tcl-incr-ref-count ?returns)
+        (tcl-write-obj (tcl-get-std-channel /stderr/) ?returns)
+        (tcl-decr-ref-count ?returns)
+        FALSE
+   else (bind ?result (funcall (nth$ 1 ?function-call)
+                               ?channel
+                               (expand$ (rest$ ?function-call))))
+        (tcl-close ?channel)
+        ?result))
 
 (deffunction read-line (?channel)
   (bind ?obj (tcl-new-obj))
