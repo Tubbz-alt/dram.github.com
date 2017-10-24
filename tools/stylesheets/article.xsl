@@ -76,6 +76,11 @@
       <xsl:attribute name="src">
         <xsl:value-of select="@item"/>
       </xsl:attribute>
+      <xsl:if test="@name">
+        <xsl:attribute name="alt">
+          <xsl:value-of select="@name"/>
+        </xsl:attribute>
+      </xsl:if>
     </img>
   </xsl:template>
 
