@@ -1,0 +1,11 @@
+article: 正则引擎的greedy模式
+
+	在Tcl中遇到正则的一个问题：
+
+	```(tcl)
+		% regexp -inline {(.+?), (.+)} "foo, bar"
+		{foo, b} foo b
+
+	一开始以为是bug，之后发现这个问题早已被多次提出，例如{这里}(https://core.tcl.tk/tcl/tktview?name=219219)、{这里}(https://core.tcl.tk/tcl/tktview?name=219358)，还有{这里}(https://core.tcl.tk/tcl/tktview?name=2798939)。
+
+	而实际上，Tcl的文档中也greedy和non-greedy有{说明}(http://www.tcl.tk/man/tcl8.6/TclCmd/re_syntax.htm)。另外，PostgreSQL和Tcl基于同一个正则引擎，所以在greedy模式上的处理上是相同的，文档中对此有详细的{介绍}(https://www.postgresql.org/docs/10/static/functions-matching.html#functions-posix-regexp)（9.7.3.5. Regular Expression Matching Rules）。
