@@ -1,0 +1,119 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>PDF格式Tcl/Tk手册</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>PDF格式Tcl/Tk手册</h1><time>28 Oct 2017</time>
+
+<p>Tcl/Tk的文档主要是其<a href="http://core.tcl.tk/tcl/dir?ci=52b1608dc2c57686&amp;name=doc">man文档</a>，虽然可以方便地在开发过程中在线阅读，离线时并不方便。</p>
+<p>可以利用groff和ghostscript将man转化为pdf格式。以下是简单的代码，主要实现这样几点特性：</p>
+<ol>
+<li>
+<p>同时包含Tcl和Tk文档（incr文档包含时有页码问题，有待解决）；</p>
+</li>
+<li>
+<p>PDF有连续页码（为便于移动小屏阅读，这里裁去了，可以注释最后裁剪相关代码调整）；</p>
+</li>
+<li>
+<p>包含书签目录（当前部分页面有1页左右定位偏差，有待解决）；</p>
+</li>
+<li>
+<p>可设置纸张和字体大小，并支持自适应裁剪。</p>
+</li>
+</ol>
+<pre><code>#!/usr/bin/env tclsh
+
+set paper_size a5
+set font_size 12
+
+set tcl_path [file join [pwd] tcl8.6.7]
+set tk_path [file join [pwd] tk8.6.7]
+set itcl_path [file join [pwd] tcl8.6.7/pkgs/itcl4.1.0]
+
+set out_path [file join [pwd] out]
+set ps_path [file join $out_path tcltk.ps]
+set pdf_path [file join $out_path tcltk.pdf]
+set marks_path [file join $out_path marks]
+
+file mkdir $out_path
+
+set marks [open $marks_path w]
+
+puts $marks "\[/Title (Tcl/Tk Manual) /DOCINFO pdfmark"
+
+set page_count 1
+
+set groff_command [list groff -Tps -P-p$paper_size -dpaper=$paper_size -mandoc -rC1 -rIN=0i -rS$font_size]
+
+foreach {category root_path pattern} \
+    [list \
+	 "Tcl Applications" $tcl_path *.1 \
+	 "Tcl Built-In Commands" $tcl_path *.n \
+	 "Tcl Library Procedures" $tcl_path *.3 \
+	 "Tk Applications" $tk_path *.1 \
+	 "Tk Built-In Commands" $tk_path *.n \
+	 "Tk Library Procedures" $tk_path *.3 \
+	] {
+	 #"\[incr Tcl\]" $itcl_path *.n \
+	 #"\[incr Tcl\] Library Procedures" $itcl_path *.3
+    set files [lsort [glob -tails -directory [file join $root_path doc] $pattern]]
+    puts $marks "\[/Count -[llength $files] /Title ($category) /Page $page_count /OUT pdfmark"
+    foreach file $files {
+	set man_path [file join $out_path $file]
+
+	lappend man_paths $man_path
+
+	puts $marks "\[/Title ([string range $file 0 end-2]) /Page $page_count /OUT pdfmark"
+
+	exec sed -e [format {s|^\.so man\.macros|.so %s|} [file join $root_path doc man.macros]] \
+	    [file join $root_path doc $file] &gt; $man_path
+	incr page_count [exec -ignorestderr {*}$groff_command $man_path | grep -c %%Page:]
+    }
+}
+
+close $marks
+
+exec -ignorestderr {*}$groff_command [lindex $man_paths 0] &gt; $ps_path
+
+set box [exec gs -dBATCH -dNOPAUSE -sDEVICE=bbox $ps_path \
+	     |&amp; grep -oP {%%BoundingBox: \K.+} \
+	     |&amp; head -1]
+
+set left_offset 0
+set bottom_offset [expr [lindex $box 1] + $font_size + 2]
+set right_offset [exec grep -oP {%%DocumentMedia: \w+ \d+ \K\d+} $ps_path]
+set top_offset [expr [lindex $box 3] - $font_size - 2]
+
+exec -ignorestderr {*}$groff_command {*}$man_paths &gt; $ps_path
+
+set crop_box [list $left_offset $bottom_offset $right_offset $top_offset]
+
+exec gs -o $pdf_path -dBATCH -dNOPAUSE \
+    -sDEVICE=pdfwrite -dFIXEDMEDIA \
+    -c "\[/CropBox \[$crop_box\] /PAGES pdfmark" \
+    -f $ps_path $marks_path
+
+set sum_left 0
+set min_bottom [exec grep -oP {%%DocumentMedia: \w+ \K\d+} $ps_path]
+set sum_right 0
+set max_top 0
+
+set pages 0
+foreach {left bottom right top} [exec gs -dBATCH -dNOPAUSE -sDEVICE=bbox \
+				     $pdf_path \
+				     |&amp; grep -oP {%%BoundingBox: \K.+}] {
+    incr pages
+    incr sum_left $left
+    if {$bottom &gt; 0} {
+	set min_bottom [tcl::mathfunc::min $min_bottom $bottom]
+    }
+    incr sum_right $right
+    set max_top [tcl::mathfunc::max $max_top $top]
+}
+
+set avg_left [expr $sum_left / $pages]
+set avg_right [expr $sum_right / $pages]
+
+set crop_box [list $avg_left $min_bottom $avg_right $max_top]
+
+exec gs -o $pdf_path -dBATCH -dNOPAUSE \
+    -sDEVICE=pdfwrite \
+    -c "\[/CropBox \[$crop_box\] /PAGES pdfmark" \
+    -f $ps_path $marks_path</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
