@@ -6,8 +6,15 @@
 ;;; BEGIN OF HELPER FUNCTION DEFINIATIONS
 ;;;
 
-(deffunction tcl ($?c) (tcl-eval-ex (tcl-merge ?c) -1 /))
+
 (deffunction string (?f $?a) (format nil ?f (expand$ ?a)))
+
+(deffunction tcl ($?c)
+  (if (eq /error/ (tcl-eval-ex (tcl-merge ?c) -1 /))
+   then (printout stderr (string "# %s%n%s%n"
+                                 (tcl-get-var "errorCode" /)
+                                 (tcl-get-var "errorInfo" /)))))
+
 
 ;;; END OF HELPER FUNCTIONS
 
