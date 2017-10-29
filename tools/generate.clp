@@ -62,7 +62,7 @@
                          (sub-string 2 (str-length ?uri) ?uri)))
 
   (if (tcl-expr-boolean
-       (string "![file exists %s] || ([file mtime %s] > [file mtime %s])"
+       (string "![file exists %s] || [file mtime %s] > [file mtime %s]"
                ?target ?source ?target))
    then
      (tcl "exec" "python3"
@@ -153,7 +153,7 @@
                          (sub-string 2 (str-length ?uri) ?uri)))
 
   (if (tcl-expr-boolean
-       (string "![file exists %s] || ([file mtime %s] > [file mtime %s])"
+       (string "![file exists %s] || [file mtime %s] > [file mtime %s]"
                ?target ?source ?target))
    then
      (tcl "exec" "python3"
