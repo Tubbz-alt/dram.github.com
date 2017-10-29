@@ -64,14 +64,13 @@
   (if (tcl-expr-boolean
        (string "![file exists %s] || [file mtime %s] > [file mtime %s]"
                ?target ?source ?target))
-   then
-     (tcl "exec" "python3"
-          "tools/sam/samparser.py" ?source
-          "|" "xsltproc"
-          "--stringparam" "date" ?date
-          "tools/stylesheets/article.xsl" "-"
-          "|" "xsltproc"
-          "--output" ?target "tools/stylesheets/main.xsl" "-")))
+   then (tcl "exec" "xsltproc"
+             "--stringparam" "date" ?date
+             "tools/stylesheets/article.xsl" "-"
+             "|" "xsltproc"
+             "--output" ?target "tools/stylesheets/main.xsl" "-"
+             "<<" (progn (tcl "parse-sam-file" ?source)
+                         (tcl-get-string-result)))))
 
 (deffunction compare-post (?a ?b)
   (<= (str-compare (fact-slot-value ?a uri)
@@ -155,12 +154,11 @@
   (if (tcl-expr-boolean
        (string "![file exists %s] || [file mtime %s] > [file mtime %s]"
                ?target ?source ?target))
-   then
-     (tcl "exec" "python3"
-          "tools/sam/samparser.py" ?source
-          "|" "xsltproc"
-          "tools/stylesheets/article.xsl" "-"
-          "|" "xsltproc"
-          "--output" ?target "tools/stylesheets/main.xsl" "-")))
+   then (tcl "exec" "xsltproc"
+             "tools/stylesheets/article.xsl" "-"
+             "|" "xsltproc"
+             "--output" ?target "tools/stylesheets/main.xsl" "-"
+             "<<" (progn (tcl "parse-sam-file" ?source)
+                         (tcl-get-string-result)))))
 
 ;;; END OF RULES
