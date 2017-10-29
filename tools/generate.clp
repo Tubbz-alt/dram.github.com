@@ -164,9 +164,3 @@
           "--output" ?target "tools/stylesheets/main.xsl" "-")))
 
 ;;; END OF RULES
-
-(reset)
-
-(run)
-
-(exit)

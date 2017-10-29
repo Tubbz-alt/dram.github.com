@@ -3,7 +3,7 @@ default: generate
 .PHONY: generate serve publish clean
 
 generate:
-	clips-tcl -f2 tools/main.clp
+	tcl-clips tools/main.tcl
 
 serve:
 	python3 -m http.server
