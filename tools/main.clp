@@ -96,11 +96,8 @@
   <uri>%s</uri>
 </post>
 "
-                               (progn (tcl "regsub"
-                                           "-all"
-                                           "&"
-                                           (fact-slot-value ?post title)
-                                           "&amp;")
+                               (progn (tcl "string" "map" "& &amp;"
+                                           (fact-slot-value ?post title))
                                       (tcl-get-string-result))
                                (fact-slot-value ?post creation-date)
                                (fact-slot-value ?post uri))
@@ -126,8 +123,7 @@
 </post>
 "
                                (progn (tcl "string" "map" "& &amp;"
-                                           (fact-slot-value ?post
-                                                            title))
+                                           (fact-slot-value ?post title))
                                       (tcl-get-string-result))
                                (fact-slot-value ?post creation-date)
                                (fact-slot-value ?post uri))
