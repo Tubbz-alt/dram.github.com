@@ -6,93 +6,8 @@
 ;;; BEGIN OF HELPER FUNCTION DEFINIATIONS
 ;;;
 
-(deffunction tcl ($?words)
-  (bind ?word-objs (tcl-new-obj))
-  (tcl-incr-ref-count ?word-objs)
-  (foreach ?word ?words
-    (tcl-list-obj-append-element ?word-objs
-                                 (tcl-new-string-obj ?word -1)))
-  (bind ?code
-    (tcl-eval-objv (tcl-list-obj-get-elements ?word-objs) /))
-  (tcl-decr-ref-count ?word-objs)
-  (if (eq ?code /ok/)
-   then (tcl-get-obj-result)
-   else (bind ?returns (tcl-get-return-options ?code))
-        (tcl-incr-ref-count ?returns)
-        (tcl-write-obj (tcl-get-std-channel /stderr/) ?returns)
-        (tcl-decr-ref-count ?returns)
-        FALSE))
-
-(deffunction tcl/b ($?words)
-  (if (bind ?result (tcl (expand$ ?words)))
-   then (tcl-incr-ref-count ?result)
-        (bind ?b (tcl-get-boolean-from-obj ?result))
-        (tcl-decr-ref-count ?result)
-        ?b
-   else FALSE))
-
-(deffunction tcl/l ($?words)
-  (if (bind ?result (tcl (expand$ ?words)))
-   then (tcl-incr-ref-count ?result)
-        (bind ?l (tcl-get-long-from-obj ?result))
-        (tcl-decr-ref-count ?result)
-        ?l
-   else FALSE))
-
-(deffunction tcl/m ($?words)
-  (if (bind ?result (tcl (expand$ ?words)))
-   then (tcl-incr-ref-count ?result)
-        (bind ?m (tcl-split-list (tcl-get-string ?result)))
-        (tcl-decr-ref-count ?result)
-        ?m
-   else FALSE))
-
-(deffunction tcl/s ($?words)
-  (if (bind ?result (tcl (expand$ ?words)))
-   then (tcl-incr-ref-count ?result)
-        (bind ?s (tcl-get-string ?result))
-        (tcl-decr-ref-count ?result)
-        ?s
-   else FALSE))
-
-(deffunction run-process ($?command)
-  (tcl-close (tcl-open-command-channel ?command /)))
-
-(deffunction with-process (?command ?function-call ?flags)
-  (bind ?channel (tcl-open-command-channel ?command ?flags))
-  (if (eq ?channel nil)
-   then (bind ?returns (tcl-get-return-options /error/))
-        (tcl-incr-ref-count ?returns)
-        (tcl-write-obj (tcl-get-std-channel /stderr/) ?returns)
-        (tcl-decr-ref-count ?returns)
-        FALSE
-   else (bind ?result (funcall (nth$ 1 ?function-call)
-                               ?channel
-                               (expand$ (rest$ ?function-call))))
-        (tcl-close ?channel)
-        ?result))
-
-(deffunction read-line (?channel)
-  (bind ?obj (tcl-new-obj))
-  (tcl-incr-ref-count ?obj)
-  (bind ?result
-    (if (= -1 (tcl-gets-obj ?channel ?obj))
-     then FALSE
-     else (tcl-get-string ?obj)))
-  (tcl-decr-ref-count ?obj)
-  ?result)
-
-(deffunction read-lines (?channel)
-  (bind ?lines (create$))
-  (while (bind ?line (read-line ?channel))
-    (bind ?lines ?lines ?line))
-  ?lines)
-
-(deffunction format-out (?channel ?format $?arguments)
-  (tcl-write-chars ?channel (format nil ?format (expand$ ?arguments)) -1))
-
-(deffunction format-string (?format $?arguments)
-  (format nil ?format (expand$ ?arguments)))
+(deffunction tcl ($?c) (tcl-eval-ex (tcl-merge ?c) -1 /))
+(deffunction string (?f $?a) (format nil ?f (expand$ ?a)))
 
 ;;; END OF HELPER FUNCTIONS
 
@@ -114,7 +29,8 @@
 
 (defrule find-post-sources
  =>
-  (foreach ?file (tcl/m "glob" "-path" ?*post-directory* "*.sam")
+  (foreach ?file (progn (tcl "glob" "-path" ?*post-directory* "*.sam")
+                        (tcl-split-list (tcl-get-string-result)))
     (bind ?date (sub-string (+ (str-length ?*post-directory*) 1)
                             (+ (str-length ?*post-directory*) 10)
                             ?file))
@@ -129,7 +45,8 @@
     (assert (post (title ?title)
                   (source ?file)
                   (uri (str-cat "/blog/"
-                                (tcl/s "string" "map" "- /" ?date)
+                                (progn (tcl "string" "map" "- /" ?date)
+                                       (tcl-get-string-result))
                                 "/"
                                 (sub-string (+ (str-length ?*post-directory*)
                                                12)
@@ -144,16 +61,17 @@
   (bind ?target (str-cat ?*output-directory*
                          (sub-string 2 (str-length ?uri) ?uri)))
 
-  (if (or (not (tcl/b "file" "exists" ?target))
-          (> (tcl/l "file" "mtime" ?source) (tcl/l "file" "mtime" ?target)))
+  (if (tcl-expr-boolean
+       (string "![file exists %s] || ([file mtime %s] > [file mtime %s])"
+               ?target ?source ?target))
    then
-     (run-process "python3"
-                  "tools/sam/samparser.py" ?source
-                  "|" "xsltproc"
-                  "--stringparam" "date" ?date
-                  "tools/stylesheets/article.xsl" "-"
-                  "|" "xsltproc"
-                  "--output" ?target "tools/stylesheets/main.xsl" "-")))
+     (tcl "exec" "python3"
+          "tools/sam/samparser.py" ?source
+          "|" "xsltproc"
+          "--stringparam" "date" ?date
+          "tools/stylesheets/article.xsl" "-"
+          "|" "xsltproc"
+          "--output" ?target "tools/stylesheets/main.xsl" "-")))
 
 (deffunction compare-post (?a ?b)
   (<= (str-compare (fact-slot-value ?a uri)
@@ -172,30 +90,28 @@
   (bind ?xml (tcl-new-string-obj "<posts>" -1))
   (foreach ?post ?posts
     (tcl-append-to-obj ?xml
-                       (format-string "<post>
+                       (string "<post>
   <title>%s</title>
   <creation-date>%s</creation-date>
   <uri>%s</uri>
 </post>
 "
-                                      (tcl/s "regsub"
-                                             "-all"
-                                             "&"
-                                             (fact-slot-value ?post title)
-                                             "&amp;")
-                                      (fact-slot-value ?post creation-date)
-                                      (fact-slot-value ?post uri))
+                               (progn (tcl "regsub"
+                                           "-all"
+                                           "&"
+                                           (fact-slot-value ?post title)
+                                           "&amp;")
+                                      (tcl-get-string-result))
+                               (fact-slot-value ?post creation-date)
+                               (fact-slot-value ?post uri))
                        -1))
   (tcl-append-to-obj ?xml "</posts>" -1)
-  (with-process (create$ "xsltproc"
-                         "tools/stylesheets/archive.xsl" "-"
-                         "|" "xsltproc"
-                         "--output" (str-cat ?*output-directory*
-                                             "blog/archive.html")
-                         "--stringparam" "title" "Archive"
-                         "tools/stylesheets/main.xsl" "-")
-                (create$ format-out (tcl-get-string ?xml))
-                /stdin/))
+  (tcl "exec" "xsltproc"
+       "tools/stylesheets/archive.xsl" "-"
+       "|" "xsltproc"
+       "--output" (str-cat ?*output-directory* "blog/archive.html")
+       "--stringparam" "title" "Archive" "tools/stylesheets/main.xsl" "-"
+       "<<" (tcl-get-string ?xml)))
 
 (defrule generate-home-html
   (posts $?posts)
@@ -203,35 +119,32 @@
   (bind ?xml (tcl-new-string-obj "<posts>" -1))
   (foreach ?post (subseq$ ?posts 1 10)
     (tcl-append-to-obj ?xml
-                       (format-string "<post>
+                       (string "<post>
   <title>%s</title>
   <creation-date>%s</creation-date>
   <uri>%s</uri>
 </post>
 "
-                                      (tcl/s "string" "map" "& &amp;"
-                                             (fact-slot-value ?post title))
-                                      (fact-slot-value ?post creation-date)
-                                      (fact-slot-value ?post uri))
+                               (progn (tcl "string" "map" "& &amp;"
+                                           (fact-slot-value ?post
+                                                            title))
+                                      (tcl-get-string-result))
+                               (fact-slot-value ?post creation-date)
+                               (fact-slot-value ?post uri))
                        -1))
   (tcl-append-to-obj ?xml "</posts>" -1)
-  (with-process (create$ "xsltproc"
-                         "tools/stylesheets/home.xsl" "-"
-                         "|" "xsltproc"
-                         "--output" (str-cat ?*output-directory*
-                                             "index.html")
-                         "--stringparam" "title" "dram.me"
-                         "tools/stylesheets/main.xsl" "-")
-                (create$ format-out (tcl-get-string ?xml))
-                /stdin/))
+  (tcl "exec" "xsltproc"
+       "tools/stylesheets/home.xsl" "-"
+       "|" "xsltproc"
+       "--output" (str-cat ?*output-directory* "index.html")
+       "--stringparam" "title" "dram.me" "tools/stylesheets/main.xsl" "-"
+       "<<" (tcl-get-string ?xml)))
 
 (defrule find-page-sources
  =>
-  (foreach ?file (with-process (create$ "find"
-                                        ?*page-directory* "-name" "*.sam")
-                               (create$ read-lines)
-                               /stdout/)
-    (assert (page (str-cat ?file)
+  (foreach ?file (progn (tcl "exec" "find" ?*page-directory* "-name" "*.sam")
+                        (tcl-split-list (tcl-get-string-result)))
+    (assert (page ?file
                   (str-cat (sub-string (str-length ?*page-directory*)
                                        (- (str-length ?file) 4)
                                        ?file)
@@ -243,15 +156,16 @@
   (bind ?target (str-cat ?*output-directory*
                          (sub-string 2 (str-length ?uri) ?uri)))
 
-  (if (or (not (tcl/b "file" "exists" ?target))
-          (> (tcl/l "file" "mtime" ?source) (tcl/l "file" "mtime" ?target)))
+  (if (tcl-expr-boolean
+       (string "![file exists %s] || ([file mtime %s] > [file mtime %s])"
+               ?target ?source ?target))
    then
-     (run-process "python3"
-                  "tools/sam/samparser.py" ?source
-                  "|" "xsltproc"
-                  "tools/stylesheets/article.xsl" "-"
-                  "|" "xsltproc"
-                  "--output" ?target "tools/stylesheets/main.xsl" "-")))
+     (tcl "exec" "python3"
+          "tools/sam/samparser.py" ?source
+          "|" "xsltproc"
+          "tools/stylesheets/article.xsl" "-"
+          "|" "xsltproc"
+          "--output" ?target "tools/stylesheets/main.xsl" "-")))
 
 ;;; END OF RULES
 
