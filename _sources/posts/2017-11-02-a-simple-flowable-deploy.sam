@@ -19,7 +19,7 @@ article: Flowable简单部署
 
 	section: 对接数据库
 
-		Flowable默认使用H2内存数据库，无法持久化，如果长期使用，需要对接数据库，具体说明在{第三章}(https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch03-Configuration.adoc#database-configuration)，这里以PostgreSQL为例。
+		Flowable默认使用H2内存数据库，无法持久化，如果长期使用，需要对接数据库，具体说明在{第三章}(https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch03-Configuration.adoc#database-configuration)和{第十三章}(https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch13-UI.adoc#installation)，这里以PostgreSQL为例。
 
 		数据库的快速搭建参考{这里}(link "/blog/2017/09/12/run-multiple-postgresql-instances.html")，其中`listen_addresses`需要调整为`localhost`。数据库启动后，通过`createdb -h localhost`创建flowable、flowableadmin、flowableidm、flowablemodeler四个数据库。使用`createuser -h localhost -P`创建flowable用户，并通过`GRANT ALL ON DATABASE ...`赋权。
 

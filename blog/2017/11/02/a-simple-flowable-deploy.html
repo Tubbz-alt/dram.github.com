@@ -17,7 +17,7 @@
 <pre><code>find . -name flowable-ui-app.properties -exec sed -i 's|idm.app.url=http://localhost|idm.app.url=http://IP-ADDRESS|' {} \;</code></pre>
 <section>
 <h2>对接数据库</h2>
-<p>Flowable默认使用H2内存数据库，无法持久化，如果长期使用，需要对接数据库，具体说明在<a href="https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch03-Configuration.adoc#database-configuration">第三章</a>，这里以PostgreSQL为例。</p>
+<p>Flowable默认使用H2内存数据库，无法持久化，如果长期使用，需要对接数据库，具体说明在<a href="https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch03-Configuration.adoc#database-configuration">第三章</a>和<a href="https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch13-UI.adoc#installation">第十三章</a>，这里以PostgreSQL为例。</p>
 <p>数据库的快速搭建参考<a href="/blog/2017/09/12/run-multiple-postgresql-instances.html">这里</a>，其中<code>listen_addresses</code>需要调整为<code>localhost</code>。数据库启动后，通过<code>createdb -h localhost</code>创建flowable、flowableadmin、flowableidm、flowablemodeler四个数据库。使用<code>createuser -h localhost -P</code>创建flowable用户，并通过<code>GRANT ALL ON DATABASE ...</code>赋权。</p>
 <p>完成数据库配置后，还需要调整Flowable的配置，包括：</p>
 <ol>
