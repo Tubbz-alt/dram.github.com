@@ -1,0 +1,29 @@
+article: Flowable简单部署
+
+	Flowable作为BPM引擎，设计的初衷主要是考虑整合到其他系统中，所以在文档中对如何部署独立运行系统着墨不多，而且比较零散。这里总结归纳下，主要包括以下几个方面。
+
+	section: 安装tomcat
+
+		除了通过各发行版包管理系统安装tomcat之外，在Flowable文档{第二章}(https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch02-GettingStarted.adoc#setting-up-the-rest-application)中提到另一种比较便捷的安装方式，从官网下载的发布包解压后可直接通过命令`bin/catalina.sh run`运行服务，这种方式的好处是，可以以非root用户运行tomcat。
+
+	section: 部署Flowable
+
+		在tomcat的webapps目录部署以下war文件（在Flowable发布包的`wars`目录）：flowable-admin，flowable-idm，flowable-modeler和flowable-task。对此的说明放在了Flowable文档较靠后的部分，详见{第十三章}(https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch13-UI.adoc#installation)。
+
+	section: 调整Flowable配置
+
+		完成以上两点，应该可以通过浏览器访问Flowable应用了。但如果是非localhost本地访问，在IDM服务认证跳转时会遇到问题，这里需要调整各服务配置文件中的`idm.app.url`属性，具体在`flowable-ui-app.properties`文件中。例如在tomcat目录运行以下命令：
+
+	```
+		find . -name flowable-ui-app.properties -exec sed -i 's|idm.app.url=http://localhost|idm.app.url=http://IP-ADDRESS|' {} \;
+
+	section: 对接数据库
+
+		Flowable默认使用H2内存数据库，无法持久化，如果长期使用，需要对接数据库，具体说明在{第三章}(https://github.com/flowable/flowable-engine/blob/flowable-6.2.0/userguide/src/en/ch03-Configuration.adoc#database-configuration)，这里以PostgreSQL为例。
+
+		数据库的快速搭建参考{这里}(link "/blog/2017/09/12/run-multiple-postgresql-instances.html")，其中`listen_addresses`需要调整为`localhost`。数据库启动后，通过`createdb -h localhost`创建flowable、flowableadmin、flowableidm、flowablemodeler四个数据库。使用`createuser -h localhost -P`创建flowable用户，并通过`GRANT ALL ON DATABASE ...`赋权。
+
+		完成数据库配置后，还需要调整Flowable的配置，包括：
+
+		1. 安装JDBC的PostgreSQL驱动。可以在这里{下载}(https://jdbc.postgresql.org/)，再将jar文件存放到tomcat中的`lib`目录；
+		2. 调整各应用的datasource.url配置（在flowable-ui-app.properties文件中，其中已有预置样板）。
