@@ -3,6 +3,7 @@ article: BPM系统市场
 	topic: 补遗
 
 		1. 从这则{新闻}(http://www.infoq.com/cn/news/2013/03/Camunda-Forks-Activiti/)中可以看到，Camunda也是Activit的一个分支。—— 2017-11-04
+		2. 另外这里一篇{博文}(https://column2.com/2013/03/stick-a-open-source-fork-in-it-camunda-bpm-splits-from-activiti/)也可以了解Activit和Camunda的历史，另外文中还提及了其他一些开源BPM系统，例如{Bonita}(https://github.com/bonitasoft/bonita-engine)、{ProcessMaker}(https://github.com/colosa/processmaker)。—— 2017-11-04
 
 	最近了解了几款BPM产品，以下做一个简单整理。
 
