@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>BPM系统市场</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>BPM系统市场</h1><time>04 Nov 2017</time>
+
+<p>最近了解了几款BPM产品，以下做一个简单整理。</p>
+<section>
+<h2>Activit</h2>
+<p><a href="https://www.activiti.org/">Activit</a>是Alfresco（英国）的一个项目。这个项目和jBPM项目应该是在国内知名度相对较高的。但在试用6.0.0版本时遇到一些问题，对于其稳定性持保留态度。</p>
+</section>
+<section>
+<h2>Camunda</h2>
+<p><a href="https://www.camunda.org/">Camunda</a>是一家德国公司的产品，在这四个产品中，Camunda的使用体验是最好的。有一个问题是，在Web UI中没有找到BPMN设计工具，不确定是否集成，还是说过程模型的设计需要独立程序（<a href="https://camunda.org/bpmn/tool/">Camunda Modeler</a>）完成。</p>
+</section>
+<section>
+<h2>Flowable</h2>
+<p><a href="http://www.flowable.org/">Flowable</a>是Activit的一个分支项目，<a href="http://www.jianshu.com/p/ca8dfc0d0f97">据说</a>整体团队是从Activit跳出来的。从初步的了解以及试用体验来看，有着良好的稳定性和API交互性，但终端交互体验勉勉强强。例如建模、认证、管理、任务系统完全解耦的设计，可能会方便系统层面的对接，而对于最终用户使用来说，并不理想，这可能与项目的定位有关。</p>
+</section>
+<section>
+<h2>jBPM</h2>
+<p><a href="http://jbpm.org/">jBPM</a>是Red Hat（美国）旗下JBoss项目的一个子项目。相对来说，历史较为悠久，系统复杂也较高。试用的是7.3.0版本，由于最近7系列版本正在对系统交互做大的调整，所以体验并不理想。另外，由于系统构架较早，整体比较陈旧，所以API交互性上并没有Flowable这样的灵活性。jBPM的一个亮点是深度整合<a href="http://www.drools.org/">Drools</a>业务规则管理系统，可以实现正向链反向链规则编程。</p>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
