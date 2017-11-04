@@ -1,5 +1,9 @@
 article: BPM系统市场
 
+	topic: 补遗
+
+		1. 从这则{新闻}(http://www.infoq.com/cn/news/2013/03/Camunda-Forks-Activiti/)中可以看到，Camunda也是Activit的一个分支。—— 2017-11-04
+
 	最近了解了几款BPM产品，以下做一个简单整理。
 
 	section: Activit
