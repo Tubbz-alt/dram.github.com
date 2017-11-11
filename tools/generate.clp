@@ -10,7 +10,7 @@
 (deffunction string (?f $?a) (format nil ?f (expand$ ?a)))
 
 (deffunction tcl ($?c)
-  (if (eq /error/ (tcl-eval-ex (tcl-merge ?c) -1 /))
+  (if (eq /error/ (tcl-eval (tcl-merge ?c)))
    then (printout stderr (string "# %s%n%s%n"
                                  (tcl-get-var "errorCode" /)
                                  (tcl-get-var "errorInfo" /)))))
