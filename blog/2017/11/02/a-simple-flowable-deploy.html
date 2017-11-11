@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Flowable简单部署</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Flowable简单部署</h1><time>02 Nov 2017</time>
 
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>tomcat也可以通过<code>bin</code>目录下的<code>startup.sh</code>启动，<code>shutdown.sh</code>关闭，这种方式支持后台执行。—— 2017-11-11</p>
+</li>
+</ol>
+</section>
 <p>Flowable作为BPM引擎，设计的初衷主要是考虑整合到其他系统中，所以在文档中对如何部署独立运行系统着墨不多，而且比较零散。这里总结归纳下，主要包括以下几个方面。</p>
 <section>
 <h2>安装tomcat</h2>
