@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- !annotation-lookup: fancy -->
 <!--  This file is part of the SPFE Open Toolkit. See the accompanying license.txt file -->
 <!--  for applicable licenses. -->
 <!--  (c) Copyright Analecta Communications Inc. 2015 All Rights Reserved. -->
@@ -59,7 +58,7 @@ Testing {XML}(language) testing {XML}+(index) testing {XML}.
 <markup>
 <message>
 <title>Hello World.</title>
-<p>This is the include test file.</p>
+<p>This is the "include" test -- file.</p>
 <grid>
 <row>
 <cell>foo</cell>
@@ -77,7 +76,7 @@ Testing {XML}(language) testing {XML}+(index) testing {XML}.
 <codeblock language="xml">
 &lt;message&gt;
 &lt;title&gt;Hello World.&lt;/title&gt;
-&lt;p&gt;This is the include test file.&lt;/p&gt;
+&lt;p&gt;This is the "include" test -- file.&lt;/p&gt;
 &lt;grid&gt;
 &lt;row&gt;
 &lt;cell&gt;foo&lt;/cell&gt;
@@ -2500,7 +2499,7 @@ n_{\mathrm{offset}} = \sum_{k=0}^{N-1} s_k n_k
 <p><code>(!en-CA)</code> creates a language attribute.</p>
 </li>
 </ul>
-<p>You can only apply one id, name, or language attribute to a block or phrase. You can apply more than one condition attribute. On output to XML, the condition attributes will be converted to a single <code>conditions</code> attribute with the individual conditions separated by commas. (For which reason, condition statements can't include commas.)</p>
+<p>You can only apply one id, name, or language attribute to a block or phrase. You can apply more than one condition attribute. On output to XML, the condition attributes will be converted to a single <code>conditions</code> attribute with the individual conditions separated by commas. (For which reason, condition statements can’t include commas.)</p>
 </description>
 <case>
 <title>Attributes on block</title>
@@ -2738,8 +2737,8 @@ recordset::(!en-CA)(*id6)(#name)(?a)(?b) foo, bar
 </description>
 <source>
 <codeblock language="sam">
-|Do|(#foo)(?bar)(?green) a deer,
-                         a female deer
+|Do|(#foo7)(?bar)(?green) a deer,
+                          a female deer
 
 |Re| a drop of
      golden sun
@@ -2754,7 +2753,7 @@ recordset::(!en-CA)(*id6)(#name)(?a)(?b) foo, bar
 </source>
 <markup>
 <ll>
-<li conditions="bar,green" name="foo">
+<li conditions="bar,green" name="foo7">
 <label>Do</label>
 <p>a deer, a female deer</p>
 </li>
@@ -2788,7 +2787,7 @@ recordset::(!en-CA)(*id6)(#name)(?a)(?b) foo, bar
 <result>
 <codeblock language="xml">
 &lt;ll&gt;
-&lt;li conditions="bar,green" name="foo"&gt;
+&lt;li conditions="bar,green" name="foo7"&gt;
 &lt;label&gt;Do&lt;/label&gt;
 &lt;p&gt;a deer, a female deer&lt;/p&gt;
 &lt;/li&gt;
@@ -2949,18 +2948,18 @@ def escape_for_xml(s):
 </description>
 <source>
 <codeblock language="sam">
-```(=latexmathml)(*id13)(#name)(?a)(?b)
+```(=latexmathml)(*id14)(#name)(?a)(?b)
     n_{\mathrm{offset}} = \sum_{k=0}^{N-1} s_k n_k
 </codeblock>
 </source>
 <markup>
-<embedblock conditions="a,b" encoding="latexmathml" id="id13" name="name">
+<embedblock conditions="a,b" encoding="latexmathml" id="id14" name="name">
 n_{\mathrm{offset}} = \sum_{k=0}^{N-1} s_k n_k
 </embedblock>
 </markup>
 <result>
 <codeblock language="xml">
-&lt;embedblock conditions="a,b" encoding="latexmathml" id="id13" name="name"&gt;
+&lt;embedblock conditions="a,b" encoding="latexmathml" id="id14" name="name"&gt;
 n_{\mathrm{offset}} = \sum_{k=0}^{N-1} s_k n_k
 &lt;/embedblock&gt;
 </codeblock>
@@ -2973,15 +2972,15 @@ n_{\mathrm{offset}} = \sum_{k=0}^{N-1} s_k n_k
 </description>
 <source>
 <codeblock language="sam">
-&gt;&gt;&gt;(image foo.gif)(*id14)(#name)(?a)(?b)
+&gt;&gt;&gt;(image foo.gif)(*id15)(#name)(?a)(?b)
 </codeblock>
 </source>
 <markup>
-<insert conditions="a,b" id="id14" item="foo.gif" name="name" type="image"/>
+<insert conditions="a,b" id="id15" item="foo.gif" name="name" type="image"/>
 </markup>
 <result>
 <codeblock language="xml">
-&lt;insert conditions="a,b" id="id14" item="foo.gif" name="name" type="image"/&gt;
+&lt;insert conditions="a,b" id="id15" item="foo.gif" name="name" type="image"/&gt;
 </codeblock>
 </result>
 </case>
@@ -3105,7 +3104,7 @@ chapter}[#single_source].
 </codeblock>
 </source>
 <markup>
-<p>When using the map approach, it is important to think about how your content will <phrase><annotation type="concept" specifically="single sourcing">single source</annotation></phrase> to paper-like media and hypertext-media. Some people will output the same map to to both media. In hyper-text media that usually results in the map being turned into a table of contents, often displayed in a separate pane as in a help system. This may be fine if you are creating a help system, but it is not how Web content is usually displayed. Another approach to single sourcing content that uses the assemble from pieces approach is to create completely separate maps -- or even to use completely different assembly techniques that don't involve maps at all -- to produce paper-like and hypertext outputs. This can help you to work around some of the design limitations that we talked about in the <phrase><citation nameref="single_source">single sourcing chapter</citation></phrase>.</p>
+<p>When using the map approach, it is important to think about how your content will <phrase><annotation type="concept" specifically="single sourcing">single source</annotation></phrase> to paper-like media and hypertext-media. Some people will output the same map to to both media. In hyper-text media that usually results in the map being turned into a table of contents, often displayed in a separate pane as in a help system. This may be fine if you are creating a help system, but it is not how Web content is usually displayed. Another approach to single sourcing content that uses the assemble from pieces approach is to create completely separate maps – or even to use completely different assembly techniques that don’t involve maps at all – to produce paper-like and hypertext outputs. This can help you to work around some of the design limitations that we talked about in the <phrase><citation nameref="single_source">single sourcing chapter</citation></phrase>.</p>
 </markup>
 <result>
 <codeblock language="xml">
@@ -3272,7 +3271,7 @@ This {should be reported}.
 </description>
 <source>
 <codeblock language="sam">
-Testing {XML}(language) testing {XML}+(index) testing {XML}.
+Testing {XML}(language) testing {XML}+(index) testing {XML}+(language).
 </codeblock>
 </source>
 <markup>
@@ -3291,15 +3290,15 @@ Testing {XML}(language) testing {XML}+(index) testing {XML}.
 </description>
 <source>
 <codeblock language="sam">
-Testing {XML}+(*foo) testing {XML}+(index) testing {XML}.
+Testing {XML}+(*foot) testing {XML}+(index) testing {XML}.
 </codeblock>
 </source>
 <markup>
-<p>Testing <phrase id="foo"><annotation type="language">XML</annotation></phrase> testing <phrase><annotation type="index"><annotation type="language">XML</annotation></annotation></phrase> testing <phrase><annotation type="language">XML</annotation></phrase>.</p>
+<p>Testing <phrase id="foot"><annotation type="language">XML</annotation></phrase> testing <phrase><annotation type="index"><annotation type="language">XML</annotation></annotation></phrase> testing <phrase><annotation type="language">XML</annotation></phrase>.</p>
 </markup>
 <result>
 <codeblock language="xml">
-&lt;p&gt;Testing &lt;phrase id="foo"&gt;&lt;annotation type="language"&gt;XML&lt;/annotation&gt;&lt;/phrase&gt; testing &lt;phrase&gt;&lt;annotation type="index"&gt;&lt;annotation type="language"&gt;XML&lt;/annotation&gt;&lt;/annotation&gt;&lt;/phrase&gt; testing &lt;phrase&gt;&lt;annotation type="language"&gt;XML&lt;/annotation&gt;&lt;/phrase&gt;.&lt;/p&gt;
+&lt;p&gt;Testing &lt;phrase id="foot"&gt;&lt;annotation type="language"&gt;XML&lt;/annotation&gt;&lt;/phrase&gt; testing &lt;phrase&gt;&lt;annotation type="index"&gt;&lt;annotation type="language"&gt;XML&lt;/annotation&gt;&lt;/annotation&gt;&lt;/phrase&gt; testing &lt;phrase&gt;&lt;annotation type="language"&gt;XML&lt;/annotation&gt;&lt;/phrase&gt;.&lt;/p&gt;
 </codeblock>
 </result>
 </case>
@@ -3817,7 +3816,7 @@ There is a `_` in _this \_ italic_ decoration.
 <case>
 <title>XML reserved characters in citation specifically attribute</title>
 <description>
-<p>XML reserved characters occurring within the text of a "specifically" attribute.</p>
+<p>XML reserved characters occurring within the text of a “specifically” attribute.</p>
 </description>
 <source>
 <codeblock language="sam">
@@ -3959,15 +3958,15 @@ There is a `_` in _this \_ italic_ decoration.
 </description>
 <source>
 <codeblock language="sam">
-&gt;&gt;&gt;(%glug)
+&gt;&gt;&gt;[%glug]
 </codeblock>
 </source>
 <markup>
-<insert item="glug" type="key"/>
+<insert keyref="glug"/>
 </markup>
 <result>
 <codeblock language="xml">
-&lt;insert item="glug" type="key"/&gt;
+&lt;insert keyref="glug"/&gt;
 </codeblock>
 </result>
 </case>
@@ -3987,17 +3986,17 @@ There is a `_` in _this \_ italic_ decoration.
 Because you often want to &gt;(image "foo.gif")(#bar)(?baz)(?bat) change some part of a text when it is being
 reused, &lt;fragments&gt; &amp; fragment references can both define local {strings}(feature).
 Any {string references}(feature) inside a fragment will be resolved by looking first
-at local-strings defined in the &gt;(*my-table) fragment reference, then at local strings defined
+at local-strings defined in the &gt;[*my-table] fragment reference, then at local strings defined
 in the fragment definition, and then at global strings. In effect, this means
 that you can define string substitutions whenever you insert a fragment into your content.
 </codeblock>
 </source>
 <markup>
-<p>Because you often want to <inline-insert conditions="baz,bat" item="foo.gif" name="bar" type="image"/> change some part of a text when it is being reused, &lt;fragments&gt; &amp; fragment references can both define local <phrase><annotation type="feature">strings</annotation></phrase>. Any <phrase><annotation type="feature">string references</annotation></phrase> inside a fragment will be resolved by looking first at local-strings defined in the <inline-insert item="my-table" type="id"/> fragment reference, then at local strings defined in the fragment definition, and then at global strings. In effect, this means that you can define string substitutions whenever you insert a fragment into your content.</p>
+<p>Because you often want to <inline-insert conditions="baz,bat" item="foo.gif" name="bar" type="image"/> change some part of a text when it is being reused, &lt;fragments&gt; &amp; fragment references can both define local <phrase><annotation type="feature">strings</annotation></phrase>. Any <phrase><annotation type="feature">string references</annotation></phrase> inside a fragment will be resolved by looking first at local-strings defined in the <inline-insert idref="my-table"/> fragment reference, then at local strings defined in the fragment definition, and then at global strings. In effect, this means that you can define string substitutions whenever you insert a fragment into your content.</p>
 </markup>
 <result>
 <codeblock language="xml">
-&lt;p&gt;Because you often want to &lt;inline-insert conditions="baz,bat" item="foo.gif" name="bar" type="image"/&gt; change some part of a text when it is being reused, &amp;lt;fragments&amp;gt; &amp;amp; fragment references can both define local &lt;phrase&gt;&lt;annotation type="feature"&gt;strings&lt;/annotation&gt;&lt;/phrase&gt;. Any &lt;phrase&gt;&lt;annotation type="feature"&gt;string references&lt;/annotation&gt;&lt;/phrase&gt; inside a fragment will be resolved by looking first at local-strings defined in the &lt;inline-insert item="my-table" type="id"/&gt; fragment reference, then at local strings defined in the fragment definition, and then at global strings. In effect, this means that you can define string substitutions whenever you insert a fragment into your content.&lt;/p&gt;
+&lt;p&gt;Because you often want to &lt;inline-insert conditions="baz,bat" item="foo.gif" name="bar" type="image"/&gt; change some part of a text when it is being reused, &amp;lt;fragments&amp;gt; &amp;amp; fragment references can both define local &lt;phrase&gt;&lt;annotation type="feature"&gt;strings&lt;/annotation&gt;&lt;/phrase&gt;. Any &lt;phrase&gt;&lt;annotation type="feature"&gt;string references&lt;/annotation&gt;&lt;/phrase&gt; inside a fragment will be resolved by looking first at local-strings defined in the &lt;inline-insert idref="my-table"/&gt; fragment reference, then at local strings defined in the fragment definition, and then at global strings. In effect, this means that you can define string substitutions whenever you insert a fragment into your content.&lt;/p&gt;
 </codeblock>
 </result>
 </case>
@@ -4008,15 +4007,15 @@ that you can define string substitutions whenever you insert a fragment into you
 </description>
 <source>
 <codeblock language="sam">
-&gt;(#foo)
+&gt;[#foo8]
 </codeblock>
 </source>
 <markup>
-<p><inline-insert item="foo" type="name"/></p>
+<p><inline-insert nameref="foo8"/></p>
 </markup>
 <result>
 <codeblock language="xml">
-&lt;p&gt;&lt;inline-insert item="foo" type="name"/&gt;&lt;/p&gt;
+&lt;p&gt;&lt;inline-insert nameref="foo8"/&gt;&lt;/p&gt;
 </codeblock>
 </result>
 </case>
@@ -4052,15 +4051,15 @@ $foo = bar bar black sheep
 </description>
 <source>
 <codeblock language="sam">
-This sentence includes a string reference &gt;(string name). And a shortcut version &gt;($name).
+This sentence includes a string reference &gt;[$name].
 </codeblock>
 </source>
 <markup>
-<p>This sentence includes a string reference <inline-insert item="name" type="string"/>. And a shortcut version <inline-insert item="name" type="string"/>.</p>
+<p>This sentence includes a string reference <inline-insert stringref="name"/>.</p>
 </markup>
 <result>
 <codeblock language="xml">
-&lt;p&gt;This sentence includes a string reference &lt;inline-insert item="name" type="string"/&gt;. And a shortcut version &lt;inline-insert item="name" type="string"/&gt;.&lt;/p&gt;
+&lt;p&gt;This sentence includes a string reference &lt;inline-insert stringref="name"/&gt;.&lt;/p&gt;
 </codeblock>
 </result>
 </case>
@@ -4121,19 +4120,19 @@ This sentence includes a string reference &gt;(string name). And a shortcut vers
 </description>
 <source>
 <codeblock language="sam">
-&gt;&gt;&gt;(~foobar)
+&gt;&gt;&gt;[~foobar]
     $a=apricot
     $b=breadfruit
 </codeblock>
 </source>
 <markup>
-<insert item="foobar" type="fragment">
+<insert fragmentref="foobar">
 <string name="a">apricot</string>
 <string name="b">breadfruit</string>
 </insert></markup>
 <result>
 <codeblock language="xml">
-&lt;insert item="foobar" type="fragment"&gt;
+&lt;insert fragmentref="foobar"&gt;
 &lt;string name="a"&gt;apricot&lt;/string&gt;
 &lt;string name="b"&gt;breadfruit&lt;/string&gt;
 &lt;/insert&gt;
@@ -4144,7 +4143,7 @@ This sentence includes a string reference &gt;(string name). And a shortcut vers
 <test>
 <title>Smart quotes</title>
 <description>
-<p>Smart quotes is an optional feature of the parser, not a feature of the SAM language. It turns straight quotes into curly quotes. It raises a warning when it can't figure out how to handle a case. The algorithm could be improved in the future to handle more cases correctly.</p>
+<p>Smart quotes is an optional feature of the parser, not a feature of the SAM language. It turns straight quotes into curly quotes. It raises a warning when it can’t figure out how to handle a case. The algorithm could be improved in the future to handle more cases correctly.</p>
 <p>The canonical way to handle quotes in SAM is to use real curly quotes to begin with. All SAM documents are UTF-8.</p>
 <Note>These tests will fail if smart quotes is not selected</Note>
 <p>using the <code>-q</code> option of the parser command line or by setting the <code>smart_quotes</code> attribute of the SamParser object to <code>True</code>.</p>
@@ -4168,8 +4167,8 @@ For "the Duke", perhaps?
 </codeblock>
 </source>
 <markup>
-<p>"For once, 'sir' adding, 'you're making a scene.'" and "For once, 'sir' adding, 'you're making a scene.'" In the winter of ’65. "Yes," he said, "I met her. She's very 'friendly.'" '"I don’t know what you mean by 'glory,'" Alice said.' "'I don’t know what you mean by "glory,"' Alice said."</p>
-<p>For "the Duke", perhaps?</p>
+<p>“For once, ‘sir’ adding, ‘you’re making a scene.’” and “For once, ‘sir’ adding, ‘you’re making a scene.’” In the winter of ’65. “Yes,” he said, “I met her. She’s very ‘friendly.’” ‘“I don’t know what you mean by ‘glory,’” Alice said.’ “‘I don’t know what you mean by “glory,”’ Alice said.”</p>
+<p>For “the Duke”, perhaps?</p>
 </markup>
 <result>
 <codeblock language="xml">
@@ -4189,7 +4188,7 @@ interpretations of the `xref`'s instruction
 </codeblock>
 </source>
 <markup>
-<p>interpretations of the <code>xref</code>'s instruction</p>
+<p>interpretations of the <code>xref</code>’s instruction</p>
 </markup>
 <result>
 <codeblock language="xml">
@@ -4214,7 +4213,7 @@ know what you mean by "glory,"' Alice said."
 </codeblock>
 </source>
 <markup>
-<p>"For once, '<phrase><annotation type="salutation">sir</annotation></phrase>' adding, 'you're making a scene.'" and "For once, <phrase><annotation type="salutation">'sir'</annotation></phrase> adding, 'you're making a scene.'" In the winter of ’65. "Yes," he said, "I met her. She's very 'friendly.'" '"I don’t know what you mean by 'glory,'" Alice said.' "'I don’t know what you mean by "glory,"' Alice said."</p>
+<p>“For once, ‘<phrase><annotation type="salutation">sir</annotation></phrase>’ adding, ‘you’re making a scene.’” and “For once, <phrase><annotation type="salutation">‘sir’</annotation></phrase> adding, ‘you’re making a scene.’” In the winter of ’65. “Yes,” he said, “I met her. She’s very ‘friendly.’” ‘“I don’t know what you mean by ‘glory,’” Alice said.’ “‘I don’t know what you mean by “glory,”’ Alice said.”</p>
 </markup>
 <result>
 <codeblock language="xml">
@@ -4235,8 +4234,8 @@ The shape of the characters (technically, "glyphs") that make up the font are st
 </codeblock>
 </source>
 <markup>
-<p>A vector graphic program creates graphics as a collection of  objects ("vector" meaning the mathematical representation of a shape or line).</p>
-<p>The shape of the characters (technically, "glyphs") that make up the font are stored separately in font files.</p>
+<p>A vector graphic program creates graphics as a collection of  objects (“vector” meaning the mathematical representation of a shape or line).</p>
+<p>The shape of the characters (technically, “glyphs”) that make up the font are stored separately in font files.</p>
 </markup>
 <result>
 <codeblock language="xml">
@@ -4256,7 +4255,7 @@ The shape of the characters (technically, "glyphs") that make up the font are st
 </codeblock>
 </source>
 <markup>
-<p>"What is truth?"<citation value="John 18:38"/></p>
+<p>“What is truth?”<citation value="John 18:38"/></p>
 </markup>
 <result>
 <codeblock language="xml">
@@ -4279,9 +4278,9 @@ The shape of the characters (technically, "glyphs") that make up the font are st
 </codeblock>
 </source>
 <markup>
-<p>"title"?</p>
-<p><phrase><annotation type="language">DocBook</annotation></phrase>'s</p>
-<p><phrase><annotation type="language">DITA</annotation></phrase> and <phrase><annotation type="language">DocBook</annotation></phrase>'s</p>
+<p>“title”?</p>
+<p><phrase><annotation type="language">DocBook</annotation></phrase>’s</p>
+<p><phrase><annotation type="language">DITA</annotation></phrase> and <phrase><annotation type="language">DocBook</annotation></phrase>’s</p>
 </markup>
 <result>
 <codeblock language="xml">
@@ -4333,13 +4332,13 @@ x, y, z, etc. -- something else
 </codeblock>
 </source>
 <markup>
-<p>This para contains -- an en dash and an---em dash.</p>
-<p>This para contains -- <phrase><annotation type="word">an</annotation></phrase> en dash and an---<phrase><annotation type="word">em</annotation></phrase> dash.</p>
-<p>This para <phrase><annotation type="word">contains</annotation></phrase> -- an en dash and <phrase><annotation type="word">an</annotation></phrase>---em dash.</p>
-<p>This para <phrase><annotation type="bold">contains</annotation></phrase> -- an en dash and <phrase><annotation type="italic">an</annotation></phrase>---em dash.</p>
-<p>This para <code>contains</code> -- an en dash and "an"---em dash.</p>
-<p>This para 'contains' -- an en dash and <code>an</code>---em dash.</p>
-<p>x, y, z, etc. -- something else</p>
+<p>This para contains – an en dash and an—em dash.</p>
+<p>This para contains – <phrase><annotation type="word">an</annotation></phrase> en dash and an—<phrase><annotation type="word">em</annotation></phrase> dash.</p>
+<p>This para <phrase><annotation type="word">contains</annotation></phrase> – an en dash and <phrase><annotation type="word">an</annotation></phrase>—em dash.</p>
+<p>This para <phrase><annotation type="bold">contains</annotation></phrase> – an en dash and <phrase><annotation type="italic">an</annotation></phrase>—em dash.</p>
+<p>This para <code>contains</code> – an en dash and “an”—em dash.</p>
+<p>This para ‘contains’ – an en dash and <code>an</code>—em dash.</p>
+<p>x, y, z, etc. – something else</p>
 </markup>
 <result>
 <codeblock language="xml">

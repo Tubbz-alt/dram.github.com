@@ -93,9 +93,7 @@ specification: Semantic Authoring Markdown (SAM)
             |flow insertion|  Flow insertions are an instruction to the application layer in content from an internal or external source at the flow level (that is, inside a flow).
             
             |citations| Citations are references to other works or structures.
-            
-            |embedded XML| You can embed XML in a SAM document. 
-            
+
             |include| You can include one SAM file in another.
 
             |ordered list| An ordered list is as list in which the order of the items is meaningful. An ordered list is any sequence of one or more ordered list items.
@@ -221,7 +219,22 @@ specification: Semantic Authoring Markdown (SAM)
             semantics:
                 A declaration is an instruction to the parser on how to interpret the SAM document. Declarations are not part of the content of the document described by the SAM markup. Rather, they describe the markup itself.    
 
-                Currently the only declaration supported is the namespace declaration which sets the namespace for the entire SAM document. You cannot assign namespaces to individual structures in the text of a SAM document like you can in XML.
+                The following declarations are supported:
+
+                |namespace| Sets the namespace for the entire SAM document. You cannot assign namespaces to individual structures in the text of a SAM document like you can in XML. Future: Assigning individual elements to namespaces can be done through a schema.
+                |annotation-lookup| Sets the {annotation lookup}(feature) mode for the document. The options are:
+
+                                    * *on* Annotation lookup is performed in a case insensitive manner.
+                                    * *off* Annotation lookup is not performed.
+                                    * *case sensitive* Annotation lookup is performed in a case sensitive manner.
+                                    * *case insensitive* (default) Annotation lookup is performed in a case insensitive manner.
+                                    * <custom> Annotation lookup is performed using a custom algorithm supported by a user-supplied extension to the parser.
+
+                |smart-quotes| Set the smart quotes processing mode for the parser. The options are:
+
+                               * *on* Smart quotes processing is performed using the default rules.
+                               * *off* (default) Smart quotes processing is not performed.
+                               * <custom> Smart quotes processing is performed using a custom rule set provided by the parser. The default parser supports this via an XML file which is specified on the command line using the -sq option. Other parsers are free to support smart quotes or not, and to support custom smart quotes rules or not using a mechanism of their choice.
 
             serialization:
                 The namespace declaration causes the namespace of a document to be set to the specified namespace. This will result in the appropriate namespace declaration in the serialized XML file. A parser may handle namespace prefixes in any way it sees fit. 
@@ -296,11 +309,11 @@ specification: Semantic Authoring Markdown (SAM)
 
         structure:(#attribute) Attributes
 
-            Attributes are metadata on a block.  
+            Attributes are metadata on a block or {phrase}.  
 
             syntax: 
 
-                Attributes are contained in parentheses that follow the colon of a {block} header with no space:
+                Attributes on blocks are contained in parentheses that follow the colon of a {block} header with no space:
 
                 ```(sam) 
                     name:(?BC) Fred Flintstone
@@ -309,6 +322,17 @@ specification: Semantic Authoring Markdown (SAM)
 
                 ```(sam) 
                     name:(?BC)(#fred) Fred Flintstone 
+
+                Attributes on {phrases} are contained in parentheses that follow the closing curly brace of the phrase or the closing parenthesis or bracket of another {annotation}, {attribute}, or {citation}.
+
+                ```(sam)
+
+                An attribute annotation looks like this:
+
+                ```(sam)
+                    In Quebec, a stop sign says {arrêt}(!fr).
+
+                A {phrase} can have an unlimited mix of attributes, {annotations}, and {citations} attached to it. 
 
                 There are four general attributes. The type of an attribute it determined by the flag character that precedes it. The four general types are:
 
@@ -352,7 +376,7 @@ specification: Semantic Authoring Markdown (SAM)
 
                 Certain block types have additional attributes that are specific to those block types. See the relevant entries for details. 
 
-                This is the list of the standard attributes allowed on each structure. Block types that take special attributes are indicated with an asterisk:
+                This is the list of the standard attributes allowed on each structure. Block types that take special attributes are indicated with <special>:
 
                 +++
                     block             | !language | #name | ?condition| *id | 
@@ -367,17 +391,16 @@ specification: Semantic Authoring Markdown (SAM)
                     blockquote        | !language | #name | ?condition| *id | 
                     phrase            | !language | #name | ?condition| *id | 
 
-                    codeblock         |           | #name | ?condition| *id | *
+                    codeblock         |           | #name | ?condition| *id | <special>
 
                     string-def        |           |       |           |     | 
 
                     paragraph         |           |       |           |     | 
                     record            |           |       |           |     | 
-                    XML               |           |       |           |     | 
 
-                    block insert      |           | #name | ?condition| *id | *
-                    inline insert     |           | #name | ?condition| *id | *
-                    include           |           |       |           |     | *
+                    block insert      |           | #name | ?condition| *id | <special>
+                    inline insert     |           | #name | ?condition| *id | <special>
+                    include           |           |       |           |     | <special>
 
                 note:
                     It should be noted that the lack of arbitrary named attributes does not reduce the semantic flexibility of SAM as compared to XML. Any metadata that can be expressed by an attribute on a block can also be expressed by a field that is a child of that block. The reason for using attributes in XML is to preserve a pure distinction between text and metadata, but that is not a design consideration in SAM, which is meant for the creation of new text through structured writing, not for the annotation of existing texts for study.
@@ -390,8 +413,12 @@ specification: Semantic Authoring Markdown (SAM)
                 * {name} is represented by a `name` attribute.
                 * {condition}s are represented by a `conditions` attribute. If multiple condition attributes are applied in SAM, they will be concatenated with commas in the `conditions` attribute value. 
 
+                Attributes on {phrases} are serialized wrapped around the phrase to which they apply just as described for {annotations}.
+
             SOM:
-                Attributes are represented by the attribute field of the {Block} object as a dictionary. 
+                Attributes on {blocks} are represented by the attributes field of the {Block} object as a list of {Attribute} objects. 
+
+                Attributes on {phrases} are represented by the attributes field of the {Phrase} object as a list of {Attribute} objects. 
         
         structure:(#field) Field
         
@@ -534,15 +561,7 @@ specification: Semantic Authoring Markdown (SAM)
             syntax:
                 An {annotation} is attached to a phrase and is expressed as an expression in parentheses following the closing `}` of the phrase with no space in between. 
 
-                An {annotation} consists either of one of four management attribute types (language, id, name, condition) or an {annotation} type expression. 
-
-                An attribute annotation looks like this:
-
-                ```(sam)
-                    In Quebec, a stop sign says {arrêt}(!fr).
-
-
-                An annotation type expression is an expression that specifies the type of a string. Here the type expression says that the string "Rio Bravo" is a reference to a movie: 
+                An annotation specifies the type of a string. Here the type expression says that the string "Rio Bravo" is a reference to a movie: 
 
                 ```(sam) 
                     In {Rio Bravo}(movie), {the Duke}(actor "John Wayne" (SAG)) plays a union colonel.
@@ -562,7 +581,7 @@ specification: Semantic Authoring Markdown (SAM)
             semantics:
                 The specific semantics of individual annotation depend on the language designer, however, in order to maintain consistency across languages, it is important to use the specifically and namespace attributes for their intended purposes and not to hijack them to express some other semantics. 
 
-                Type annotations may be from any of the structured writing domains (media, document, subject, management). The relationship between the annotation type and the meaning of the specifically attribute changes in each domain. 
+                Annotations may be from any of the {structured writing domains} (media, document, subject, management). The relationship between the annotation type and the meaning of the specifically attribute changes in each domain. 
 
                 In the media domain, the annotation type refers to some media property to be applied to the text, and the specifically attribute supplies more specific information. For example it could be `{the Duke}(highlight "yellow")` or `{the Duke}(link "http://JohnWayne.com")`.
 
@@ -571,13 +590,6 @@ specification: Semantic Authoring Markdown (SAM)
                 In the subject domain, the annotation type refers to the type of the subject being referred to and the specifically attribute clarifies the intended subject if required. For example `{the Duke}(actor "John Wayne").
 
                 The key to using the annotation attributes correctly is simply to make sure that the attribute names apply in a reasonable fashion to the values they contain. If they don't, a different markup strategy should be used. 
-
-                The semantics of management attribute annotations are as follows:
-
-                * {condition}(attribute) determines if the {phrase} will be included in the output or not.
-                * {Name}(attribute), assigns a {name} to the {phrase} so it can be referred to elsewhere.
-                * {id}(attribute), assigns an {ID} to the {phrase} so it can be referred to elsewhere.
-                * {language}(attribute), specifies the language in which the phrase is written. 
 
             serialization:
 
@@ -740,7 +752,7 @@ specification: Semantic Authoring Markdown (SAM)
                 resource in parentheses:
 
                 ```(sam)
-                    My favorite flavor of ice cream is >($favorite-flavor).
+                    My favorite flavor of ice cream is >[$favorite-flavor].
 
 
                 The resource to be inserted may be identified either by type and URL as in the block example above or by
@@ -751,7 +763,7 @@ specification: Semantic Authoring Markdown (SAM)
                 the introduction to the deluxe version of a product, you could do this:
 
                 ```(sam)
-                    >>>(~deluxe-intro)(?model=deluxe)
+                    >>>[~deluxe-intro](?model=deluxe)
 
                 Remember that it is up to the application layer to implement such inserts.
 
@@ -836,9 +848,9 @@ specification: Semantic Authoring Markdown (SAM)
                 The string can then be inserted using a {block insert} or {inline insert}:
 
                 ```(sam)
-                    The sentence includes and string insert >($foo).
+                    The sentence includes and string insert >[$foo].
 
-                    >>>($foo)
+                    >>>[$foo])
 
 
 
@@ -887,17 +899,17 @@ specification: Semantic Authoring Markdown (SAM)
                 ```(sam) 
                     ~~~(#my-fragment) 
                         $color=black 
-                        Bar bar >>($color) sheep Have you any wool? 
+                        Bar bar >[$color] sheep Have you any wool? 
 
                 To insert a fragment: 
 
                 ```(sam) 
-                    >>>(~my-fragment)
+                    >>>[~my-fragment]
                 
                 Any strings defined within a fragment are scoped to that fragment (per normal {string} scoping rules. You can override these strings when you insert the fragment. In fact, you can override any in-scope strings in a fragment insert. String definitions must each be on a line by themselves. 
 
                 ```(sam)
-                    >>>(~my-fragment)
+                    >>>[~my-fragment]
                         $color=white
 
             semantics:
@@ -1287,7 +1299,7 @@ specification: Semantic Authoring Markdown (SAM)
             semantics:
                 A grid is nothing more than a two dimensional grid of cells. If you want any more complex representation of a table, you need to find a different way to mark it up. 
 
-                Note that SAM is primarily intended for creating {subject domain} languages and as such it does not provide native support for complex tables, which are document domain objects. {Record sets} are the SAM-like way to represent real record data. To create document domain tables in SAM, you would need to create a table markup using {blocks} and {fields}. Another alternative would be to use {embedded XML}.
+                Note that SAM is primarily intended for creating {subject domain} languages and as such it does not provide native support for complex tables, which are document domain objects. {Record sets} are the SAM-like way to represent real record data. To create document domain tables in SAM, you would need to create a table markup using {blocks} and {fields}. Another alternative would be to use {embedded}(feature "embedded markup) XML".
 
             serialization:
                 Grids are serialized as follows: 

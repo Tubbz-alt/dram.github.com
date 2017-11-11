@@ -38,13 +38,16 @@ block_patterns = {
                 re_indent + r'(?P<flag>!!!)(' + re_attributes + ')?\s*(?P<unexpected>.*)',
                 re.U),
             'declaration': re.compile(re_indent + '!' + re_name + r'(?<!\\):' + re_content + r'?', re.U),
-            'block-start': re.compile(re_indent + re_name + r'(?<!\\):' + re_attributes + '\s' + re_content + r'?', re.U),
+            'block-start': re.compile(re_indent + re_name + r'(?<!\\):' + re_attributes + '((\s' + re_content + r'?)|$)', re.U),
             'codeblock-start': re.compile(
                 re_indent + r'(?P<flag>```)(' + re_attributes + ')?\s*(?P<unexpected>.*)',
                 re.U),
             'grid-start': re.compile(re_indent + r'\+\+\+' + re_attributes, re.U),
             'blockquote-start': re.compile(
-                re_indent + r'("""|\'\'\')(' + re_remainder + r')?',
+                re_indent + r'"""(' + re_remainder + r')?',
+                re.U),
+            'alt-blockquote-start': re.compile(
+                re_indent + r"'''(" + re_remainder + r')?',
                 re.U),
             'fragment-start': re.compile(re_indent + r'~~~' + re_attributes, re.U),
             'paragraph-start': re.compile(r'\w*', re.U),
@@ -54,21 +57,14 @@ block_patterns = {
             'list-item': re.compile(re_indent + re_ul_marker + re_attributes + re_spaces + re_content, re.U),
             'num-list-item': re.compile(re_indent + re_ol_marker + re_attributes + re_spaces + re_content, re.U),
             'labeled-list-item': re.compile(re_indent + re_ll_marker + re_attributes + re_spaces + re_content, re.U),
-            'block-insert': re.compile(re_indent + r'>>>(?P<insert>\((.*?(?<!\\))\))(' + re_attributes + ')?\s*(?P<unexpected>.*)', re.U),
+            'block-insert': re.compile(re_indent + r'>>>((\((?P<insert>.+?)\))|(\[(?P<ref>.*?(?<!\\))\]))(' + re_attributes + ')?\s*(?P<unexpected>.*)', re.U),
             'include': re.compile(re_indent + r'<<<' + re_attributes, re.U),
             'string-def': re.compile(re_indent + r'\$' + re_name + '\s*=\s*' + re_content, re.U)
         }
 
-# Flow regex component expressions
-re_single_quote_close = '(?<=[\w\.\,\"\)}\?-])\'((?=[\.\s"},\?!:;\[])|$)'
-re_single_quote_open = '(^|(?<=[\s\"{]))\'(?=[\w"{-])'
-re_double_quote_close = '(?<=[\w\.\,\'\)\}\?-])\"((?=[\.\s\'\)},\?!:;\[-])|$)'
-re_double_quote_open = '(^|(?<=[\s\'{\(]))"(?=[\w\'{-])'
-re_apostrophe = "(?<=[\w`\*_\}\)])'(?=\w)"
-re_en_dash = "(?<=[\w\*_`\"\'\.\)\}]\s)--(?=\s[\w\*_`\"\'\{\(])"
-re_em_dash = "(?<=[\w\*_`\"\'\.\)\}])---(?=[\w\*_`\"\'\{\(])"
 
 
+# Flow patterns
 flow_patterns = {
             'escape': re.compile(r'\\', re.U),
             'phrase': re.compile(r'(?<!\\)\{(?P<text>.*?)(?<!\\)\}'),
@@ -94,26 +90,30 @@ flow_patterns = {
             'bold': re.compile(r'\*(?P<text>((?<=\\)\*|[^\*])*)(?<!\\)\*', re.U),
             'italic': re.compile(r'_(?P<text>((?<=\\)_|[^_])*)(?<!\\)_', re.U),
             'code': re.compile(r'`(?P<text>(``|[^`])*)`', re.U),
-            'apostrophe': re.compile(re_apostrophe, re.U),
-            'single_quote_close': re.compile(re_single_quote_close, re.U),
-            'single_quote_open': re.compile(re_single_quote_open, re.U),
-            'double_quote_close': re.compile(re_double_quote_close, re.U),
-            'double_quote_open': re.compile(re_double_quote_open, re.U),
-            'inline-insert': re.compile(r'>(?P<insert>\((.*?(?<!\\))\))' + re_attributes, re.U),
-            'en-dash': re.compile(re_en_dash, re.U),
-            'em-dash': re.compile(re_em_dash, re.U),
+            'inline-insert': re.compile(r'>((\((?P<insert>.+?)\))|(\[(?P<ref>.*?(?<!\\))\]))' + re_attributes, re.U),
             'citation': re.compile(
                 r'((\[\s*\*(?P<id>\S+?)(\s+(?P<id_extra>.+?))?\])|(\[\s*\%(?P<key>\S+?)(\s+(?P<key_extra>.+?))?\])|(\[\s*\#(?P<name>\S+?)(\s+(?P<name_extra>.+?))?\])|(\[\s*(?P<citation>.*?)\]))',
                 re.U)
         }
 
-smart_quote_subs = {re_double_quote_close:'”',
-                    re_double_quote_open: '“',
-                    re_single_quote_close:'’',
-                    re_single_quote_open: '‘',
-                    re_apostrophe: '’',
-                    re_en_dash: '–',
-                    re_em_dash: '—'}
+#smart quote patterns
+re_single_quote_close = '(?<=[\w\.\,\"\)}\?-])\'((?=[\.\s"},\?!:;\[])|$)'
+re_single_quote_open = '(^|(?<=[\s\"{]))\'(?=[\w"{-])'
+re_double_quote_close = '(?<=[\w\.\,\'\)\}\?-])\"((?=[\.\s\'\)},\?!:;\[-])|$)'
+re_double_quote_open = '(^|(?<=[\s\'{\(]))"(?=[\w\'{-])'
+re_apostrophe = "(?<=[\w`\*_\}\)])'(?=\w)"
+re_en_dash = "(?<=[\w\*_`\"\'\.\)\}]\s)--(?=\s[\w\*_`\"\'\{\(])"
+re_em_dash = "(?<=[\w\*_`\"\'\.\)\}])---(?=[\w\*_`\"\'\{\(])"
+
+smart_quote_subs = {re.compile(re_double_quote_close):'”',
+                    re.compile(re_double_quote_open): '“',
+                    re.compile(re_single_quote_close):'’',
+                    re.compile(re_single_quote_open): '‘',
+                    re.compile(re_apostrophe): '’',
+                    re.compile(re_en_dash): '–',
+                    re.compile(re_em_dash): '—'}
+
+smart_quote_sets = {'on': smart_quote_subs}
 
 included_files = []
 
@@ -147,7 +147,7 @@ class SamParser:
         self.doc = None
         self.source = None
         self.sourceurl = None
-        self.smart_quotes = False
+        self.flow_parser = FlowParser()
 
 
     def parse(self, source):
@@ -173,8 +173,8 @@ class SamParser:
         indent = match.end("indent")
         block_name = match.group("name").strip()
         attributes, citations = parse_attributes(match.group("attributes"))
-        content = match.group("content").strip()
-        parsed_content = None if content == '' else flow_parser.parse(content, self.doc)
+        content = match.group("content")
+        parsed_content = None if content is None else self.flow_parser.parse(content.strip(), self.doc)
         b = Block(block_name, indent, attributes, parsed_content, citations)
         self.doc.add_block(b)
         return "SAM", context
@@ -262,7 +262,7 @@ class SamParser:
         try:
             line = source.next_line
         except EOFError:
-            f = flow_parser.parse(self.current_text_block.text, self.doc)
+            f = self.flow_parser.parse(self.current_text_block.text, self.doc)
             self.current_text_block = None
             self.doc.add_flow(f)
             return "END", context
@@ -272,13 +272,13 @@ class SamParser:
         this_line_indent = len(line) - len(line.lstrip())
 
         if block_patterns['blank-line'].match(line):
-            f = flow_parser.parse(self.current_text_block.text, self.doc)
+            f = self.flow_parser.parse(self.current_text_block.text, self.doc)
             self.current_text_block = None
             self.doc.add_flow(f)
             return "SAM", context
 
         if this_line_indent < para_indent:
-            f = flow_parser.parse(self.current_text_block.text, self.doc)
+            f = self.flow_parser.parse(self.current_text_block.text, self.doc)
             self.current_text_block = None
             self.doc.add_flow(f)
             source.return_line()
@@ -287,7 +287,7 @@ class SamParser:
         if self.doc.in_context(['p', 'li']):
             if block_patterns['list-item'].match(line) or block_patterns['num-list-item'].match(line) or block_patterns[
                 'labeled-list-item'].match(line):
-                f = flow_parser.parse(self.current_text_block.text, self.doc)
+                f = self.flow_parser.parse(self.current_text_block.text, self.doc)
                 self.current_text_block = None
                 self.doc.add_flow(f)
                 source.return_line()
@@ -327,7 +327,7 @@ class SamParser:
         label = match.group("label")
         content_start = match.start("content")
         attributes, citations = parse_attributes(match.group("attributes"))
-        lli = LabeledListItem(indent, flow_parser.parse(label, self.doc), attributes, citations)
+        lli = LabeledListItem(indent, self.flow_parser.parse(label, self.doc), attributes, citations)
         self.doc.add_block(lli)
         p = Paragraph(content_start)
         self.doc.add_block(p)
@@ -339,9 +339,12 @@ class SamParser:
         if match.group("unexpected"):
             raise SAMParserError("Unexpected characters in block insert. Found: " + match.group("unexpected"))
         indent = match.end("indent")
-        attributes, citations = parse_attributes(match.group("attributes"), flagged="*#?")
-        type, item = parse_insert(match.group("insert"))
-        b = BlockInsert(indent, type, item, attributes, citations)
+        if match.group("attributes"):
+            attributes, citations = parse_attributes(match.group("attributes"), flagged="*#?")
+        else:
+            attributes, citations = [],[]
+        type, ref, item = parse_insert(match.group("insert"), match.group("ref"))
+        b = BlockInsert(indent, type, ref, item, attributes, citations)
         self.doc.add_block(b)
         return "SAM", context
 
@@ -391,7 +394,7 @@ class SamParser:
     def _string_def(self, context):
         source, match = context
         indent = match.end("indent")
-        s = StringDef(match.group('name'), flow_parser.parse(match.group('content'), self.doc), indent=indent)
+        s = StringDef(match.group('name'), self.flow_parser.parse(match.group('content'), self.doc), indent=indent)
         self.doc.add_block(s)
         return "SAM", context
 
@@ -400,7 +403,7 @@ class SamParser:
         indent = match.end("indent")
         attributes, citations = parse_attributes(match.group("attributes"))
         b=Line(indent, attributes,
-               flow_parser.parse(match.group('content'), self.doc, strip=False), citations)
+               self.flow_parser.parse(match.group('content'), self.doc, strip=False), citations)
         self.doc.add_block(b)
         return "SAM", context
 
@@ -429,7 +432,7 @@ class SamParser:
             return "SAM", context
         else:
             #FIXME: splitting field values belongs to record object
-            field_values = [flow_parser.parse(x.strip(), self.doc) for x in re.split(r'(?<!\\),', line)]
+            field_values = [self.flow_parser.parse(x.strip(), self.doc) for x in re.split(r'(?<!\\),', line)]
             r = Record(field_values, indent)
             self.doc.add_block(r)
 
@@ -467,7 +470,7 @@ class SamParser:
                 b = Cell(indent)
                 self.doc.add_block(b)
 
-                self.doc.add_flow(flow_parser.parse(content, self.doc))
+                self.doc.add_flow(self.flow_parser.parse(content, self.doc))
             # Test for consistency with previous rows?
 
             return "GRID", context
@@ -487,8 +490,10 @@ class SamParser:
                 raise SAMParserStructureError("Declarations must come before all other content.")
             if name == 'namespace':
                 self.doc.default_namespace = content
-            if name == 'annotation-lookup':
+            elif name == 'annotation-lookup':
                 self.doc.annotation_lookup = content
+            elif name == 'smart-quotes':
+                self.flow_parser.smart_quotes = content
             else:
                 raise SAMParserStructureError("Unknown declaration.")
 
@@ -518,6 +523,10 @@ class SamParser:
             return "CODEBLOCK-START", (source, match)
 
         match = block_patterns['blockquote-start'].match(line)
+        if match is not None:
+            return "BLOCKQUOTE-START", (source, match)
+
+        match = block_patterns['alt-blockquote-start'].match(line)
         if match is not None:
             return "BLOCKQUOTE-START", (source, match)
 
@@ -573,7 +582,7 @@ class SamParser:
 
 
 class Block(ABC):
-    def __init__(self, name, indent, attributes=None, content=None, citations=None, namespace=None):
+    def __init__(self, name, indent, attributes=[], content=None, citations=[], namespace=None):
 
         # Test for a valid block name. Must be valid XML name.
         try:
@@ -705,9 +714,10 @@ class Block(ABC):
 
 
 class BlockInsert(Block):
-    def __init__(self, indent, type, item, attributes=None, citations=None, namespace=None):
+    def __init__(self, indent, insert_type, ref_type, item, attributes=None, citations=None, namespace=None):
         super().__init__(name='insert', indent=indent, attributes=attributes, citations=citations, namespace=namespace)
-        self.type =type
+        self.insert_type = insert_type
+        self.ref_type =ref_type
         self.item = item
 
     def __str__(self):
@@ -715,18 +725,26 @@ class BlockInsert(Block):
 
     def regurgitate(self):
         yield " " * int(self.indent)
-        type_symbol = Attribute.attribute_symbols.get(self.type)
-        if type_symbol:
-            yield '>>>({0}{1})'.format(type_symbol, self.item)
+        if self.ref_type:
+            ref_symbol = Attribute.attribute_symbols.get(self.ref_type)
+            yield '>>>[{0}{1}]'.format(ref_symbol, self.item)
         else:
-            yield '>>>({0} {1})'.format(self.type, self.item)
+            yield '>>>({0} {1})'.format(self.insert_type, self.item)
         for x in self.attributes:
             yield from x.regurgitate()
-        yield '\n\n'
+        yield '\n'
+        for c in self.children:
+            yield from c.regurgitate()
+        yield '\n'
+
+
 
     def serialize_xml(self):
 
-        attrs=[Attribute('type', self.type), Attribute('item', self.item)]
+        if self.ref_type:
+            attrs = [Attribute(self.ref_type, self.item)]
+        else:
+            attrs=[Attribute('type', self.insert_type), Attribute('item', self.item)]
 
         yield '<insert'
         if self.attributes:
@@ -1024,11 +1042,10 @@ class RecordSet(Block):
 
 class Record(Block):
     def __init__(self, field_values, indent, namespace=None):
-        self.name='record'
+        super().__init__(name='record', indent=indent, attributes=[],  citations=[], namespace=namespace)
         self.field_values = field_values
-        self.content = None
-        self.namespace = namespace
-        self.indent = indent
+
+
 
     def __str__(self):
         return
@@ -1242,16 +1259,20 @@ class Paragraph(Block):
         elif self.parent is None:
             for x in self.children:
                 yield from x.regurgitate()
-            yield "\n"
+            yield "\n\n"
         elif self.parent.children.index(self) == 0:
             for x in self.children:
                 yield from x.regurgitate()
-            yield "\n"
+            yield "\n\n"
         else:
-            yield " " * int(self.indent)
+            parent_indent = self.parent.indent
+            parent_leader = len(str(self.parent.parent.children.index(self.parent)+1))+2
+
+
+            yield " " * (parent_indent + parent_leader)
             for x in self.children:
                 yield from x.regurgitate()
-            yield "\n"
+            yield "\n\n"
 
 
     def _add_child(self, b):
@@ -1386,6 +1407,26 @@ class UnparsedTextBlock:
         return " ".join(x.strip() for x in self.lines)
 
 
+block_pattern_replacements = {
+    'comment': '#',
+    'remark-start': '!',
+    'declaration': '!',
+    'block-start': ':',
+    'codeblock-start': '`',
+    'grid-start': '+',
+    'blockquote-start': '"',
+    'alt-blockquote-start': "'",
+    'fragment-start': '~',
+    'line-start': '|',
+    'record-start': ':',
+    'num-list-item': '.',
+    'labeled-list-item': '|',
+    'block-insert': '>',
+    'include': '<',
+    'string-def': '$'
+}
+
+
 class Flow(list):
     def __str__(self):
         return ''.join(self.regurgitate())
@@ -1396,9 +1437,16 @@ class Flow(list):
             if hasattr(x, 'regurgitate'):
                 yield from x.regurgitate()
             elif i == 0:
-                match = block_patterns['block-start'].match(x)
-                if match is not None:
-                    yield escape_for_sam(x).replace(':', '\\:')
+                # if block_patterns['block-start'].match(x) is not None:
+                #     yield escape_for_sam(x).replace(':', '\\:', 1)
+                # elif block_patterns['num-list-item'].match(x) is not None:
+                #     yield escape_for_sam(x).replace('.', '\\.', 1)
+                # Don't need to do this for bulleted list items as escape_for_sam takes care of them
+
+                for key, value in block_pattern_replacements.items():
+                    if block_patterns[key].match(x) is not None:
+                        yield escape_for_sam(x).replace(value, '\\'+value, 1)
+                        break
                 else:
                     yield escape_for_sam(x)
             else:
@@ -1436,17 +1484,6 @@ class Flow(list):
             return annotation_lookup_modes[mode](self, text)
         except KeyError:
             raise SAMParserError("Unknown annotation lookup mode: " + mode)
-        # if mode=='case insensitive':
-        #     for i in reversed(self):
-        #         if type(i) is Phrase:
-        #             if [x for x in i.annotations if not x.local] and i.text.lower() == text.lower():
-        #                 return [x for x in i.annotations if not x.local]
-        # else:
-        #     for i in reversed(self):
-        #         if type(i) is Phrase:
-        #             if [x for x in i.annotations if not x.local] and i.text == text:
-        #                 return [x for x in i.annotations if not x.local]
-        # return None
 
     def serialize_xml(self):
         for x in self:
@@ -1455,12 +1492,17 @@ class Flow(list):
             except AttributeError:
                 yield escape_for_xml(x)
 
+# Annotation lookup modes. Third parties can add additional lookup modes
+# by extending the annotation_lookup_modes dictionary with new annotation
+# matching algorithms.
+
 def _annotation_lookup_case_sensitive(flow, text):
     for i in reversed(flow):
         if type(i) is Phrase:
             if [x for x in i.annotations if not x.local] and i.text == text:
                 return [x for x in i.annotations if not x.local]
     return None
+
 
 def _annotation_lookup_case_insensitive(flow, text):
     for i in reversed(flow):
@@ -1470,7 +1512,14 @@ def _annotation_lookup_case_insensitive(flow, text):
     return None
 
 
+def _annotation_lookup_off(flow, text):
+    return None
+
+
+
 annotation_lookup_modes = {
+    'on': _annotation_lookup_case_insensitive,
+    'off': _annotation_lookup_off,
     'case sensitive': _annotation_lookup_case_sensitive,
     'case insensitive': _annotation_lookup_case_insensitive
 }
@@ -1648,14 +1697,10 @@ class DocStructure:
         """
 
         # ID check
-        try:
-
-            if 'id' in block.attributes:
-                if block.attributes['id'] in self.ids:
-                    raise SAMParserStructureError('Duplicate ID found "{0}".'.format(block.attributes['id']))
-                self.ids.append(block.attributes['id'])
-        except (TypeError, AttributeError):
-            pass
+        for i in [x.value for x in block.attributes if x.type == 'id']:
+            if i in self.ids:
+                raise SAMParserStructureError('Duplicate ID found "{0}".'.format(i))
+            self.ids.append(i)
 
         # Check IDs from included files
         try:
@@ -1743,12 +1788,9 @@ class DocStructure:
 
 class Include(Block):
     def __init__(self, doc, content, href, indent):
+        super().__init__(name="include", indent=indent, attributes=[],  content = content, namespace=None)
         self.children=doc.root.children
-        self.indent = indent
-        self.namespace = None
         self.ids = doc.ids
-        self.name = "<<<"
-        self.content = content
         self.href= href
 
     def __str__(self):
@@ -1803,8 +1845,8 @@ class FlowParser:
         self.flow_source = None
         self.current_string = None
         self.flow = None
-        self.smart_quotes = False
 
+        self.smart_quotes = 'off'
         self.stateMachine = StateMachine()
         self.stateMachine.add_state("PARA", self._para)
         self.stateMachine.add_state("ESCAPE", self._escape)
@@ -1816,9 +1858,6 @@ class FlowParser:
         self.stateMachine.add_state("BOLD-START", self._bold_start)
         self.stateMachine.add_state("ITALIC-START", self._italic_start)
         self.stateMachine.add_state("CODE-START", self._code_start)
-        self.stateMachine.add_state("DOUBLE_QUOTE", self._double_quote)
-        self.stateMachine.add_state("SINGLE_QUOTE", self._single_quote)
-        self.stateMachine.add_state("DASH-START", self._dash_start)
         self.stateMachine.add_state("INLINE-INSERT", self._inline_insert)
         self.stateMachine.add_state("CHARACTER-ENTITY", self._character_entity)
         self.stateMachine.set_start("PARA")
@@ -1853,17 +1892,23 @@ class FlowParser:
             return "ITALIC-START", para
         elif char == "`":
             return "CODE-START", para
-        elif char == '"':
-            return "DOUBLE_QUOTE", para
-        elif char == "'":
-            return "SINGLE_QUOTE", para
         elif char == ">":
             return "INLINE-INSERT", para
         elif char == "&":
             return "CHARACTER-ENTITY", para
-        elif char == "-":
-            return "DASH-START", para
         else:
+            if self.smart_quotes != 'off':
+                try:
+                    for r, sub in smart_quote_sets[self.smart_quotes].items():
+                        match = r.match(para.para, para.currentCharNumber)
+                        if match is not None:
+                            self.current_string += sub
+                            if len(match.group(0)) > 1:
+                                para.advance(len(match.group(0)) - 1)
+                            return "PARA", para
+                except KeyError:
+                    raise SAMParserError("Unknown smart quotes set specified: {0}".format(self.smart_quotes))
+
             self.current_string += char
             return "PARA", para
 
@@ -1873,8 +1918,8 @@ class FlowParser:
             self.flow.append(self.current_string)
             self.current_string = ''
             text = unescape(match.group("text"))
-            if self.smart_quotes:
-                text = multi_replace(text, smart_quote_subs)
+            if self.smart_quotes != 'off':
+                text = multi_replace(text, smart_quote_sets[self.smart_quotes])
             p = Phrase(text)
             self.flow.append(p)
             para.advance(len(match.group(0)))
@@ -1884,30 +1929,33 @@ class FlowParser:
             elif flow_patterns['citation'].match(para.rest_of_para):
                 return "CITATION-START", para
             else:
-                # If there is an annotated phrase with no annotation, look back
+                # If there is an phrase with no annotation, look back
                 # to see if it has been annotated already, and if so, copy the
                 # closest preceding annotation.
                 # First look back in the current flow
                 # (which is not part of the doc structure yet).
-                previous = self.flow.find_last_annotation(text, self.doc.annotation_lookup)
-                if previous is not None:
-                    p.annotations.extend(previous)
-                else:
-                    # Then look back in the document.
-                    previous = self.doc.find_last_annotation(text)
-                    if previous is not None:
-                        p.annotations.extend(previous)
-
-                    # Else output a warning.
-                    else:
-                        SAM_parser_warning(
-                            "Unannotated phrase found: {" +
-                            text + "} " +
-                            "If you are trying to insert curly braces " +
-                            "into the document, use \{" + text + "}."
-                        )
+                # previous = self.flow.find_last_annotation(text, self.doc.annotation_lookup)
+                # if previous is not None:
+                #     pa = [x.type for x in p.annotations]
+                #     for a in previous:
+                #         if not a.type in pa:
+                #             p.annotations.append(a)
+                # else:
+                #     # Then look back in the document.
+                #     previous = self.doc.find_last_annotation(text)
+                #     if previous is not None:
+                #         p.annotations.extend(previous)
+                #
+                #     # Else output a warning.
+                #     else:
+                #         SAM_parser_warning(
+                #             "Unannotated phrase found: {" +
+                #             text + "} " +
+                #             "If you are trying to insert curly braces " +
+                #             "into the document, use \{" + text + "}."
+                #         )
                 para.retreat(1)
-                return "PARA", para
+                return "PHRASE-END", para
         else:
             self.current_string += '{'
             return "PARA", para
@@ -1921,22 +1969,20 @@ class FlowParser:
             # First look back in the current flow
             # (which is not part of the doc structure yet).
             previous = self.flow.find_last_annotation(phrase.text, self.doc.annotation_lookup)
-            if previous is not None:
-                phrase.annotations.extend(previous)
-            else:
-                # Then look back in the document.
+            if previous is None:
                 previous = self.doc.find_last_annotation(phrase.text)
-                if previous is not None:
-                    phrase.annotations.extend(previous)
-
-                # Else output a warning.
-                else:
-                    SAM_parser_warning(
-                        "Unannotated phrase found: {" +
-                        phrase.text + "} " +
-                        "If you are trying to insert curly braces " +
-                        "into the document, use \{" + phrase.text + "}."
-                    )
+            if previous is not None:
+                for a in previous:
+                    if a not in phrase.annotations:
+                        phrase.annotations.append(a)
+            # Else output a warning.
+            else:
+                SAM_parser_warning(
+                    "Unannotated phrase found: {" +
+                    phrase.text + "} " +
+                    "If you are trying to insert curly braces " +
+                    "into the document, use \{" + phrase.text + "}."
+                )
 
         return "PARA", para
 
@@ -2099,68 +2145,18 @@ class FlowParser:
             para.retreat(1)
             return "PARA", para
 
-    def _dash_start(self, para):
-        if self.smart_quotes:
-            if flow_patterns['en-dash'].search(para.para, para.currentCharNumber,
-                                                          para.currentCharNumber + 5):
-                self.current_string += '–'
-                self.flow_source.advance(1)
-
-            elif flow_patterns['em-dash'].search(para.para, para.currentCharNumber,
-                                                           para.currentCharNumber + 5):
-                self.current_string += '—'
-                self.flow_source.advance(2)
-            else:
-                self.current_string += '-'
-        else:
-            self.current_string += '-'
-        return "PARA", para
-
-    def _double_quote(self, para):
-        if self.smart_quotes:
-            if flow_patterns['double_quote_close'].search(para.para, para.currentCharNumber,
-                                                          para.currentCharNumber + 2):
-                self.current_string += '”'
-            elif flow_patterns['double_quote_open'].search(para.para, para.currentCharNumber,
-                                                           para.currentCharNumber + 2):
-                self.current_string += '“'
-            else:
-                self.current_string += '"'
-                SAM_parser_warning(
-                    'Detected straight double quote that was not recognized by smart quote rules in: "' + para.para + '" at position ' + str(
-                        para.currentCharNumber))
-        else:
-            self.current_string += '"'
-        return "PARA", para
-
-    def _single_quote(self, para):
-        if self.smart_quotes:
-            if flow_patterns['single_quote_close'].search(para.para, para.currentCharNumber,
-                                                          para.currentCharNumber + 2):
-                self.current_string += '’'
-            elif flow_patterns['single_quote_open'].search(para.para, para.currentCharNumber,
-                                                           para.currentCharNumber + 2):
-                self.current_string += '‘'
-            elif flow_patterns['apostrophe'].search(para.para, para.currentCharNumber, para.currentCharNumber + 2):
-                self.current_string += '’'
-            else:
-                self.current_string += "'"
-                SAM_parser_warning(
-                    'Detected straight single quote that was not recognized by smart quote rules in: "' + para.para + '" at position ' + str(
-                        para.currentCharNumber))
-        else:
-            self.current_string += "'"
-        return "PARA", para
-
     def _inline_insert(self, para):
         match = flow_patterns['inline-insert'].match(para.rest_of_para)
         if match:
             self.flow.append(self.current_string)
             self.current_string = ''
-            attributes, citations = parse_attributes(match.group("attributes"))
-            type, item =parse_insert(match.group("insert"))
+            if match.group("attributes"):
+                attributes, citations = parse_attributes(match.group("attributes"))
+            else:
+                attributes, citations = [],[]
+            type, ref, item =parse_insert(match.group("insert"), match.group("ref"))
 
-            self.flow.append(InlineInsert(type, item, attributes, citations))
+            self.flow.append(InlineInsert(type, ref, item, attributes, citations))
             para.advance(len(match.group(0)) - 1)
         else:
             self.current_string += '>'
@@ -2287,6 +2283,7 @@ class Code(Phrase):
     def append(self, thing):
         raise SAMParserStructureError("Inline code cannot have typed annotations.")
 
+
 class FlowSource:
     def __init__(self, para, strip=True):
         self.para = para.strip() if strip else para
@@ -2322,7 +2319,12 @@ class Attribute:
                          'attribution': '',
                          'type': '',
                          'item': '',
-                         'key': '%'}
+                         'key': '%',
+                         'nameref': '#',
+                         'idref': '*',
+                         'keyref': '%',
+                         'fragmentref': '~',
+                         'stringref': '$'}
 
     def __init__(self, type, value, local=False):
         self.type = type
@@ -2332,6 +2334,12 @@ class Attribute:
     def __str__(self):
         return ''.join(self.regurgitate())
 
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+    def __ne__(self, other):
+        return self.__dict__ != other.__dict__
+
     def regurgitate(self):
         yield '(%s%s)' % (Attribute.attribute_symbols[self.type], self.value)
 
@@ -2340,8 +2348,8 @@ class Attribute:
 
 
 class Annotation:
-    def __init__(self, annotation_type, specifically='', namespace='', local=False):
-        self.annotation_type = annotation_type.strip()
+    def __init__(self, type, specifically='', namespace='', local=False):
+        self.type = type.strip()
         self.specifically = specifically
         self.namespace = namespace
         self.local = local
@@ -2349,16 +2357,22 @@ class Annotation:
     def __str__(self):
         return ''.join(self.regurgitate())
 
+    def __eq__(self, other):
+        return [self.type, self.specifically, self.namespace] == [other.type, other.specifically, other.namespace]
+
+    def __ne__(self, other):
+        return [self.type, self.specifically, self.namespace] != [other.type, other.specifically, other.namespace]
+
     def regurgitate(self):
-        yield '({0}'.format(self.annotation_type)
+        yield '({0}'.format(self.type)
         yield (' "{0}"'.format(self.specifically.replace('"','\\"')) if self.specifically else '')
         yield (' ({0})'.format(self.namespace) if self.namespace else '')
         yield ')'
 
     def serialize_xml(self, annotations=None, payload=None):
         yield '<annotation'
-        if self.annotation_type:
-            yield ' type="{0}"'.format(self.annotation_type)
+        if self.type:
+            yield ' type="{0}"'.format(self.type)
         if self.specifically:
             yield ' specifically="{0}"'.format(escape_for_xml_attribute(self.specifically))
         if self.namespace:
@@ -2403,6 +2417,12 @@ class Citation:
             yield '*'
         elif self.citation_type == 'nameref':
             yield '#'
+        elif self.citation_type == 'keyref':
+            yield '%'
+        elif self.citation_type == 'fragmentref':
+            yield '~'
+        elif self.citation_type == 'stringref':
+            yield '$'
         else:
             yield '{0} '.format(self.citation_type)
         yield self.citation_value
@@ -2415,9 +2435,8 @@ class Citation:
 
     def serialize_xml(self, attrs=None, payload=None):
         yield '<citation'
-        if self.citation_extra is not None:
-            if self.citation_extra:
-                yield ' extra="{0}"'.format(escape_for_xml_attribute(self.citation_extra))
+        if self.citation_extra:
+            yield ' extra="{0}"'.format(escape_for_xml_attribute(self.citation_extra))
         yield ' {0}="{1}"'.format(self.citation_type, escape_for_xml_attribute(self.citation_value))
         #Nest attributes for serialization
         if attrs:
@@ -2441,8 +2460,9 @@ class Citation:
 
 
 class InlineInsert:
-    def __init__(self, type, item, attributes=None, citations=None):
-        self.type = type
+    def __init__(self, insert_type, ref_type, item, attributes=None, citations=None):
+        self.insert_type = insert_type
+        self.ref_type =ref_type
         self.item = item
         self.attributes = attributes
         self.citations = citations
@@ -2451,18 +2471,22 @@ class InlineInsert:
         return ''.join(self.regurgitate())
 
     def regurgitate(self):
-        type_symbol = Attribute.attribute_symbols.get(self.type)
-        if type_symbol:
-            yield '>({0}{1})'.format(type_symbol, self.item)
+        if self.ref_type:
+            ref_symbol = Attribute.attribute_symbols.get(self.ref_type)
+            yield '>[{0}{1}]'.format(ref_symbol, self.item)
         else:
-            yield '>({0} {1})'.format(self.type, self.item)
+            yield '>({0} {1})'.format(self.insert_type, self.item)
+
         for x in self.attributes:
             yield from x.regurgitate()
 
 
     def serialize_xml(self):
 
-        attrs=[Attribute('type', self.type), Attribute('item', self.item)]
+        if self.ref_type:
+            attrs = [Attribute(self.ref_type, self.item)]
+        else:
+            attrs=[Attribute('type', self.insert_type), Attribute('item', self.item)]
 
         yield '<inline-insert'
 
@@ -2499,9 +2523,6 @@ def parse_attributes(attributes_string, flagged="?#*!", unflagged=None):
     citations =[]
     attributes_list=[]
     citations_list=[]
-
-    re_att = re.compile(r"(\(.*?(?<!\\)\))")
-    re_cit = re.compile(r"(\[.*?(?<!\\)\])")
 
     re_all = re.compile(r'(\((?P<att>.*?(?<!\\))\))|(\[((?P<cit>.*?(?<!\\))\])|(?P<bad>.))')
 
@@ -2590,40 +2611,44 @@ def parse_attributes(attributes_string, flagged="?#*!", unflagged=None):
     return attributes, citations
 
 
-def parse_insert(annotation_string):
-    result = []
+def parse_insert(insert, ref):
+    insert_type = None
+    ref_type = None
+    item = None
 
-    insert_annotation = re.match(r'(\(.*?(?<!\\)\))', annotation_string)
-    attributes_list = insert_annotation.group(0)[1:-1].partition(' ')
-    insert_type = attributes_list[0]
-    if insert_type[0] == '$':
-        insert_item = insert_type[1:]
-        insert_type = 'string'
-    elif insert_type[0] == '*':
-        insert_item = insert_type[1:]
-        insert_type = 'id'
-    elif insert_type[0] == '#':
-        insert_item = insert_type[1:]
-        insert_type = 'name'
-    elif insert_type[0] == '~':
-        insert_item = insert_type[1:]
-        insert_type = 'fragment'
-    elif insert_type[0] == '%':
-        insert_item = insert_type[1:]
-        insert_type = 'key'
+    if insert:
+        insert_parts = insert.partition(' ')
+        insert_type = insert_parts[0]
+        item = insert_parts[2].strip()
+        # strip unnecessary quotes from insert item
+        item = re.sub(r'^(["\'])|(["\'])$', '', item)
+        if item == '':
+            raise SAMParserStructureError("Insert item not specified in: {0}".format(insert))
+    elif ref:
+        if ref[0] == '$':
+            item = ref[1:]
+            ref_type = 'stringref'
+        elif ref[0] == '*':
+            item = ref[1:]
+            ref_type = 'idref'
+        elif ref[0] == '#':
+            item = ref[1:]
+            ref_type = 'nameref'
+        elif ref[0] == '~':
+            item = ref[1:]
+            ref_type = 'fragmentref'
+        elif ref[0] == '%':
+            item = ref[1:]
+            ref_type = 'keyref'
     else:
-        insert_item = attributes_list[2].strip()
-    #result.append(Attribute('type', unescape(insert_type)))
-    # strip unnecessary quotes from insert item
-    insert_item = re.sub(r'^(["\'])|(["\'])$', '', insert_item)
-    if insert_item == '':
-        raise SAMParserStructureError ("Insert item not specified in: {0}".format(annotation_string))
-    #result.append(Attribute('item', unescape(insert_item)))
-    return insert_type, insert_item
+        raise SAMParserError("Unrecognized insert expression found.")
+
+
+    return insert_type, ref_type, item
 
 
 def escape_for_sam(s):
-    t = dict(zip([ord('['), ord('{'), ord('&'), ord('\\')], ['\\[', '\\{', '\\&', '\\\\']))
+    t = dict(zip([ord('['), ord('{'), ord('&'), ord('\\'), ord('*'), ord('_'), ord('`')], ['\\[', '\\{', '\\&', '\\\\', '\\*', '\\_', '\\`']))
     try:
         return s.translate(t)
     except AttributeError:
@@ -2645,8 +2670,7 @@ def escape_for_xml_attribute(s):
 
 
 def multi_replace(string, subs):
-    for pattern, sub in subs.items():
-        r = re.compile(pattern)
+    for r, sub in subs.items():
         string= r.sub(sub, string)
     return string
 
@@ -2697,8 +2721,6 @@ def replace_charref(match):
     return character
 
 
-flow_parser = FlowParser()
-
 if __name__ == "__main__":
 
     import glob
@@ -2713,70 +2735,93 @@ if __name__ == "__main__":
     intermediategroup = argparser.add_mutually_exclusive_group()
     intermediategroup.add_argument("-intermediatefile", "-i", help="name of file to dump intermediate XML to when using -xslt")
     intermediategroup.add_argument("-intermediatedir", "-id", help="name of directory to dump intermediate XML to when using -xslt")
-    argparser.add_argument("-smartquotes", "-q", help="turn on smart quotes processing",
-                           action="store_true")
     argparser.add_argument("-xsd", help="Specify an XSD schema to validate generated XML")
     argparser.add_argument("-outputextension", "-oext",  nargs='?', const='.xml', default='.xml')
     argparser.add_argument("-intermediateextension", "-iext",  nargs='?', const='.xml', default='.xml')
     argparser.add_argument("-regurgitate", "-r", help="regurgitate the input in normalized form",
                            action="store_true")
+    argparser.add_argument("-smartquotes", "-sq", help="the path to a file containing smartquote patterns and substitutions")
 
     args = argparser.parse_args()
     transformed = None
-
-    samParser = SamParser()
-
-    if args.smartquotes:
-        flow_parser.smart_quotes = True
-
-    if (args.intermediatefile or args.intermediatedir) and not args.xslt:
-        raise SAMParserError("Do not specify an intermediate file or directory if an XSLT file is not specified.")
-
-    if args.xslt and not (args.intermediatefile or args.intermediatedir):
-        raise SAMParserError("An intermediate file or directory must be specified if an XSLT file is specified.")
-
-    if args.infile == args.outfile:
-        raise SAMParserError('Input and output files cannot have the same name.')
-
     error_count = 0
-    for inputfile in glob.glob(args.infile):
-        try:
-            with open(inputfile, "r", encoding="utf-8-sig") as inf:
 
-                SAM_parser_info("Parsing " + os.path.abspath(inf.name))
-                samParser.parse(inf)
+    try:
 
-                if args.outdir:
-                    outputfile = os.path.join(args.outdir,
-                                              os.path.splitext(os.path.basename(inputfile))[0] + args.outputextension)
-                else:
-                    outputfile = args.outfile
+        samParser = SamParser()
 
-                if args.intermediatedir:
-                    intermediatefile=os.path.join(args.intermediatedir, os.path.splitext(os.path.basename(inputfile))[0] + args.intermediateextension)
-                else:
-                    intermediatefile=args.intermediatefile
+        if (args.intermediatefile or args.intermediatedir) and not args.xslt:
+            raise SAMParserError("Do not specify an intermediate file or directory if an XSLT file is not specified.")
+
+        if args.xslt and not (args.intermediatefile or args.intermediatedir):
+            raise SAMParserError("An intermediate file or directory must be specified if an XSLT file is specified.")
+
+        if args.infile == args.outfile:
+            raise SAMParserError('Input and output files cannot have the same name.')
+
+        if args.smartquotes:
+            with open(args.smartquotes,  encoding="utf8") as sqf:
+                try:
+                    substitution_sets = etree.parse(sqf)
+                except etree.XMLSyntaxError as e:
+                    raise SAMParserError("Smart quotes file {0} contains XML error {1}: " + str(e))
+
+                for x in substitution_sets.iterfind(".//subset"):
+                    subs = {}
+                    for y in x.iterfind("sub"):
+                        r= re.compile(y.find("pattern").text)
+                        subs.update({r: y.find("replace").text})
+                    smart_quote_sets.update({x.find("name").text: subs})
 
 
-                xml_string = "".join(samParser.serialize('xml')).encode('utf-8')
+        for inputfile in glob.glob(args.infile):
+            try:
+                with open(inputfile, "r", encoding="utf-8-sig") as inf:
+
+                    SAM_parser_info("Parsing " + os.path.abspath(inf.name))
+                    samParser.parse(inf)
+
+                    if args.outdir:
+                        outputfile = os.path.join(args.outdir,
+                                                  os.path.splitext(os.path.basename(inputfile))[0] + args.outputextension)
+                    else:
+                        outputfile = args.outfile
+
+                    if args.intermediatedir:
+                        intermediatefile=os.path.join(args.intermediatedir, os.path.splitext(os.path.basename(inputfile))[0] + args.intermediateextension)
+                    else:
+                        intermediatefile=args.intermediatefile
 
 
-                if intermediatefile:
-                    with open(intermediatefile, "wb") as intermediate:
-                        intermediate.write(xml_string)
+                    xml_string = "".join(samParser.serialize('xml')).encode('utf-8')
 
-                if args.xslt:
-                    try:
-                        transform = etree.XSLT(etree.parse(args.xslt))
-                    except FileNotFoundError as e:
-                        raise SAMParserError(e.strerror + ' ' + e.filename)
 
-                    xml_input = etree.parse(open(intermediatefile, 'r', encoding="utf-8-sig"))
-                    try:
-                        transformed = transform(xml_input)
-                    except etree.XSLTError as e:
-                        raise SAMParserError("XSLT processor reported error: " + str(e))
-                    finally:
+                    if intermediatefile:
+                        with open(intermediatefile, "wb") as intermediate:
+                            intermediate.write(xml_string)
+
+                    if args.xslt:
+                        try:
+                            transform = etree.XSLT(etree.parse(args.xslt))
+                        except FileNotFoundError as e:
+                            raise SAMParserError(e.strerror + ' ' + e.filename)
+
+                        xml_input = etree.parse(open(intermediatefile, 'r', encoding="utf-8-sig"))
+                        try:
+                            transformed = transform(xml_input)
+                        except etree.XSLTError as e:
+                            raise SAMParserError("XSLT processor reported error: " + str(e))
+                        finally:
+                            if transform.error_log:
+                                SAM_parser_warning("Messages from the XSLT transformation:")
+                                for entry in transform.error_log:
+                                    print('message from line %s, col %s: %s' % (
+                                        entry.line, entry.column, entry.message), file=sys.stderr)
+                                    print('domain: %s (%d)' % (entry.domain_name, entry.domain), file=sys.stderr)
+                                    print('type: %s (%d)' % (entry.type_name, entry.type), file=sys.stderr)
+                                    print('level: %s (%d)' % (entry.level_name, entry.level), file=sys.stderr)
+
+
                         if transform.error_log:
                             SAM_parser_warning("Messages from the XSLT transformation:")
                             for entry in transform.error_log:
@@ -2786,64 +2831,58 @@ if __name__ == "__main__":
                                 print('type: %s (%d)' % (entry.type_name, entry.type), file=sys.stderr)
                                 print('level: %s (%d)' % (entry.level_name, entry.level), file=sys.stderr)
 
-
-                    if transform.error_log:
-                        SAM_parser_warning("Messages from the XSLT transformation:")
-                        for entry in transform.error_log:
-                            print('message from line %s, col %s: %s' % (
-                                entry.line, entry.column, entry.message), file=sys.stderr)
-                            print('domain: %s (%d)' % (entry.domain_name, entry.domain), file=sys.stderr)
-                            print('type: %s (%d)' % (entry.type_name, entry.type), file=sys.stderr)
-                            print('level: %s (%d)' % (entry.level_name, entry.level), file=sys.stderr)
-
-                if outputfile:
-                    with open(outputfile, "wb") as outf:
+                    if outputfile:
+                        with open(outputfile, "wb") as outf:
+                            if args.regurgitate:
+                                for i in samParser.doc.regurgitate():
+                                    outf.write(i.encode('utf-8'))
+                            elif transformed:
+                                outf.write(str(transformed).encode(encoding='utf-8'))
+                            else:
+                                for i in samParser.serialize('xml'):
+                                    outf.write(i.encode('utf-8'))
+                    else:
                         if args.regurgitate:
                             for i in samParser.doc.regurgitate():
-                                outf.write(i.encode('utf-8'))
+                                sys.stdout.buffer.write(i.encode('utf-8'))
                         elif transformed:
-                            outf.write(str(transformed).encode(encoding='utf-8'))
+                            sys.stdout.buffer.write(transformed)
+
+
                         else:
                             for i in samParser.serialize('xml'):
-                                outf.write(i.encode('utf-8'))
-                else:
-                    if args.regurgitate:
-                        for i in samParser.doc.regurgitate():
-                            sys.stdout.buffer.write(i.encode('utf-8'))
-                    elif transformed:
-                        sys.stdout.buffer.write(transformed)
+                                sys.stdout.buffer.write(i.encode('utf-8'))
 
 
-                    else:
-                        for i in samParser.serialize('xml'):
-                            sys.stdout.buffer.write(i.encode('utf-8'))
-
-
-                if args.xsd:
-                    try:
-                        xmlschema = etree.XMLSchema(file=args.xsd)
-                    except etree.XMLSchemaParseError as e:
-                        print(e, file=sys.stderr)
-                        exit(1)
-                    SAM_parser_info("Validating output using " + args.xsd)
-                    xml_doc = etree.fromstring(xml_string)
-                    try:
-                        xmlschema.assertValid(xml_doc)
-                    except etree.DocumentInvalid as e:
-                        print('STRUCTURE ERROR: ' + str(e), file=sys.stderr)
-                        error_count += 1
-                    else:
-                        SAM_parser_info("Validation successful.")
+                    if args.xsd:
+                        try:
+                            xmlschema = etree.XMLSchema(file=args.xsd)
+                        except etree.XMLSchemaParseError as e:
+                            print(e, file=sys.stderr)
+                            exit(1)
+                        SAM_parser_info("Validating output using " + args.xsd)
+                        xml_doc = etree.fromstring(xml_string)
+                        try:
+                            xmlschema.assertValid(xml_doc)
+                        except etree.DocumentInvalid as e:
+                            print('STRUCTURE ERROR: ' + str(e), file=sys.stderr)
+                            error_count += 1
+                        else:
+                            SAM_parser_info("Validation successful.")
 
 
 
-        except FileNotFoundError:
-            raise SAMParserError("No input file specified.")
+            except FileNotFoundError:
+                raise SAMParserError("No input file specified.")
 
-        except SAMParserError as e:
-            sys.stderr.write('SAM parser ERROR: ' + str(e) + "\n")
-            error_count += 1
-            continue
+            except SAMParserError as e:
+                sys.stderr.write('SAM parser ERROR: ' + str(e) + "\n")
+                error_count += 1
+                continue
+
+    except SAMParserError as e:
+        sys.stderr.write('SAM parser ERROR: ' + str(e) + "\n")
+        error_count += 1
 
     print('Process completed with %d errors.' % error_count, file=sys.stderr)
     if error_count > 0:
