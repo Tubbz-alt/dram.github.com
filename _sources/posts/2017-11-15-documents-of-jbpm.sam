@@ -1,0 +1,7 @@
+article: jBPM文档
+
+	jBPM官网的{文档}(https://www.jbpm.org/learn/documentation.html)非常不成熟，组织凌乱。但红帽已经将jBPM产品化，所以在红帽官网可以找到更详尽的文档，见{这里}(https://access.redhat.com/documentation/en-us/red_hat_jboss_bpm_suite/)。
+
+	而实际上，在jBPM的文档页面也已经贴有红帽官方文档的链接，标题为“Red Hat subscription documentation”。
+
+	另外，从文档版本列表中可以看到，7系列还未列于其中，不确定是否是出于稳定性的考虑。

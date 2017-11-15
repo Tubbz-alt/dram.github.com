@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM 7在Tomcat中部署</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM 7在Tomcat中部署</h1><time>15 Nov 2017</time>
+
+<p>jBPM官方提供的<a href="https://www.jbpm.org/download/download.html">安装包</a>运行于整合其中的WildFly（JBoss的开源版本），如果想在Tomcat中部署，可以依以下步骤执行：</p>
+<ul>
+<li>
+<p>从Tomcat<a href="https://tomcat.apache.org/">官网</a>下载Tomcat 8压缩包；</p>
+</li>
+<li>
+<p>从JBoss仓库下载<a href="https://repository.jboss.org/nexus/content/repositories/releases/org/kie/server/kie-server/7.4.1.Final/kie-server-7.4.1.Final-webc.war">kie-server</a>和<a href="https://repository.jboss.org/nexus/content/repositories/releases/org/kie/kie-wb/7.4.1.Final/kie-wb-7.4.1.Final-tomcat8.war">kie-wb</a>适用于Tomcat的war包（链接版本为7.4.1.Final）；</p>
+</li>
+<li>
+<p>将war包解压到Tomcat的webapps目录；</p>
+</li>
+<li>
+<p>拷贝kie-server目录中的slf4j-api和slf4j-jdk14库，以及kie-wb目录中的h2库到Tomcat的lib目录；</p>
+</li>
+<li>
+<p>下载<a href="https://repository.jboss.org/nexus/content/repositories/releases/org/kie/kie-tomcat-integration/7.4.1.Final/kie-tomcat-integration-7.4.1.Final.jar">kie-tomcat-integration</a>和<a href="https://repository.jboss.org/nexus/content/repositories/central/javax/security/jacc/javax.security.jacc-api/1.5/javax.security.jacc-api-1.5.jar">jacc-api</a>并拷贝到Tomcat的lib目录；</p>
+</li>
+<li>
+<p>根据kie-server中的README调整Tomcat配置，包括创建用户、设置数据源、配置JACC以及设置环境变量；（最后一步XA Recovery不确定是否必须）</p>
+</li>
+<li>
+<p>根据kie-wb中的README追加环境变量设置。</p>
+</li>
+</ul>
+<p>以上配置使用的是H2内存数据库，如何对接其他数据库还需要进一步研究。另外，jBPM部分数据是使用git存储的，那数据库中具体存放哪些数据也需要再研究下。</p>
+<p>红帽官方JBoss RPM Suite 6.4的<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_bpm_suite/6.4/html-single/installation_guide/">安装文档</a>可以作为参考。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
