@@ -1,0 +1,7 @@
+article: 配置jBPM控制台默认语言
+
+	在登录jBPM控制台时，系统会根据浏览器的语言设置调整默认语言，但当前中文翻译质量并不理想，所以考虑默认使用英语。
+
+	JBoss BPM Suite 6.4文档中有提及语言的{配置}(https://access.redhat.com/documentation/en-us/red_hat_jboss_bpm_suite/6.4/html/administration_and_configuration_guide/chap_localization_and_customization#changing_language_settings)，但在jBPM 7中无效（不确定是不是Tomcat的问题）。而jBPM控制台是基于GWT实现，查看GWT{官方文档}(http://www.gwtproject.org/doc/latest/tutorial/i18n.html)，其中有提及几种配置方式，这里采用URL追加参数的机制。
+
+	具体方式是修改`kie-wb/index.jsp`代码，在`queryString`为空时追加`locale=en`参数。
