@@ -1,0 +1,58 @@
+article: jBPM 7 PostgreSQL配置
+
+	在jBPM的文档中，并没有详细说明如何在Tomcat环境中配置PostgreSQL，基于这几份文档（{一}(https://www.atomikos.com/Documentation/ConfiguringPostgreSQL)、{二}(https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuration_guide/datasource_management#example_postgresql_datasource)、{三}(https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuration_guide/datasource_management#example_postgresql_xa_datasource)、{四}(http://tomcat.apache.org/tomcat-8.5-doc/jndi-datasource-examples-howto.html)）以及H2的示例配置，整合出以下可用配置，作为备忘：
+
+	```
+		<Resource name="sharedDataSource"
+		    auth="Container"
+		    type="org.postgresql.xa.PGXADataSource"
+		    user="sa"
+		    password="sa"
+		    serverName="localhost"
+		    portNumber="5432"
+		    databaseName="kie"
+		    description="PostgreSQL Data Source"
+		    factory="org.postgresql.xa.PGXADataSourceFactory"/>
+
+	另外，需要下载PostgreSQL的JDBC{接口库}(https://repository.jboss.org/nexus/content/repositories/central/org/postgresql/postgresql/42.1.4/postgresql-42.1.4.jar)，存放到Tomcat的lib目录。
+
+	jBPM中对于数据存储，有好几种机制，例如数据库用于存储执行中的过程的动态数据，而静态的过程定义数据则使用Git存储。另外在jBPM界面中还可以配置数据源，具体怎么使用还需要研究。
+
+	以下是对应的PostgreSQL服务初始化脚本：
+
+	```
+		#!/bin/sh
+
+		HOST=localhost
+
+		export PGDATA="$(dirname "$(readlink -f "$0")")/data"
+
+		case $1 in
+		    init-cluster)
+		        pg_ctl init -o "--auth=password --pwprompt"
+		        cat >>"$PGDATA/postgresql.conf" <<EOF
+		listen_addresses = '$HOST'
+		logging_collector = on
+		max_prepared_transactions = 100
+		unix_socket_directories = '.'
+		EOF
+		        pg_ctl start
+		        ;;
+		    init-database)
+		        createdb -h $HOST kie
+		        createuser -h $HOST -P sa
+		        psql -h $HOST -c "GRANT ALL ON DATABASE kie TO sa" postgres
+		        ;;
+		    shell)
+		        psql -h $HOST postgres
+		        ;;
+		    start)
+		        pg_ctl start
+		        ;;
+		    stop)
+		        pg_ctl stop
+		        ;;
+		    *)
+		        echo "Unknown command"
+		        ;;
+		esac

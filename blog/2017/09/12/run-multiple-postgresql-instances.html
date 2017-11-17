@@ -13,6 +13,9 @@
 <li>
 <p>利用环境变量<code>PGDATA</code>和PostgreSQL配置文件，可以简化下面的脚本，详见<a href="/data/2017-10-09-postgresql-playground-service.sh">这里</a>。—— 2017-10-09</p>
 </li>
+<li>
+<p>为增加安全性，在调用<code>pg_ctl init</code>命令时，最好追加<code>-o "--auth=password --pwprompt"</code>参数以禁用本地用户未认证登录。—— 2017-11-17</p>
+</li>
 </ol>
 </section>
 <p>虽然众多RDBMS设计之初就是向着多数据库多用户的方向发展的（SQLite是一个例外），但并不是说不能各用户独立实例使用。例如KDE就可以使用MySQL存储用户数据。</p>
