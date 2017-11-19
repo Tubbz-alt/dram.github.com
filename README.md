@@ -1,6 +1,6 @@
 # Dram's Blog
 
-This directory contains data for my personal blog (http://dram.me/blog).
+This directory contains data for my personal blog (http://dram.me/).
 
 The design is based on following blogs. Thanks for their wonderful works.
 
