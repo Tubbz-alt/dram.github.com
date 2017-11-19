@@ -1,5 +1,9 @@
 article: jBPM 7在Tomcat中部署
 
+	topic: 补遗
+
+		1. 这样的部署模式下，jBPM的临时文件会比较散乱，部分会在当前工作目录生成，可以用简单的{脚本}(link "/data/2017-11-18-jbpm-tomcat-service.sh")封装。另外还可以设置`org.guvnor.m2repo.dir`和`jbpm.data.dir`这两个Java系统属性。—— 2017-11-18
+
 	jBPM官方提供的{安装包}(https://www.jbpm.org/download/download.html)运行于整合其中的WildFly（JBoss的开源版本），如果想在Tomcat中部署，可以依以下步骤执行：
 
 	* 从Tomcat{官网}(https://tomcat.apache.org/)下载Tomcat 8压缩包；

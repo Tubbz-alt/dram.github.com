@@ -1,5 +1,9 @@
 article: jBPM 7 PostgreSQL配置
 
+	topic: 补遗
+
+		1. 遗漏了一点，需要配置Java系统属性`hibernate.dialect`为`org.hibernate.dialect.PostgreSQLDialect`。—— 2017-11-18
+
 	在jBPM的文档中，并没有详细说明如何在Tomcat环境中配置PostgreSQL，基于这几份文档（{一}(https://www.atomikos.com/Documentation/ConfiguringPostgreSQL)、{二}(https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuration_guide/datasource_management#example_postgresql_datasource)、{三}(https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/configuration_guide/datasource_management#example_postgresql_xa_datasource)、{四}(http://tomcat.apache.org/tomcat-8.5-doc/jndi-datasource-examples-howto.html)）以及H2的示例配置，整合出以下可用配置，作为备忘：
 
 	```

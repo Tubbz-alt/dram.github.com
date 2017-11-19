@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM 7在Tomcat中部署</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM 7在Tomcat中部署</h1><time>15 Nov 2017</time>
 
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>这样的部署模式下，jBPM的临时文件会比较散乱，部分会在当前工作目录生成，可以用简单的<a href="/data/2017-11-18-jbpm-tomcat-service.sh">脚本</a>封装。另外还可以设置<code>org.guvnor.m2repo.dir</code>和<code>jbpm.data.dir</code>这两个Java系统属性。—— 2017-11-18</p>
+</li>
+</ol>
+</section>
 <p>jBPM官方提供的<a href="https://www.jbpm.org/download/download.html">安装包</a>运行于整合其中的WildFly（JBoss的开源版本），如果想在Tomcat中部署，可以依以下步骤执行：</p>
 <ul>
 <li>
