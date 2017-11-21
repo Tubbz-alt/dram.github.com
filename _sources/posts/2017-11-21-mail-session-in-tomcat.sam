@@ -1,0 +1,10 @@
+article: Tomcat的MailSession实现
+
+	Tomcat的MailSession基于JNDI接口实现。
+
+	在{ResourceFactory}(https://github.com/apache/tomcat/blob/TOMCAT_8_0_0/java/org/apache/naming/factory/ResourceFactory.java#L124)中定义了`javax.mail.Session`默认factory为{org.apache.naming.factory.MailSessionFactory}(https://github.com/apache/tomcat/blob/TOMCAT_8_0_0/java/org/apache/naming/factory/MailSessionFactory.java)。
+
+	在`MailSessionFactory`中会处理Resource的属性，特别是对认证的处理，最后将数据通过`javax.mail.Session`的`getInstance`方法传入{JavaMail}(https://javaee.github.io/javamail/)并生成会话。
+
+	另外，Tomcat中有一份简单的JavaMail{接口}(https://github.com/apache/tomcat/tree/TOMCAT_8_0_0/java/javax/mail)，并不包含实现。
+
