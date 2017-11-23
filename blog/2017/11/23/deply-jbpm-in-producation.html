@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM基于Tomcat的生产部署</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM基于Tomcat的生产部署</h1><time>23 Nov 2017</time>
+
+<section>
+<h2>Apache设置</h2>
+<p>首先确定<code>mod_ssl</code>和<code>mod_proxy_ajp</code>两个Apache模块已经安装，之后在<code>/etc/httpd/conf.d/ssl.conf</code>中的<code>VirtualHost</code>段添加：</p>
+<pre><code>ProxyPass /kie-wb ajp://127.0.0.1:8009/kie-wb</code></pre>
+</section>
+<section>
+<h2>Tomcat配置</h2>
+<p>生产环境主要包括以下配置：</p>
+<ol>
+<li>
+<p>服务本地监听：在<code>conf/server.xml</code>配置文件中8080和8009的Connecter添加<code>address="127.0.0.1"</code>；</p>
+</li>
+<li>
+<p>删除manager相关app：删除<code>webapps</code>目录下除去<code>kie-wb</code>和<code>kie-server</code>的所有目录；</p>
+</li>
+<li>
+<p>密码加密：Tomcat支持密码加密存储，具体查看<a href="https://serverfault.com/a/818372">这里</a>和Tomcat<a href="https://tomcat.apache.org/tomcat-8.5-doc/realm-howto.html#Digested_Passwords">文档</a>中的说明，流程包括更改server.xml中的Realm配置，以及生成密码。但如果加密密码，jBPM的controller会存在无法连通server的问题，具体原因可能<a href="https://github.com/kiegroup/droolsjbpm-integration/commit/d4f0bd3bb85df3061172026eaa31807bac83d5f2">与此</a>有关。所以直接使用LDAP作为认证机制，详见<a href="/blog/2017/11/23/config-ldap-for-jbpm-on-tomcat.html">这里</a>。</p>
+</li>
+</ol>
+</section>
+<section>
+<h2>jBPM设置</h2>
+<p>更改kieserver用户密码，除了更改LDAP中的密码外，还需要通过Java系统属性设置<code>org.kie.server.controller.pwd</code>和<code>or.kie.server.pwd</code>。（这种方式存在安全问题，因为Tomcat会转化为Java命令行参数，导致信息暴露），在jBPM 7.5中会<a href="https://github.com/kiegroup/droolsjbpm-integration/pull/1267">加入</a>更完善的KeyStore方式，具体使用可以查看这里的<a href="https://github.com/kiegroup/kie-docs/commit/50f36601b4e7b25efd2d97189e48fea2eca25a44">说明</a>。</p>
+</section>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>

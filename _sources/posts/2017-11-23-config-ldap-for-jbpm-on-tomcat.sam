@@ -1,0 +1,132 @@
+article: Tomcat部署jBPM的LDAP配置
+
+	具体配置参考{这里}(http://www.zytrax.com/books/ldap/ch6/slapd-config.html)和{这里}(http://www.zytrax.com/books/ldap/ch5/index.html#step1-add)的教程，以及Tomcat的{文档}(https://tomcat.apache.org/tomcat-8.5-doc/realm-howto.html#JNDIRealm)（其中LDAP示例中存在部分问题，需要留意）。
+
+	以下是整理的脚本，依序运行其中的01到05的脚本（另外`00-setenv.sh`是配置信息，`99-clean.sh`用于清空数据），其中密码可以由`slappasswd`命令生成。
+
+	`00-setenv.sh`：
+
+	```
+		CONF=slapd.d
+		DATABASE=$PWD/slapd.db
+		URL=ldap://127.0.0.1:8389/
+		ADMIN=admin
+		PASSWORD=password
+
+	`01-init.sh`：
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		TMP=$(mktemp slap.conf.XXX)
+
+		trap "rm $TMP" EXIT
+
+		cat >$TMP <<EOF
+		database config
+
+		rootdn "cn=$ADMIN,cn=config"
+		rootpw $PASSWORD
+		EOF
+
+		mkdir -p $CONF
+
+		slaptest -F $CONF -f $TMP
+
+	`02-run.sh`：
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		slapd -d any -h $URL -F $CONF
+
+	`03-add-schema.sh`：
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD -f /etc/openldap/schema/core.ldif
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD -f /etc/openldap/schema/cosine.ldif
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD -f /etc/openldap/schema/inetorgperson.ldif
+
+	`04-add-database.sh`：
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		mkdir -p $DATABASE
+
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD <<EOF
+		dn: olcDatabase=mdb,cn=config
+		objectClass: olcBdbConfig
+		olcDatabase: mdb
+		olcRootDN: cn=$ADMIN,cn=config
+		olcDbDirectory: $DATABASE
+		olcSuffix: dc=company,dc=com
+		EOF
+
+	`05-add-users.sh`：
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD <<EOF
+		dn: dc=company,dc=com
+		objectClass: dcObject
+		objectClass: organization
+		dc: company
+		o: Company Display Name
+
+		dn: ou=people,dc=company,dc=com
+		objectClass: organizationalUnit
+		ou: people
+
+		dn: uid=user,ou=people,dc=company,dc=com
+		objectClass: inetOrgPerson
+		uid: user
+		userPassword: {SSHA}...
+		cn: Common Name
+		sn: Surname
+		employeeType: admin
+		employeeType: analyst
+		employeeType: HR
+		employeeType: kie-server
+		employeeType: PM
+
+		dn: uid=kieserver,ou=people,dc=company,dc=com
+		objectClass: inetOrgPerson
+		uid: kieserver
+		userPassword: {SSHA}...
+		cn: Common Name
+		sn: Surname
+		employeeType: kie-server
+
+
+	`99-clean.sh`：
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		rm -rf $CONF $DATABASE
+
+	之后在Tomcat的server.xml中调整Realm配置如下：
+
+	```
+		<Realm className="org.apache.catalina.realm.JNDIRealm"
+		  connectionURL="ldap://127.0.0.1:8389/"
+		  userPattern="uid={0},ou=people,dc=company,dc=com"
+		  userRoleName="employeeType" />
+
+	另外，jBPM应该是可以直接对接LDAP的，具体如何处理还需要进一步研究。

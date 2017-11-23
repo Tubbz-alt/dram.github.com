@@ -1,0 +1,20 @@
+article: jBPM基于Tomcat的生产部署
+
+	section: Apache设置
+
+		首先确定`mod_ssl`和`mod_proxy_ajp`两个Apache模块已经安装，之后在`/etc/httpd/conf.d/ssl.conf`中的`VirtualHost`段添加：
+
+		```
+			ProxyPass /kie-wb ajp://127.0.0.1:8009/kie-wb
+
+	section: Tomcat配置
+
+		生产环境主要包括以下配置：
+
+		1. 服务本地监听：在`conf/server.xml`配置文件中8080和8009的Connecter添加`address="127.0.0.1"`；
+		2. 删除manager相关app：删除`webapps`目录下除去`kie-wb`和`kie-server`的所有目录；
+		3. 密码加密：Tomcat支持密码加密存储，具体查看{这里}(https://serverfault.com/a/818372)和Tomcat{文档}(https://tomcat.apache.org/tomcat-8.5-doc/realm-howto.html#Digested_Passwords)中的说明，流程包括更改server.xml中的Realm配置，以及生成密码。但如果加密密码，jBPM的controller会存在无法连通server的问题，具体原因可能{与此}(https://github.com/kiegroup/droolsjbpm-integration/commit/d4f0bd3bb85df3061172026eaa31807bac83d5f2)有关。所以直接使用LDAP作为认证机制，详见{这里}(link "/blog/2017/11/23/config-ldap-for-jbpm-on-tomcat.html")。
+
+	section: jBPM设置
+
+		更改kieserver用户密码，除了更改LDAP中的密码外，还需要通过Java系统属性设置`org.kie.server.controller.pwd`和`or.kie.server.pwd`。（这种方式存在安全问题，因为Tomcat会转化为Java命令行参数，导致信息暴露），在jBPM 7.5中会{加入}(https://github.com/kiegroup/droolsjbpm-integration/pull/1267)更完善的KeyStore方式，具体使用可以查看这里的{说明}(https://github.com/kiegroup/kie-docs/commit/50f36601b4e7b25efd2d97189e48fea2eca25a44)。
