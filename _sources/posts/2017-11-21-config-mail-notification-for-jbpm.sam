@@ -1,5 +1,9 @@
 article: 配置jBPM邮件通知
 
+	topic: 补遗
+
+		1. `userinfo.properties`的配置可以整合到LDAP中，需要设置Java系统属性`org.jbpm.ht.userinfo`为`ldap`，并配置`kie-server/WEB-INF/classes/jbpm.user.info.properties`文件。—— 2017-11-29
+
 	jBPM有两种模式可以实现邮件通知，分别是邮件服务任务（mail service task）和截止时间通知（deadline notification）。
 
 	section: 邮件服务任务

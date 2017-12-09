@@ -1,5 +1,10 @@
 article: jBPM基于Tomcat的生产部署
 
+	topic: 补遗
+
+		1. kie-server以及controller（包含在kie-wb中）并没有针对角色做安全限制，所以将其暴露在外存在严重安全风险，当前只能从容器web.xml层面考虑限制，具体见{这里}(https://issues.jboss.org/browse/JBPM-6650)。—— 2017-11-29
+		2. 可以考虑将kie-wb和kie-server独立部署，可以增强稳定性和安全性，参考{这里}(https://github.com/kiegroup/kie-docs/blame/r7.4.1.Final/docs/product-installation-guide/src/main/asciidoc/assembly_installing-on-eap.adoc#L13)的文档。—— 2017-11-30
+
 	section: Apache设置
 
 		首先确定`mod_ssl`和`mod_proxy_ajp`两个Apache模块已经安装，之后在`/etc/httpd/conf.d/ssl.conf`中的`VirtualHost`段添加：
