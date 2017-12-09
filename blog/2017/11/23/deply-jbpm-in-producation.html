@@ -1,6 +1,17 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM基于Tomcat的生产部署</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM基于Tomcat的生产部署</h1><time>23 Nov 2017</time>
 
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>kie-server以及controller（包含在kie-wb中）并没有针对角色做安全限制，所以将其暴露在外存在严重安全风险，当前只能从容器web.xml层面考虑限制，具体见<a href="https://issues.jboss.org/browse/JBPM-6650">这里</a>。—— 2017-11-29</p>
+</li>
+<li>
+<p>可以考虑将kie-wb和kie-server独立部署，可以增强稳定性和安全性，参考<a href="https://github.com/kiegroup/kie-docs/blame/r7.4.1.Final/docs/product-installation-guide/src/main/asciidoc/assembly_installing-on-eap.adoc#L13">这里</a>的文档。—— 2017-11-30</p>
+</li>
+</ol>
+</section>
 <section>
 <h2>Apache设置</h2>
 <p>首先确定<code>mod_ssl</code>和<code>mod_proxy_ajp</code>两个Apache模块已经安装，之后在<code>/etc/httpd/conf.d/ssl.conf</code>中的<code>VirtualHost</code>段添加：</p>

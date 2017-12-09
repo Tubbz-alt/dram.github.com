@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>配置jBPM邮件通知</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>配置jBPM邮件通知</h1><time>21 Nov 2017</time>
 
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p><code>userinfo.properties</code>的配置可以整合到LDAP中，需要设置Java系统属性<code>org.jbpm.ht.userinfo</code>为<code>ldap</code>，并配置<code>kie-server/WEB-INF/classes/jbpm.user.info.properties</code>文件。—— 2017-11-29</p>
+</li>
+</ol>
+</section>
 <p>jBPM有两种模式可以实现邮件通知，分别是邮件服务任务（mail service task）和截止时间通知（deadline notification）。</p>
 <section>
 <h2>邮件服务任务</h2>
