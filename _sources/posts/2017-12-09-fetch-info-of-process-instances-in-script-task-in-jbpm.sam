@@ -1,0 +1,14 @@
+article: 在jBPM脚本任务中获取全局流程实例信息
+
+	在jBPM的脚本任务（Script Task）中，可以通过`kcontext`获取当前任务以及所属流程实例的信息，但没有直接的接口获取全局其他流程的信息。
+
+	在查看了{KieContext}(https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/KieContext.html)、{KieRuntime}(https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/KieRuntime.html)、{RuntimeManager}(https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/manager/RuntimeManager.html)、{RuntimeEngine}(https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/manager/RuntimeEngine.html)等文档，以及搜索部分KIE的代码后，发现可以基于{AuditService}(https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/manager/audit/AuditService.html)实现，以下为代码片段：
+
+	```(java)
+		org.kie.api.runtime.manager.RuntimeManager manager = (org.kie.api.runtime.manager.RuntimeManager) kcontext.getKieRuntime().getEnvironment().get(org.kie.api.runtime.EnvironmentName.RUNTIME_MANAGER);
+
+		org.kie.api.runtime.manager.RuntimeEngine runtime = manager.getRuntimeEngine(org.kie.internal.runtime.manager.context.ProcessInstanceIdContext.get(kcontext.getProcessInstance().getId()));
+
+		for (org.kie.api.runtime.manager.audit.ProcessInstanceLog p : runtime.getAuditService().findProcessInstances()) {
+			System.out.println(p.getProcessName());
+		}

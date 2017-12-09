@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>在jBPM脚本任务中获取其他流程实例的信息</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>在jBPM脚本任务中获取其他流程实例的信息</h1><time>09 Dec 2017</time>
+
+<p>在jBPM的脚本任务（Script Task）中，可以通过<code>kcontext</code>获取当前任务以及所属流程实例的信息，但没有直接的接口获取所有进程。</p>
+<p>在查看了<a href="https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/KieContext.html">KieContext</a>、<a href="https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/KieRuntime.html">KieRuntime</a>、<a href="https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/manager/RuntimeManager.html">RuntimeManager</a>、<a href="https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/manager/RuntimeEngine.html">RuntimeEngine</a>等文档，以及搜索了部分KIE的代码后，发现可以基于<a href="https://docs.jboss.org/drools/release/7.4.1.Final/kie-api-javadoc/org/kie/api/runtime/manager/audit/AuditService.html">AuditService</a>实现，以下为代码片段：</p>
+<pre><code>org.kie.api.runtime.manager.RuntimeManager manager = (org.kie.api.runtime.manager.RuntimeManager) kcontext.getKieRuntime().getEnvironment().get(org.kie.api.runtime.EnvironmentName.RUNTIME_MANAGER);
+
+org.kie.api.runtime.manager.RuntimeEngine runtime = manager.getRuntimeEngine(org.kie.internal.runtime.manager.context.ProcessInstanceIdContext.get(kcontext.getProcessInstance().getId()));
+
+for (org.kie.api.runtime.manager.audit.ProcessInstanceLog p : runtime.getAuditService().findProcessInstances()) {
+	System.out.println(p.getProcessName());
+}</code></pre>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
