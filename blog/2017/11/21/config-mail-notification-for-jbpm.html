@@ -7,6 +7,9 @@
 <li>
 <p><code>userinfo.properties</code>的配置可以整合到LDAP中，需要设置Java系统属性<code>org.jbpm.ht.userinfo</code>为<code>ldap</code>，并配置<code>kie-server/WEB-INF/classes/jbpm.user.info.properties</code>文件。—— 2017-11-29</p>
 </li>
+<li>
+<p>Email WorkItem和Notification存在一点不同，Notification会尝试基于用户名查找邮件地址，而Email WorkItem则是直接使用指定内容。—— 2017-12-12</p>
+</li>
 </ol>
 </section>
 <p>jBPM有两种模式可以实现邮件通知，分别是邮件服务任务（mail service task）和截止时间通知（deadline notification）。</p>

@@ -3,6 +3,7 @@ article: jBPM文档
 	topic: 补遗
 
 		1. 当前JBoss BPM Suite 7系列还处于LA（Limited Availability）阶段，该版本的文档还没有在官网完全公开，不过可以基于{kie-docs}(https://github.com/kiegroup/kie-docs)仓库代码直接编译，编译脚本可参考{这里}(link "/data/2017-12-09-build-kie-docs.sh")。—— 2017-12-09
+		2. 所谓新年新气象，在2018即将到来之际，从这份PR中可得知，红帽已将JBoss BPM Suite更名为Business Automation Suite，BRMS更名为Decision Manager。由此，编译文档的脚本中`BPMS`也需要对应调整为`BA`。—— 2017-12-11
 
 	jBPM官网的{文档}(https://www.jbpm.org/learn/documentation.html)非常不成熟，组织凌乱。但红帽已经将jBPM产品化，所以在红帽官网可以找到更详尽的文档，见{这里}(https://access.redhat.com/documentation/en-us/red_hat_jboss_bpm_suite/)。
 
