@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM项目中的Java代码</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM项目中的Java代码</h1><time>17 Dec 2017</time>
+
+<p>在jBPM中执行复杂逻辑时，往往需要使用脚本任务（Script Task），但如果代码量过大，那么编写、调试脚本任务的工作量会很大，而且也难以做单元测试。</p>
+<p>实际上，jBPM以Git仓库的方式组织项目，可以在<code>.niogit</code>目录中找到对应项目的仓库路径。这样在用<code>git clone</code>拉取内容后，就可以在<code>src/main/java/...</code>路径中编写Java代码了。提交代码前，可以直接使用<code>mvn compile</code>编译代码，无需回到KIE Workbench。</p>
+<p>其中定义的public类中的public方法，都可以在脚本中直接引用。</p>
+</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
