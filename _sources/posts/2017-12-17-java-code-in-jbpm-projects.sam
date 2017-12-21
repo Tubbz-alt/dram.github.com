@@ -1,5 +1,9 @@
 article: jBPM项目中的Java代码
 
+	topic: 补遗
+
+		1. 在编辑Java文件保存后，jBPM会自动重新编译，所以直接在Workbench中编辑Java代码也是便捷的。—— 2017-12-21
+
 	在jBPM中执行复杂逻辑时，往往需要使用脚本任务（Script Task），但如果代码量过大，那么编写、调试脚本任务的工作量会很大，而且也难以做单元测试。
 
 	实际上，jBPM以Git仓库的方式组织项目，可以在`.niogit`目录中找到对应项目的仓库路径。这样在用`git clone`拉取内容后，就可以在`src/main/java/...`路径中编写Java代码了。提交代码前，可以直接使用`mvn compile`编译代码，无需回到KIE Workbench（如果依赖KIE的库，可能需要在pom中加入，在Workbench中则可以直接编译，为何不同还需要进一步研究）。
