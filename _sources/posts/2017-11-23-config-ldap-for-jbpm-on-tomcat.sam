@@ -1,5 +1,9 @@
 article: Tomcat部署jBPM的LDAP配置
 
+	topic: 补遗
+
+		1. 以下配置默认允许匿名用户访问，如果需要禁用，可以在`01-init.sh`的`database ...`之前追加`disallow bind_anon`。—— 2017-12-26
+
 	具体配置参考{这里}(http://www.zytrax.com/books/ldap/ch6/slapd-config.html)和{这里}(http://www.zytrax.com/books/ldap/ch5/index.html#step1-add)的教程，以及Tomcat的{文档}(https://tomcat.apache.org/tomcat-8.5-doc/realm-howto.html#JNDIRealm)（其中LDAP示例中存在部分问题，需要留意）。
 
 	以下是整理的脚本，依序运行其中的01到05的脚本（另外`00-setenv.sh`是配置信息，`99-clean.sh`用于清空数据），其中密码可以由`slappasswd`命令生成。

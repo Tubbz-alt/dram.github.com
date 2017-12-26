@@ -1,6 +1,14 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Tomcat部署jBPM的LDAP配置</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Tomcat部署jBPM的LDAP配置</h1><time>23 Nov 2017</time>
 
+<section class="topic">
+<h2>补遗</h2>
+<ol>
+<li>
+<p>以下配置默认允许匿名用户访问，如果需要禁用，可以在<code>01-init.sh</code>的<code>database ...</code>之前追加<code>disallow bind_anon</code>。—— 2017-12-26</p>
+</li>
+</ol>
+</section>
 <p>具体配置参考<a href="http://www.zytrax.com/books/ldap/ch6/slapd-config.html">这里</a>和<a href="http://www.zytrax.com/books/ldap/ch5/index.html#step1-add">这里</a>的教程，以及Tomcat的<a href="https://tomcat.apache.org/tomcat-8.5-doc/realm-howto.html#JNDIRealm">文档</a>（其中LDAP示例中存在部分问题，需要留意）。</p>
 <p>以下是整理的脚本，依序运行其中的01到05的脚本（另外<code>00-setenv.sh</code>是配置信息，<code>99-clean.sh</code>用于清空数据），其中密码可以由<code>slappasswd</code>命令生成。</p>
 <p><code>00-setenv.sh</code>：</p>
