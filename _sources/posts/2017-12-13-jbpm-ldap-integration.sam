@@ -1,5 +1,9 @@
 article: jBPM和LDAP整合
 
+	topic: 补遗
+
+		1. 以下jBPM LDAP配置存在错误，`ldap.bind.user`应为`java.naming.security.principal`，`ldap.bind.pwd`应为`java.naming.security.credentials`。—— 2017-12-26
+
 	之前有介绍过jBPM基于Tomcat的LDAP{简单对接}(link "/blog/2017/11/23/config-ldap-for-jbpm-on-tomcat.html")，但在权限处理上并不大灵活。以下是用户信息和角色分离的方案（Tomcat{文档}(http://tomcat.apache.org/tomcat-8.5-doc/realm-howto.html#JNDIRealm)中也有提及）。
 
 	总体思路是角色（roles）和分组（groups）分离开，roles用于在Tomcat实现鉴权，groups用于jBPM中的任务处理。
