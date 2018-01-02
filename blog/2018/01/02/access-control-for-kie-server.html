@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM KIE Server RESTful API访问控制</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM KIE Server RESTful API访问控制</h1><time>02 Jan 2018</time>
+
+<p>在jBPM 7之后，kie-server的API权限有了<a href="https://issues.jboss.org/browse/JBPM-6649">调整</a>，只要用户具备<code>user</code>或者<code>kie-server</code>角色，就可以访问所有API，这存在严重的安全风险。</p>
+<p>对此，有几种方案：</p>
+<ol>
+<li>
+<p>基于servlet的web.xml控制，但web.xml中url-pattern的匹配语言较为薄弱，很难满足复杂的控制需求；</p>
+</li>
+<li>
+<p>编写servlet过滤器自定义控制；</p>
+</li>
+<li>
+<p>编写<a href="https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services">JAX-RS</a>过滤器自定义控制。</p>
+</li>
+</ol>
+<p>由于jBPM的RESTful API基于符合JAX-RS标准的<a href="http://resteasy.jboss.org/">RESTEasy</a>框架实现，所以第三种方案比较简便，也更具通用性。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

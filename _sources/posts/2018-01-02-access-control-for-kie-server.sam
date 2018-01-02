@@ -1,0 +1,11 @@
+article: jBPM KIE Server RESTful API访问控制
+
+	在jBPM 7之后，kie-server的API权限有了{调整}(https://issues.jboss.org/browse/JBPM-6649)，只要用户具备`user`或者`kie-server`角色，就可以访问所有API，这存在严重的安全风险。
+
+	对此，有几种方案：
+
+	1. 基于servlet的web.xml控制，但web.xml中url-pattern的匹配语言较为薄弱，很难满足复杂的控制需求；
+	2. 编写servlet过滤器自定义控制；
+	3. 编写{JAX-RS}(https://en.wikipedia.org/wiki/Java_API_for_RESTful_Web_Services)过滤器自定义控制。
+
+	由于jBPM的RESTful API基于符合JAX-RS标准的{RESTEasy}(http://resteasy.jboss.org/)框架实现，所以第三种方案比较简便，也更具通用性。
