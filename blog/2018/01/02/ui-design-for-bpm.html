@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>BPM系统界面设计</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>BPM系统界面设计</h1><time>02 Jan 2018</time>
+
+<p>和传统的B/S系统相比，在设计BPM系统的界面时，存在一些不同，例如：</p>
+<ol>
+<li>
+<p>接口通用化：传统的B/S系统一般针对不同功能，有不同的RESTful接口，而BPM则只需要一些通用接口（例如创建流程实例、获取任务列表、获取任务输入、完成任务等）；</p>
+</li>
+<li>
+<p>传统B/S系统需要感知流程中任务的组织步骤（例如完成任务A之后，基于结果选择任务B或C），而在BPM中，这一部分逻辑由BPM系统维护，界面只需要从任务列表中获取待办任务即可。</p>
+</li>
+</ol>
+<p>这就导致在界面实现中在架构上会有大的不同，甚至部分影响到交互的设计。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
