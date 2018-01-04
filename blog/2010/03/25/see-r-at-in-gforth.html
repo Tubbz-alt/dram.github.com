@@ -52,4 +52,4 @@ Label real_ca;</code></pre>
 <pre><code>: show-saved_ip $4297E8 @ 100 - 200 dump ;</code></pre>
 <p>最后来看一下R@的主体部分，了解一下对两个堆栈的处理。不难发现，data stack以寄存器esi做为头指针，而returnstack的首地址则是用全局变量rp。</p>
 <p>有一点疑惑是，在Label的处理上，C代码地址转化比较复杂，但在汇编代码中反而简略了，这是不是编译器优化的结果？</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

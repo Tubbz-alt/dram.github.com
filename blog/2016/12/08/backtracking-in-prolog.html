@@ -31,4 +31,4 @@
 <p>回溯的最直接体现是在交互模式中，如果可能存在多个<a href="/blog/2016/11/20/prolog-unification-and-pattern-match.html">联合</a>结果，Prolog会提示是否需要查看其他符合条件的值，其他可能值就是通过回溯得到的。</p>
 <p>在脚本中Prolog默认只尝试获取一个联合的结果。更多的值需要通过<code>fail</code>、<code>\+</code>等机制主动触发回溯以获取。另外cut（<code>!</code>）可用于删减结果，可以形象得理解为园丁修剪枝叶，去除不必要的分支。如果分支存在，那么一旦子分支中出现匹配错误，并且父层或更高层级choice point存在的话，回溯将会被出发。</p>
 <p>针对<code>fail</code>和cut有一个细节，可以加深对于回溯的理解。在一个Stack Overflow的<a href="http://stackoverflow.com/a/14584114/5180632">回答</a>中提到，<code>!, fail</code>的模式可用于强制失败，这是先修剪掉所有分支，再显式出错，这时Prolog没有其他choice point，只能得出匹配出错的结果。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

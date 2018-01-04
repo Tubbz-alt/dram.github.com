@@ -6,4 +6,4 @@
 <p>当前是通过先将列表以字符串形式读取（<code>Tcl_GetString</code>），之后再拆分为数组元素（<code>Tcl_SplitList</code>）实现，其中存在性能问题，详见这个<a href="https://github.com/dram/clips-tcl/commit/d540f5faed4b7909583a279ef1de87d81ae1630c">提交</a>。</p>
 <p>另外一种思路是结合<code>Tcl_ListObjGetElements</code>实现，由于Tcl内部采用引用计数，Tcl端不存在性能损失，问题在CLIPS端，因为CLIPS没有批量转化multifield的接口（某种<code>map$</code>），所以需要频繁创建销毁multifield对象用于组建最终接口。</p>
 <p>从Tcl在接口中对<code>string</code>一词的使用来看，可以考虑添加<code>Tcl_ListObjGetElementStrings</code>这样的接口。但为保证与Tcl接口的一致性，暂不考虑在CLIPS-Tcl中添加。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

@@ -7,4 +7,4 @@
 <p>大概了解DPC之后，基本可以确定是硬件驱动上的问题了。但在Process Explorer中不能看到具体是哪个硬件在使用DPC，这时我们还需要一个工具RATTV3，具体使用方法可以看<a href="http://www.networkworld.com/columnists/2007/102507gearhead.html">这里</a>。</p>
 <p>好了，离结果不远了。通过分析RATTV3的日志后，是<code>HSF_CNXT.sys</code>在占用资源，像是声卡的文件。</p>
 <p>禁用声卡，CPU使用率立马下来了。再联想到前些天刚更新过驱动，降级到先前的版本后，系统正常了。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

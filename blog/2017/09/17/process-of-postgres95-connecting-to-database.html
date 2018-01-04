@@ -16,4 +16,4 @@
 <p>另外有一个细节，在这里提一下，在<code>startup2PacketBuf</code>和<code>packetSend</code>的注释中有提到，这两段代码与backend/libpq的代码类似，只是为了不链接<code>libpq.a</code>而在这边定义了。为何同时存在两份<code>libpq</code>代码（分别在backend和interfaces目录）？</p>
 <p>从目录中文件命名来看，<code>fe</code>表示frontend，<code>be</code>表示<code>backend</code>。从内容上看，分别是客户端逻辑和服务端逻辑代码，这一点比较认证相关的代码就可以看出。</p>
 <p>从Makefile看，最终的<code>libpq</code>库应该是由interfaces目录中的代码生成的，那backend目录中的libpq的意图是什么呢？主要是给PG内部使用的吗？这还需要进一步确认，特别是注释中提到的不链接<code>libpq.a</code>令人费解。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

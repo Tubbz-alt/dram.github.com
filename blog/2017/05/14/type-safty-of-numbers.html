@@ -28,4 +28,4 @@ srandom(time(nil))
         UInt32(  )</code></pre>
 <p>可以做类型转化，例如<code>srandom(UInt32(time(nil)))</code>。但这样依然存在问题，如果<code>time()</code>返回值大于<code>UInt32.max</code>，在类型转化时会有溢出错误。</p>
 <p>因此，可以调整为<code>srandom(UInt32(time(nil) % Int(UInt32.max)))</code>，或者还有一个更优的方式：<code>srandom(UInt32(truncatingBitPattern: time(nil)))</code>。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

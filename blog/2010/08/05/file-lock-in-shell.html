@@ -10,4 +10,4 @@ flock 300
 flock -u 300
 ) &gt; /tmp/file.lock</code></pre>
 <p>但flock有个缺陷是，在打开flock之后fork()，子进程也会拥有锁，如果在flock其间有运行daemon的话，必需确保daemon在启动时已经关闭了所有的文件句柄，不然该文件会因为daemon一直将其置于打开状态而无法解锁。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

@@ -17,4 +17,4 @@ foldr f z (x:xs)  =   f x (foldr f z xs)</code></pre>
 
 count2 p l = foldl (\c x -&gt; if p x then c+1 else c) 0 l</code></pre>
 <p>同时可以看到，由于 foldr 需要从最后一个元素开始，它实现的是一个递归的过程，而 foldl 则是一个递代的过程，所以通常 foldl 要比 foldr 高效。而由于 Haskell 的惰性特性，foldr 可以对无限大的 list 进行处理。所以 foldr 和 foldl 还是各有利弊的。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

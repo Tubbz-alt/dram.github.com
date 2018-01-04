@@ -14,4 +14,4 @@ socat -d -d -v -x "PIPE:pg-out.pipe,nonblock!!PIPE:pg-in.pipe" "UNIX-CONNECT:$PG
 echo "Connection closed"</code></pre>
 <p>其中<code>-d -d</code>选项用于显示调试信息，<code>-v -x</code>显示数据交互。另外<code>nonblock</code>参数是为让<code>socat</code>预先将<code>pg-in.pipe</code>管道也创建好，而不是等待在<code>pg-out.pipe</code>对端连接。</p>
 <p>之后CLIPS先打开<code>pg-out.pipe</code>管道，写入启动信息，之后PostgreSQL服务端响应后，CLIPS可以打开<code>pg-in.pipe</code>管道并读取。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

@@ -102,4 +102,4 @@
             (list (list from to))
             (cadr (assoc (list spare to) lst)))))</code></pre>
 <p>同样，对于Hanoi问题，关键还是两点，Hanoi的递推思路是先移到n-1个盘到spare柱，再移动最下面的盘到to柱，最后将spare中的n-1个盘移到to柱。这样对于下一层递代调用来说，需要上一层准备将n-1盘从from移动到spare及从spare移动到to的步骤。由于在不同层次，from, to, spare的角色会相互替换，所以上一层调用需要准备和将n-1个盘在3个柱之间移动的所有6种情况的步骤。而递代的结束通过n来计数递代调用层次。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

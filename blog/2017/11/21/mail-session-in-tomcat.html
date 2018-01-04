@@ -5,4 +5,4 @@
 <p>在<a href="https://github.com/apache/tomcat/blob/TOMCAT_8_0_0/java/org/apache/naming/factory/ResourceFactory.java#L124">ResourceFactory</a>中定义了<code>javax.mail.Session</code>默认factory为<a href="https://github.com/apache/tomcat/blob/TOMCAT_8_0_0/java/org/apache/naming/factory/MailSessionFactory.java">org.apache.naming.factory.MailSessionFactory</a>。</p>
 <p>在<code>MailSessionFactory</code>中会处理Resource的属性，特别是对认证的处理，最后将数据通过<code>javax.mail.Session</code>的<code>getInstance</code>方法传入<a href="https://javaee.github.io/javamail/">JavaMail</a>并生成会话。</p>
 <p>另外，Tomcat中有一份简单的JavaMail<a href="https://github.com/apache/tomcat/tree/TOMCAT_8_0_0/java/javax/mail">接口</a>，并不包含实现。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

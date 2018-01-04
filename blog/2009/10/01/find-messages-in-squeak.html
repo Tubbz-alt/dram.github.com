@@ -5,4 +5,4 @@
 <p>先需要知道这个查找窗口的class name，可以通过窗口菜单中about功能得到。这个Morph是MessageNames，再就是在System Browser里看看这个class有些什么功能了，特别是要注意有些什么class messages。</p>
 <p>这样就会找到一个相关的message methodBrowserSearchingFor:，再看看有哪些地方用到了它，像<code>StandardToolSet class&gt;&gt;browseMessageNames:</code>, <code>ToolSet class&gt;&gt;browseMessageNames:</code>, <code>SystemNavigation&gt;&gt;browseMethodsWhoseNamesContain:</code>, <code>ParagraphEditor&gt;&gt;methodNamesContainingIt</code>。</p>
 <p>再去看看methodNamesContainingIt，会有一个惊喜的发现，其实Workspace里已经包含了这一功能，只是隐藏地比较深而已。那就是Shift+右键菜单，而快捷键是Alt+Shift+W。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

@@ -31,4 +31,4 @@
 <pre><code>socat -d -d TCP-LISTEN:8000,bind=127.0.0.1,fork EXEC:"clips -f file.clp",pipes,fdin=128,fdout=129</code></pre>
 <p>其中关键的一点是socat通过<code>EXEC</code>地址的<code>fdin</code>和<code>fdout</code>参数指定文件描述符，CLIPS再通过<code>/proc/self/fd/</code>打开对应文件，这样socat和CLIPS之间的通信就不依赖于stdin和stdout了。</p>
 <p>通过以上配置，CLIPS所有的输入输出依然可用，甚至REPL也是依然可用的。</p>
-</article><footer><p>Copyright © 2007–2017 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
