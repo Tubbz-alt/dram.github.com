@@ -1,0 +1,5 @@
+article: jBPM中的定时事件
+
+	在jBPM的{文档}(https://github.com/kiegroup/kie-docs/blame/7.5.0.Final/docs/product-user-guide/src/main/asciidoc/appe-process-elements.adoc#L589)中，有提及可以使用Cron的格式定义周期性触发的事件，但文档的描述非常简略。
+
+	jBPM的定时任务基于{Quartz}(http://www.quartz-scheduler.org/)实现，格式上和Linux的Cron存在区别，后者包括5个时间字段，而Quartz中则包括6个字段，具体的格式见这里的{说明}(http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger.html#format)。
