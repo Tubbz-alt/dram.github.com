@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Tomcat的MailSession实现</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Tomcat的MailSession实现</h1><time>21 Nov 2017</time>
 
+
 <p>Tomcat的MailSession基于JNDI接口实现。</p>
 <p>在<a href="https://github.com/apache/tomcat/blob/TOMCAT_8_0_0/java/org/apache/naming/factory/ResourceFactory.java#L124">ResourceFactory</a>中定义了<code>javax.mail.Session</code>默认factory为<a href="https://github.com/apache/tomcat/blob/TOMCAT_8_0_0/java/org/apache/naming/factory/MailSessionFactory.java">org.apache.naming.factory.MailSessionFactory</a>。</p>
 <p>在<code>MailSessionFactory</code>中会处理Resource的属性，特别是对认证的处理，最后将数据通过<code>javax.mail.Session</code>的<code>getInstance</code>方法传入<a href="https://javaee.github.io/javamail/">JavaMail</a>并生成会话。</p>

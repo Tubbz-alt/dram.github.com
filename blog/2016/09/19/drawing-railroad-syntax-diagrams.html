@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>程序设计语言语法图（Railroad Diagram）</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>程序设计语言语法图（Railroad Diagram）</h1><time>19 Sep 2016</time>
 
+
 <p>所谓“一图胜千言”，在适当的时候，图形化的表述更能快速、简洁地传达信息。</p>
 <p>在Smalltalk<a href="http://sdmeta.gforge.inria.fr/FreeBooks/">蓝皮书</a>的末尾，附有针对Smalltalk语法的说明，使用的是<a href="https://en.wikipedia.org/wiki/Syntax_diagram">railroad diagram</a>这种图形化的表述。</p>
 <p>细想之下，Smalltalk没有使用文本化的形式（例如EBNF）而是采用图形化是合乎情理的。因为Smalltalk语言是为让更多非专业人员充分利用计算机的资源而设计，在各个层面上需要做到尽量地平易。</p>
@@ -8,6 +9,7 @@
 <p>以下详细说明该脚本的用法。</p>
 <section>
 <h2>获取脚本</h2>
+
 <p>SQLite项目使用Fossil处理代码版本管理，语法图的脚本存放在<code>docsrc</code>代码库中。由于没有找到直接下载单个文件的方法，这里通过<code>fossil</code>获取其全部代码。</p>
 <pre><code>fossil clone http://www.sqlite.org/cgi/docsrc sqlite-doc.fossil
 mkdir sqlite-doc &amp;&amp; cd sqlite-doc
@@ -16,6 +18,7 @@ fossil open ../sqlite-doc.fossil</code></pre>
 </section>
 <section>
 <h2>编辑语法图数据</h2>
+
 <p>数据描述文件用于指定需要绘制的语法图的所需信息。具体的语法可参考<code>art/syntax/bubble-generator-data.tcl</code>文件。可以在此文件基础上直接修改和添加新语法，例如将如下示例代码添加到文件的<code>all_graphs</code>块内：</p>
 <pre><code>digit {
   or
@@ -42,6 +45,7 @@ number {
 </section>
 <section>
 <h2>生成语法图</h2>
+
 <p>通过<code>wish</code>命令运行<code>bubble-generator.tcl</code>，可以看到在图形化菜单中包括了上例中新添加的<code>digit</code>、<code>digits</code>和<code>number</code>项，点击即可生成图片。</p>
 <p>如下图所示为其中<code>number</code>的最终效果：</p>
 <img src="/images/2016-09-19-number.png"/>

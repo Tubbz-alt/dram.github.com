@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>containerof 中的 _mptr</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>containerof 中的 _mptr</h1><time>01 Jun 2009</time>
 
+
 <p>在了解 Linux kernel 的链表实现时，看到了<code>container_of</code>，具体的功能和代码原理就不在这多说了，网上有比较多的资料，比如 <a href="http://www.kroah.com/log/linux/container_of.html">这篇</a> 就挺不错。</p>
 <p>这是要说的是在<code>container_of</code>中<code>__mptr</code>的作用。就和 lisan 06年在 CU 上问的 <a href="http://bbs3.chinaunix.net/thread-852201-1-1.html">问题</a> 一样，我也有这个疑问，感觉<code>__mptr</code>有些多余。</p>
 <p>经过一番搜索，我可能找到了 <a href="http://ds9a.nl/klogbot/?year=2008&amp;month=11&amp;day=5&amp;hour=10.5">答案</a> 。</p>

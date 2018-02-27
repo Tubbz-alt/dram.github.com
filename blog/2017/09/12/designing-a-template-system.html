@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>模板系统设计</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>模板系统设计</h1><time>12 Sep 2017</time>
 
+
 <p>最近考虑在CLIPS中实现一个模板系统，以便做Web应用相关开发。</p>
 <p>最开始考虑参考<a href="https://github.com/olafvdspek/ctemplate">ctemplate</a>和<a href="http://mustache.github.io/">mustache</a>实现，两者的理念是呈现和逻辑的绝对分离。</p>
 <p>但从当前Web开发的发展来说，呈现端是需要逻辑的，如若不然，逻辑和呈现间很难有清晰的接口分界。例如Angular就是在浏览器端实现了完整的MVC框架，Angular和后端通过RESTful API通信。</p>

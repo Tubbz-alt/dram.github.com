@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Mercury的IO系统</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Mercury的IO系统</h1><time>25 May 2017</time>
 
+
 <p>之前我觉得Mercury的IO系统在实现上可能类似于Haskell，要全然掌握门槛较高，想着待对语言有一定了解后再看，没有深究。但最近有两个示例让我其产生了好奇。</p>
 <p>一是Peter Wang在<a href="https://github.com/Mercury-Language/mercury/wiki/Hello,-world!#exercises">Mercury Wiki</a>编写的教程里，有一个练习：如果更换包含状态变量的语句顺序，会有怎样的结果？例如：</p>
 <pre><code>main(IO0, IO) :-

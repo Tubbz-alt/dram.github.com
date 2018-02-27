@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>PostgreSQL的初始数据表</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>PostgreSQL的初始数据表</h1><time>15 Sep 2017</time>
 
+
 <p>在<a href="/blog/2017/09/12/run-multiple-postgresql-instances.html">PostgreSQL多实例运行</a>的补遗中有提到，PostgreSQL在初始化时会创建<code>postgres</code>、<code>template0</code>、<code>template1</code>这三个数据库，而数据库里面初始就创建了多张系统默认表，可以通过<code>\dt *</code>查看。</p>
 <p>对于这些表的说明，具体见这里的<a href="https://www.postgresql.org/docs/10/static/catalogs-overview.html">文档</a>。文档中涉及到cluster、catalog、schema的概念，可以分别简单理解为数据库服务、数据库、名字域，具体的解释可以阅读这一个<a href="https://stackoverflow.com/a/17943883/5180632">Stack Overflow</a>的回答。</p>
 <p>可以看到，这些表大多为各数据库私有，但也有个别表是在一个cluster中多个数据库共享的，比如<code>pg_database</code>存储了cluster中各数据库的信息，这一共享是基于tablespace实现的，具体可以查看<a href="https://www.postgresql.org/docs/10/static/manage-ag-tablespaces.html">文档</a>，通过<code>\d pg_database</code>可以查看到<code>pg_global</code> tablespace。再如<code>pg_tablespace</code>表存储了cluster中所有tablespace信息。</p>

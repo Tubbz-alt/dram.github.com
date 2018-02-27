@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Prolog的核心概念</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Prolog的核心概念</h1><time>08 Dec 2016</time>
 
+
 <p>Prolog最核心的概念，我觉得是<a href="/blog/2016/11/20/prolog-unification-and-pattern-match.html">联合</a>（unification）和<a href="/blog/2016/12/08/backtracking-in-prolog.html">回溯</a>（backtracking）。从另一个角度说，是选择以及基于选择的遍历。</p>
 <p>例如联合产生选择（choice points），而disjunction（<code>；</code>）和conjunction（<code>，</code>）分别可以增加和减少选择，cut（<code>!</code>）可以删减选择。</p>
 <p>对于遍历，<code>fail</code>、<code>true</code>、<code>\+</code>可用于控制backtracking。</p>

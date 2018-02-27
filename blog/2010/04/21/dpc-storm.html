@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>DPC风暴</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>DPC风暴</h1><time>21 Apr 2010</time>
 
+
 <p>这些天发现本子的一核CPU占用一直保持在20%，居高不下。心理有些不爽，于是较真了一下。</p>
 <p>一般情况下，通过任务管理器就可以大致看出是哪个进程一直在占用CPU。但这次只发现System Idle Process(SIP)占用90%的CPU使用率，也就是说20%的CPU使用大部分是被SIP用了。但SIP不是空闲进程吗？都空闲了还忙着做什么呢？</p>
 <p>后来通过Process Explorer发现，占用资源的主要是System Idle Process中的Deferred Procedure Calls(DPC)。 那么具体何为DPC呢？可以看看<a href="http://en.wikipedia.org/wiki/Deferred_Procedure_Call">wikipedia</a>。</p>

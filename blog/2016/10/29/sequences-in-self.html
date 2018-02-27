@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Self中的序列对象</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Self中的序列对象</h1><time>29 Oct 2016</time>
 
+
 <p>在程序设计中，序列是一种基本的数据类型。大部分编程语言都包含有对序列的支持。只是各自在命名和形式上有所差异。例如在<a href="http://www.json.org/">JSON</a>中，将这些类型统一表示为<em>an ordered list of values</em>，涵盖了各类语言中的<em>array</em>，<em>vector</em>，<em>list</em>或<em>sequence</em>数据类型。</p>
 <p>而在Self中，对于序列的表述，同时包含有vector，list和sequence三类对象。这就要求理解其中的共性和个性，才能够加以合理利用。</p>
 <p>下图为各traits的继承树：</p>

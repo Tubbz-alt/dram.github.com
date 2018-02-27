@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于 inttypes.h 和 stdint.h</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于 inttypes.h 和 stdint.h</h1><time>06 Jun 2009</time>
 
+
 <p>这是 C99 定义的两个头文件，标准规定了 inttypes.h 必须包含 stdint.h，那么如果要用<code>uint32_t</code>之类的类型定义，应该用哪个头文件呢？</p>
 <p>autoconf 的 <a href="http://www.gnu.org/software/autoconf/manual/html_node/Header-Portability.html">文档</a> 中有建立使用 inttypes.h。</p>
 <p>globus 项目的一个 <a href="http://bugzilla.globus.org/globus/show_bug.cgi?id=5118">bug</a> 也值得注意，在 HP-UX 中如果直接用 stdint.h 而不是 inttypes.h，会出现问题。 而 FFmpeg 中关于用 stdint.h 替代 inttypes.h 的 <a href="https://lists.mplayerhq.hu/pipermail/ffmpeg-devel/2008-March/043425.html">讨论</a> ，持有的是一个相反的论点。</p>

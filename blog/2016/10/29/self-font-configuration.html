@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Self字体设置</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Self字体设置</h1><time>29 Oct 2016</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <p>在<a href="/blog/2016/11/07/add-self-slots-in-scripts.html">脚本化添加Self属性</a>中，有对字体设置的更新，并包含有配色设置。—— 2016-11-07</p>
 </section>
 <p>Self中有一<code>preferences</code>对象，用于设置开发环境的一些可定制化信息。比如我之前提交的设置<a href="https://github.com/russellallen/self/pull/82">初始化窗口大小</a>的功能，就是在<code>preferences desktop</code>对象中增加了属性<code>initialBounds</code>。</p>
@@ -28,6 +30,7 @@
 <p>至此，界面文字对应字体设置对象就找到了，之后可使用<code>traits fontSpec</code>中定义的方法设置其属性。</p>
 <section>
 <h2>配置脚本</h2>
+
 <p>以下代码可以存放在<code>$HOME/.selfrc</code>中，之后在Self的终端shell中执行<code>cc rc</code>既可以打开字体经过调整的界面：</p>
 <pre><code>(|
   globals* = globals.
@@ -78,6 +81,7 @@
 </section>
 <section>
 <h2>遗留问题</h2>
+
 <p>以下是在分析过程中发现的问题，需要有所留意：</p>
 <ol>
 <li>

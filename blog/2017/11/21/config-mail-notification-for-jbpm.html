@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>配置jBPM邮件通知</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>配置jBPM邮件通知</h1><time>21 Nov 2017</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <ol>
 <li>
 <p><code>userinfo.properties</code>的配置可以整合到LDAP中，需要设置Java系统属性<code>org.jbpm.ht.userinfo</code>为<code>ldap</code>，并配置<code>kie-server/WEB-INF/classes/jbpm.user.info.properties</code>文件。—— 2017-11-29</p>
@@ -15,6 +17,7 @@
 <p>jBPM有两种模式可以实现邮件通知，分别是邮件服务任务（mail service task）和截止时间通知（deadline notification）。</p>
 <section>
 <h2>邮件服务任务</h2>
+
 <p>要使用邮件服务任务，首先需要在项目Settings的Deployment descriptor中添加Work item handlers，名称为<code>Email</code>，标识符使用<code>mvel</code>表示如下：</p>
 <pre><code>new org.jbpm.process.workitem.email.EmailWorkItemHandler("smtp.example.com","25","user@example.com","password")</code></pre>
 <p>也可以将账号信息存放在Tomcat的<code>conf/context.xml</code>设置中，配置如下：</p>
@@ -45,6 +48,7 @@
 </section>
 <section>
 <h2>截止时间通知</h2>
+
 <p>截止时间通知是jBPM另一种邮件通知方式，用于定时发送任务启动和截止的通知。具体的配置在JBoss BPM Suite 6.4<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_bpm_suite/6.4/html/user_guide/appe_process_elements#sect_user_task">文档</a>（A.8.5.3. Notification）中有说明。jBPM内置的Evalution示例中也有邮件提醒的例子（在Self Evaluation任务中定义）。</p>
 <p>要使用这个功能，除了在BPMN任务中定义<code>Notifications</code>属性，以及配置上述Tomcat Email Session之外，还需要为用户设置邮箱。</p>
 <p>jBPM支持多种用户管理模式，从这个<a href="https://github.com/kiegroup/jbpm/tree/7.4.1.Final/jbpm-human-task/jbpm-human-task-core/src/main/java/org/jbpm/services/task/identity">目录</a>中可以看到，包括数据库、LDAP、Property等。例如在Property中，可基于<code>email</code>属性指定用户。</p>

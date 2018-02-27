@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>C语言中的system函数接口</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>C语言中的system函数接口</h1><time>08 Sep 2017</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <ol>
 <li>
 <p>CLIPS先前的<code>system</code>接口没有返回值，最近<a href="https://sourceforge.net/p/clipsrules/tickets/26/">完善</a>了这个接口。但有一点需要注意的是，<code>system()</code>的返回值并不是<code>exit()</code>接口指定的值，而是<code>waitpid</code>获取的值，其中包含了更多的信息，详见<a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/waitpid.html">POSIX标准</a>。—— 2017-09-17</p>

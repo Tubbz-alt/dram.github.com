@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>去除NetBSD终端下的橙色高亮</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>去除NetBSD终端下的橙色高亮</h1><time>04 Oct 2008</time>
 
+
 <p>终端下，NetBSD会在一些地方用橙色作为高亮，这样眼睛看久了会不舒服。而且VIM下的一些color scheme也会出现偏差。在网上找了好久，发现应该是在termcap的问题。经过试验，得出如下方法。</p>
 <p>编辑<code>/usr/share/misc/termcap</code>，找到以<code>vt220</code>开头的行，然后将这一项中的<code>ue=\E[24m</code>和<code>us=\E[4m</code>这两个选项删除，别忘了对应的冒号（记得做备份哦，出问题了别来找我:P），然后保存退出。其实这两个选项是处理下划线的，NetBSD用橙色高亮取代下划线了。</p>
 <p>再在<code>/usr/share/misc/</code>目录下，利用<code>cap_mkdb termcap</code>来生成<code>termcap.db</code>文件，同样，最好先备份原来的<code>termcap.db</code>文件。</p>

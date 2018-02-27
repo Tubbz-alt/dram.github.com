@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM分配任务给流程发起人</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM分配任务给流程发起人</h1><time>11 Dec 2017</time>
 
+
 <p>jBPM中分配任务通过在Human Task中指定Actors属性实现。该属性可以指定一个或多个执行人（以逗号分割），每个执行人可以是常量，也可以是<code>#{user}</code>形式的变量。</p>
 <p>那么如何将任务分配给流程发起人呢？在jBPM中，存在一个特殊变量<code>initiator</code>，为流程的发起人。但要在Actors属性中使用该变量的话，需要先定义<code>initiator</code>流程变量，否则无效。对于这一点，不确定是有意为之还是bug。（在Evalution示例中，同样存在该变量的显式定义）</p>
 </article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

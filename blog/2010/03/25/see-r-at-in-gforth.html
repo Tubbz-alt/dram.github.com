@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>读Gforth: see R@</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>读Gforth: see R@</h1><time>25 Mar 2010</time>
 
+
 <p>学习语言，看代码及写代码都是比较有效的方式。Gforth是一个ANS Forth实现，有较好的跨平台特性，在Gforth中，除去一些primitive words外，都是用Forth编写，有一定的学习价值。可以通过阅读它的代码学习Forth本身的语言特性及解析器实现。</p>
 <p>准备把学习的过程整理成一个系列的文档，一方面可以分享心得，更是为敦促自己。 由于牵扯到汇编代码，有必要先交待一下执行环境：Cygwin 1.7.2 + GCC 4.3.4 + Gforth 0.7.0。另外假设读者对Forth及x86汇编有所了解，不然看下面的文字会有些吃力。好，下面进行正题。</p>
 <p>不用做过多解释，R@是将return stack的TOS拷贝到data stack。把它作为第一个代码阅读的对象主要是由于它涉及到Forth中主要的两个堆栈，可以了解Gforth是如何实现这两个堆栈。</p>

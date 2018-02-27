@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>什么时候用 typedef</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>什么时候用 typedef</h1><time>14 May 2009</time>
 
+
 <p>最近 NetBSD 里将大量的<code>struct device *</code>用<code>device_t</code>代替，但没有怎么说明原因。</p>
 <p>只记得在 Linux Kernel Coding Style 中对 typedef 还是不怎么提倡使用的，于是又重新翻了一下这份文档，发现这大概和下面这种情况比较相符：</p>
 <blockquote>

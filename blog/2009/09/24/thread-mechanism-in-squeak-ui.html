@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Squeak UI的线程机制</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Squeak UI的线程机制</h1><time>24 Sep 2009</time>
 
+
 <p>Squeak的UI Morphic是单线程，而不是多线程的。所以如果在Workspace上执行 <code>(Delay forSeconds: 10) wait.</code> 整个UI会僵死10秒，而不单单是Workspace这一个窗口。当然，整个Smalltalk系统则是多线程的，可以通过<code>[(Delay forSeconds: 10) wait] fork.</code>将一个代码放入后台执行。更为详细的信息可以看<a href="http://wiki.squeak.org/squeak/5696">这里</a>，还有<a href="http://lists.squeakfoundation.org/pipermail/beginners/2008-October/005539.html">这里</a>。</p>
 </article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

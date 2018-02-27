@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Prolog的联合（unification）和模式匹配</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Prolog的联合（unification）和模式匹配</h1><time>20 Nov 2016</time>
 
+
 <p>故事从Felix（<a href="https://www.call-cc.org/">CHICKEN Scheme</a>作者）的<a href="https://bitbucket.org/bunny351/prolog">?-Prolog</a>项目中的一个问题开始。</p>
 <p>?-Prolog依赖SWI Prolog实现bootstrap，SWI Prolog在v6.5.2版本针对<code>current_prolog_flag/2</code>引入了一个不向下兼容的<a href="http://www.swi-prolog.org/ChangeLog?branch=development&amp;from=6.5.1&amp;to=6.5.2">更改</a>，具体来说是在处理<code>args</code>（命令行参数）时，早期版本会包含所有参数，而新版本则只返回<code>--</code>之后的参数。</p>
 <p>这一更改导致?-Prolog无法编译，在报告问题后，Felix很快做了<a href="https://bitbucket.org/bunny351/prolog/commits/afbf7a8792e7e38af9dd1be08da1098a1396a5f2">修复</a>。由于对Prolog并不熟悉，即使从与Prolog最相近的Erlang的语义来分析也无法理解。这也引出了本文的话题，Prolog的联合（<a href="https://en.wikipedia.org/wiki/Unification_%28computer_science%29">unification</a>）和其他语言中<a href="https://en.wikipedia.org/wiki/Pattern_matching">模式匹配</a>的不同。</p>

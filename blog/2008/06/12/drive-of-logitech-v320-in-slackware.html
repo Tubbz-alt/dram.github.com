@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Slackware下驱动罗技V320</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Slackware下驱动罗技V320</h1><time>12 Jun 2008</time>
 
+
 <p>V320的中键还有向左向右点击的功能，Windows下可以通过简单的安装SetPoint来设置，而在Linux则需要一些设置。</p>
 <p>其实并不麻烦，只需将下面这段代码加到<code>/etc/X11/xorg.conf</code>中即可。</p>
 <pre><code>Section "InputDevice"

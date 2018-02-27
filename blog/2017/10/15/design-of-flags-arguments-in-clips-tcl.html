@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS-Tcl中标志型参数设计</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS-Tcl中标志型参数设计</h1><time>15 Oct 2017</time>
 
+
 <p>在<a href="https://github.com/dram/clips-tcl">CLIPS-Tcl</a>中封装Tcl标志型参数时，由于CLIPS没有原生的位运算符和常量定义的支持，所以遇到一些问题。</p>
 <p>一开始的处理方式，是用multifield的模式，例如在<code>tcl-open-command-channel</code>中，如果需要同时重定向标准输入和标准输出，就传入<code>(create$ stdin stdout)</code>参数，对应到Tcl端，则是将<code>TCL_STDIN|TCL_STDOUT</code>传入<code>Tcl_OpenCommandChannel</code>。</p>
 <p>这样的处理方式存在两个问题：</p>

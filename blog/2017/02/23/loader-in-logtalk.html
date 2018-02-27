@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Logtalk中的加载器（loader）</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Logtalk中的加载器（loader）</h1><time>23 Feb 2017</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <ol>
 <li>
 <p>加载器另一个作用是可以简化路径，<code>logtalk_load/1</code>在加载代码时，如果是在toplevel调用，则相对于当前工作目录查找，如果<code>logtalk_load/1</code>在代码文件中调用，则相对于该文件所在目录的路径，示例可以查看<a href="https://github.com/LogtalkDotOrg/logtalk3/blob/lgt3092stable/library/types_loader.lgt">types_loader.lgt</a>。—— 2017-02-25</p>
@@ -29,6 +31,7 @@
 </ol>
 <section>
 <h2>示例</h2>
+
 <p>以下通过示例说明：</p>
 <pre><code>:- initialization((
     logtalk_load(library(loopp)),
@@ -56,6 +59,7 @@
 </section>
 <section>
 <h2>延展</h2>
+
 <p>从中可以看到，Logtalk在总体设计上较为动态化，继承了部分Lisp和Smalltalk的特性。如果有Prolog实现支持镜像化机制（image）的话，可能更为贴合Logtalk的设计。</p>
 </section>
 </article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

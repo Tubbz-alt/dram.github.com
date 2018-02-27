@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于Tcl的exec和Tcl_OpenCommandChannel</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于Tcl的exec和Tcl_OpenCommandChannel</h1><time>17 Oct 2017</time>
 
+
 <p>Tcl的<a href="https://tcl.tk/man/tcl8.6/TclCmd/exec.htm">exec</a>和<a href="https://tcl.tk/man/tcl8.6/TclLib/OpenFileChnl.htm#M7">Tcl_OpenCommandChannel</a>可以实现系统命令调用，并且功能丰富，包括输入输出重定向、管道等。</p>
 <p>但其中存在一个非常严重的问题：特殊字符<code>&gt;</code>、<code>&lt;</code>、<code>|</code>等不能作为命令参数传入，具体可以查看<a href="https://core.tcl.tk/tips/doc/trunk/tip/424.md">TIP 424</a>中的说明。</p>
 <p>因为TIP 424还没有整合，所以当前没有解决的方案。临时的处理，一是做输入检查，或者是结合<a href="http://pubs.opengroup.org/onlinepubs/9699919799/utilities/xargs.html">xargs</a>使用（xargs中使用<code>-0</code>参数比较方便，但这个参数没有标准化）。也可以调用<code>sh -c</code>将命令整体传入。</p>

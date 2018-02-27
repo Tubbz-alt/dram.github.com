@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>修改文件在各脚本语言中的处理</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>修改文件在各脚本语言中的处理</h1><time>15 Aug 2010</time>
 
+
 <p>文本处理是脚本语言的一个重要应用，而修改文件某行或几行文本内容也是经常遇到的问题。由于类UNIX系统中的文件系统一般都不是结构化文件系统，在修改文件时并不是很方便，以下整理了一些比较常用的模式。由于一些接口只在特定语言中有，这里用主流的Python，Ruby和PHP三大脚本语言为例。</p>
 <p>注意以下方法主要是从代码的可读性及实现的便捷性上考虑的，并没有考虑性能因素，所以只适用于对小文件的修改。</p>
 <p>最为直接的一种方式是先建一临时文件，对原文件以行遍历，如果无需修改，直接写入文件，需要修改的行，将修改后的内容写入临时文件，最后关闭临时文件，覆盖原文件。Ruby中的Tempfile模块可以方便地创建临时文件。这一方法的一个不足是，无法保留文件的原有权限。在处理系统配置文件时需要特别注意。</p>

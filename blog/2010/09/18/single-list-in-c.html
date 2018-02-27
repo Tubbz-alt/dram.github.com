@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>C语言中的链表</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>C语言中的链表</h1><time>18 Sep 2010</time>
 
+
 <p>相信但凡学习过编程的人，对于链表都不会陌生。而在C中，语言本身和标准库中都并没有针对链表的接口，这样，作为如些重要的一类数据结构，在编程实践中必然经常需要实现它。所以有必要稍作整理。</p>
 <p>在BSD中的queue.h对各类链表提供了比较统一的宏接口，如单链表、双向链表等，可以作为参考。</p>
 <p>以下主要总结单向链表的一些实现方式。</p>

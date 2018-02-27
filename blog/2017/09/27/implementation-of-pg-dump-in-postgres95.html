@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Postgres95 pg_dump实现</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Postgres95 pg_dump实现</h1><time>27 Sep 2017</time>
 
+
 <p>在Postgres95 1.01代码库中，包含有<a href="https://github.com/postgres/postgres/tree/PG95-1_01/src/bin/pg_dump">pg_dump</a>的代码，以及<a href="https://github.com/postgres/postgres/tree/PG95-1_01/src/bin/pg4_dump">pg4_dump</a>的代码。</p>
 <p>猜测pg4_dump是为兼容导出POSTGRES数据用的，这里只就pg_dump展开分析，以下为具体流程：</p>
 <ol>

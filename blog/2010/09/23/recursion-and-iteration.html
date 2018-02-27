@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>递归与递代</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>递归与递代</h1><time>23 Sep 2010</time>
 
+
 <p>对一个问题的求解，递归与递代是两个全然不同的思维方式，递归是自上而下的，而递代则是自下而上的。而两者的联系也是非常紧密，在将递归计算过程转化为递代时，可以以递归的调用过程作为基础进行递代结构设计。以下用几个例子加以说明。</p>
 <p>以对 <code>2^n</code> 的求解说明线性递归转化为递代的思路。根据 <code>2^n = 2 * 2^(n-1)</code> 及 <code>2^0 = 1</code> ，用Scheme实现的递归代码如下：</p>
 <pre><code>(define (expt-2 n)

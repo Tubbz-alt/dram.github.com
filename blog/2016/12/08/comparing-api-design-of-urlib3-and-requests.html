@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>urllib3与requests的API设计比较</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>urllib3与requests的API设计比较</h1><time>08 Dec 2016</time>
 
+
 <p>Python应用最为广泛的HTTP客户端库为<a href="http://docs.python-requests.org">requests</a>，这是广为人知的工具库。而<a href="https://urllib3.readthedocs.io">urllib3</a>则是requests实现的基石，这个库知道的人不多。</p>
 <p>从对两者的比较中，可以发现在功能定位以及API设计中的考量有比较大的差异。</p>
 <p>如果从分层结构上考虑，假设Python标准库作为最底的第一层，urllib3大体落在一层，更严格的界定的话可以作为1.5层。考量的因素主要是urllib3总体没有全面覆盖标准库的功能，上层应用在使用时需要借助<code>json</code>，<code>encoding</code>，<code>urllib2</code>等库结合urllib3使用才能完成任务。</p>

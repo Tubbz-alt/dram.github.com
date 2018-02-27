@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>zsh vi 模式提示</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>zsh vi 模式提示</h1><time>07 Jun 2009</time>
 
+
 <p>习惯了 vi 按键的，相信都有在 shell 下使用 vi 模式的经历。而不能提示当前编辑模式则是大部分 shell vi 模式的一个致命伤。</p>
 <p>对于 zsh，没有发现并不代表不存在，<a href="http://zshwiki.org/home/examples/zlewidgets">zshwiki</a> 里有一个简单的例子，下面的代码在它的基础上稍作加工，以不同的提示符颜色指示当前是 insert 还是 normal 模式。</p>
 <pre><code>function zle-line-init zle-keymap-select {

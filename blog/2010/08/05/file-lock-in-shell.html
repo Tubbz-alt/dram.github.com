@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>SHELL中的文件锁</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>SHELL中的文件锁</h1><time>05 Aug 2010</time>
 
+
 <p>在SHELL中实现文件锁，有两种简单的方式。</p>
 <p>一是利用普通文件，在脚本启动时检查特定文件是否存在，如果存在，则等待一段时间后继续检查，直到文件不存时创建该文件，在脚本结束时删除文件。为确保脚本在异常退出时文件仍然能被删除，可以借助于<code>trap "cmd" EXIT TERM INT</code>命令。一般这类文件存放在<code>/var/lock/</code>目录下，操作系统在启动时会对该目录做清理。</p>
 <p>另一种方法是是使用<code>flock</code>命令。使用方式如下，这个命令的好处是等待动作在flock命令中完成，无需另外添加代码。</p>

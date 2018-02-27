@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM的版本问题</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM的版本问题</h1><time>13 Dec 2017</time>
 
+
 <p>jBPM刚最近<a href="https://github.com/kiegroup/jbpm-website/pull/41">发布</a>了7.5.0版本。红帽同时维护有社区版和商用版本，社区版只维护大版本，例如v7.5、v7.6，而不会发布v7.5.1、v7.5.2等bug修复版本。</p>
 <p>但如果需要使用稳定版，可以从JBoss的仓库中下载SNAPSHOT的war包，例如7.5.1-SNAPSHOT的<a href="https://repository.jboss.org/nexus/content/groups/public/org/kie/server/kie-server/7.5.1-SNAPSHOT/">kie-server</a>包和<a href="https://repository.jboss.org/nexus/content/groups/public/org/kie/kie-wb/7.5.1-SNAPSHOT/">kie-wb</a>包，在Tomcat中部署，还需要<a href="https://repository.jboss.org/nexus/content/groups/public/org/kie/kie-tomcat-integration/7.5.1-SNAPSHOT/">kie-tomcat-integration</a>包（当前该目录还不存在）。</p>
 <p><code>7.5.1-SNAPSHOT</code>基于<code>7.5.x</code>分支打包，相较于v7.5.0的差异，可以通过以下命令查看：</p>

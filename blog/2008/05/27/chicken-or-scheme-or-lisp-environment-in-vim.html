@@ -1,17 +1,21 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>VIM下搭建Chicken(Scheme, Lisp)开发环境</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>VIM下搭建Chicken(Scheme, Lisp)开发环境</h1><time>27 May 2008</time>
 
+
 <p>首先到 http://vim-chicken.googlecode.com 下载相关文件：csi-srv.scm, csi.py, scheme-dict.scm, ReadMe.txt。</p>
 <section>
 <h2>交互</h2>
+
 <p>利用 csi-srv.scm 和 csi.py 可以实现简单的交互，具体的使用方法可以看 ReadMe.txt 文件，里面有比较详细的说明。注意 VIM 需要支持 <code>+python</code>。如果使用的是 Windows + Python25，VIM 官方的预编译版本不支持 Python25，可以到 http://cream.sourceforge.net/download.html 下载 Windows VIM Installers without Cream.</p>
 </section>
 <section>
 <h2>编辑</h2>
+
 <p>可以去看看这些插件：autoclose, surround.</p>
 <p>还有可以看看:help text-objects.</p>
 <section>
 <h3>自动补全</h3>
+
 <p>首先用 sheme-dict.scm 生成一个 scheme.lst 文件。</p>
 <p>再在 .vim/ftplugin/scheme.vim 中加入：</p>
 <pre><code>setl complete=kE:/home/scheme.lst</code></pre>
@@ -19,10 +23,12 @@
 </section>
 <section>
 <h2>缩进</h2>
+
 <p>VIM 中，对于 Lisp 的缩进控制灵活性不大，lispwords 是唯一与此有关的选项。选项内容由以逗号分割的关键词组成，在其中出现的关键词都以类似 define 的方式进行缩进。可惜灵活性不够，比如像 call/cc 就无法很好缩进，只能将 call/cc 和 lambda 分成两行。</p>
 </section>
 <section>
 <h2>其他资料</h2>
+
 <ul>
 <li>
 <p>http://www.cliki.net/vim http://mikael.jansson.be/hacking/limp</p>

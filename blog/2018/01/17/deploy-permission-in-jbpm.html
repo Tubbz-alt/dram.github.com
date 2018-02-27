@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM中部署的权限</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM中部署的权限</h1><time>17 Jan 2018</time>
 
+
 <p>在jBPM的Workbench中，对于权限有细致的划分。这里想说明的是其中“Build &amp; Deploy”的权限。</p>
 <p>默认情况下，角色为<code>developer</code>和<code>admin</code>的用户都可以执行部署操作，但如果项目版本为正式版（版本号没有<code>-SNAPSHOT</code>后缀），<code>developer</code>不能覆盖已经发布的版本。</p>
 <p>基于此，可以方便地划分开发和生成环境的使用。</p>

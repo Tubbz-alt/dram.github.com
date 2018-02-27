@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Haskell 中的字符串处理</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Haskell 中的字符串处理</h1><time>07 Dec 2007</time>
 
+
 <p>注：以前在其他地方写的笔记，现在重新开始学习 Haskell，所以先搬过来。</p>
 <section>
 <h2>split 和 join</h2>
+
 <p>相信各位如果学过 Python 的话，对于这两个函数必定是非常熟悉了。但在 Haskell 中并没有具有同样功能的函数，相似的还是有的。</p>
 <p>首先是 words 和 lines 函数，它们的名字已很能说明问题了，words 用来 split 以空格分隔的字符串，lines 则是 split 以 '\n' 分隔的字符串。</p>
 <p>这两个函数用来简单的 split 已经够用了，如果不能满足要求那么就试试 Text.Regex.splitRegex，这个就和 split 差不多了，且功能强大的多，因为可以使用正则表达式了。来个简单的例子。</p>
@@ -20,6 +22,7 @@ join d = concat . intersperse d</code></pre>
 </section>
 <section>
 <h2>切片</h2>
+
 <p>Python 非常迷人的一个功能应该就是切片了，用起来非常方便。而 Haskell 中也还好，有 take, drop 系列函数，可以完成常用的一些功能。</p>
 <p>take 用来取得 list 前面的几个元素，而 drop 则丢弃前面的几个元素。比如： 先我们可以来定义一个 takeTail 函数，还有一个 slice，其中的 slice 与 Python 稍有不同，我是参考 Lua，将第二个参数作为返回字符串的长度处理，且计数是从 1 开始的：</p>
 <pre><code>takeTail :: Int -&gt; [a] -&gt; [a]
@@ -37,10 +40,12 @@ dropWhile (/='.') "hello.world"     --&gt; ".world"</code></pre>
 </section>
 <section>
 <h2>find 和 replace</h2>
+
 <p>上面的功能可以在通用的 list 函数中找到答案，但 find 和 replace 则不好办了，如果只是找 Char 没问题，但找 String 的话则要用 Text.Regex.matchRegex 和 subRegex 了。</p>
 </section>
 <section>
 <h2>网络资源</h2>
+
 <ul>
 <li>
 <p><a href="http://julipedia.blogspot.com/2006/08/split-function-in-haskell.html">A split function in Haskell</a> -- 一篇博客文章，里面的回复也挺有价值的。</p>

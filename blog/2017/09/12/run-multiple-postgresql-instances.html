@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>PostgreSQL多实例运行</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>PostgreSQL多实例运行</h1><time>12 Sep 2017</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <ol>
 <li>
 <p>PostgreSQL在初始化的时候会生成一个默认数据库<code>postgres</code>（另外还有两个模板库<code>template0</code>和<code>template1</code>，可以通过<code>psql -l</code>查看。详见<a href="https://www.postgresql.org/docs/10/static/manage-ag-templatedbs.html">文档</a>），所以如果只是生成单数据库环境，初始化时可以省去<code>createdb</code>的过程。—— 2017-09-15</p>

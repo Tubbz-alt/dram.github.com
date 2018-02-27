@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Postgres95查询的执行流程</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Postgres95查询的执行流程</h1><time>26 Sep 2017</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <ol>
 <li>
 <p><code>handleCopyOut</code>和<code>handleCopyIn</code>对应的分别是<code>COPY ... TO</code>和<code>COPY ... FROM</code>语句，而非<code>COPY OUT</code>和<code>COPY IN</code>。—— 2017-09-27</p>

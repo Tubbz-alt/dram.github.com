@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Postgres95 postmaster实现</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Postgres95 postmaster实现</h1><time>27 Sep 2017</time>
 
+
 <p>postmaster是PG95的主进程，用于监听端口，等待客户端连接并启动后端程序。</p>
 <p>postmaster的主体实现是典型的fork&amp;exec socket服务端模型，但流程上有部分优化。例如在fork&amp;exec之前会先校验请求和用户信息的有效性，如果是无效请求或者用户，则无需启用新进程。</p>
 <p>除了启动任务进程，postmaster还负责管理共享资源，例如调用<code>CreateSharedMemoryAndSemaphores</code>初始化共享内存和信号量。</p>

@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>安装Logtalk</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>安装Logtalk</h1><time>21 Feb 2017</time>
 
+
 <p><a href="http://logtalk.org/">Logtalk</a>的安装与常见的开源软件编译安装模式有所不同，以下列出主要的不同点：</p>
 <ol>
 <li>
@@ -12,14 +13,17 @@
 </ol>
 <section>
 <h2>生产环境</h2>
+
 <p>生产环境的安装，可以参考Logtalk的<a href="https://github.com/LogtalkDotOrg/logtalk3/blob/master/INSTALL.md">INSTALL.md</a>说明。其中涉及到<code>install.sh</code>脚本的执行、<code>LOGTALKHOME</code>和<code>LOGTALKUSER</code>环境变量的设置、<code>logtalk_user_setup</code>的执行等。</p>
 </section>
 <section>
 <h2>开发环境</h2>
+
 <p>开发环境的安装可以参考<a href="https://github.com/LogtalkDotOrg/logtalk3/wiki/Running-Developer-Versions">这篇</a>维基的说明，总体与生产环境类似，只是省去了<code>install.sh</code>和<code>logtalk_user_setup</code>的步骤。</p>
 </section>
 <section>
 <h2>脚本化</h2>
+
 <p>基于上面开发环境的思路，可以编写简单的脚本直接执行Logtalk，免去设置环境变量的过程，示例脚本如下：</p>
 <pre><code>#!/bin/sh
 

@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Self数据结构</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Self数据结构</h1><time>07 Dec 2016</time>
 
+
 <p>之前已对<a href="/blog/2016/10/29/sequences-in-self.html">Self中的序列对象</a>和<a href="/blog/2016/11/08/self-data-structures-collector.html">Self数据类型之收集器</a>有简单介绍，以下对Self各数据类型做汇总整理。</p>
 <section>
 <h2>布尔（boolean）</h2>
+
 <p>布尔型是非常基本的类型，在Self及Smalltalk中，更是有其特别的用途。</p>
 <p>传统结构化编程中的分支结构，在Self中通过<code>true</code>和<code>false</code>对象以及boolean特性（traits）实现，而Smalltalk中则通过<code>True</code>和<code>False</code>这两个<code>Boolean</code>子类实现。</p>
 <p>在boolean特性中，定义有以下方法：</p>
@@ -31,6 +33,7 @@
 </section>
 <section>
 <h2>数值（number）</h2>
+
 <ul>
 <li>
 <p><code>predecessor</code> (<code>pred</code>) —— 前一数值；</p>
@@ -66,6 +69,7 @@
 </section>
 <section>
 <h2>整数（integer）</h2>
+
 <ul>
 <li>
 <p><code>do:</code> —— 对<code>0..n</code>的数遍历；</p>
@@ -86,6 +90,7 @@
 </section>
 <section>
 <h2>浮点数（float）</h2>
+
 <ul>
 <li>
 <p><code>ceil</code> —— 向上取整；</p>
@@ -103,6 +108,7 @@
 </section>
 <section>
 <h2>集合（collection）</h2>
+
 <p>集合特性包含有序列类以及键值对类的子特性，详细介绍参考<a href="/blog/2016/10/29/sequences-in-self.html">Self中的序列对象</a>。需要注意的一点是，在使用<code>do:</code>遍历集合时，以<code>:value</code>、<code>:key</code>的顺序传入遍历块，由于Self中支持忽略传入块的多余参数，所以在遍历序列时不需要关心第二个参数。实际上，在序列中，可以认为每个元素的<code>key</code>和<code>value</code>是相同的，都为其本身。</p>
 <ul>
 <li>
@@ -130,6 +136,7 @@
 </section>
 <section>
 <h2>索引（indexable）</h2>
+
 <p>indexable是键为整型的集合，详细介绍参考<a href="/blog/2016/10/29/sequences-in-self.html">Self中的序列对象</a>。</p>
 <ul>
 <li>
@@ -172,10 +179,12 @@
 </section>
 <section>
 <h2>向量（vector）</h2>
+
 <p>从vector的prototype可以看出vector是较为底层的特性，除parent和数据外，他自身并不包含任何额外的slot。</p>
 </section>
 <section>
 <h2>序列（sequence）</h2>
+
 <p>sequence是基于vector实现的可动态调整存储空间的序列。vector是固定大小的。在traits sequence中包含方法<code>desiredMinCapacity:</code>，用于调整大小。另外dictionary也是基于vector实现的。</p>
 <p>如果考虑JSON序列化问题，在Self众多序列对象中，总体sequence较为合适。</p>
 <ul>
@@ -186,6 +195,7 @@
 </section>
 <section>
 <h2>字符串（string）</h2>
+
 <p>字符串的主体原型链为：<code>traits string</code> -&gt; <code>traits byteVector</code> -&gt; <code>traits mutableIndexable</code>，后续的原型在<a href="/blog/2016/10/29/sequences-in-self.html">Self中的序列对象</a>中已有说明。</p>
 <ul>
 <li>
@@ -206,6 +216,7 @@
 </section>
 <section>
 <h2>列表（list）</h2>
+
 <p>list是不可索引的序列。</p>
 <ul>
 <li>
@@ -215,6 +226,7 @@
 </section>
 <section>
 <h2>字典（dictionary）</h2>
+
 <p>在维基百科中，对于字典（或关联数组、映射）的<a href="https://en.wikipedia.org/wiki/Associative_array">定义</a>为：</p>
 <blockquote>
 <p>An associative array, map, symbol table, or dictionary is an abstract data type composed of a collection of (key, value) pairs, such that each possible key appears at most once in the collection.</p>

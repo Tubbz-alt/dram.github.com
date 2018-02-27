@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>jBPM KIE Server RESTful API访问控制</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>jBPM KIE Server RESTful API访问控制</h1><time>02 Jan 2018</time>
 
+
 <p>在jBPM 7之后，kie-server的API权限有了<a href="https://issues.jboss.org/browse/JBPM-6649">调整</a>，只要用户具备<code>user</code>或者<code>kie-server</code>角色，就可以访问所有API，这存在严重的安全风险。</p>
 <p>对此，有几种方案：</p>
 <ol>

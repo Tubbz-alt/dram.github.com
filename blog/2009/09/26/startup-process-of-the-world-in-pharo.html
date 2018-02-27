@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Pharo的World以及启动流程</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Pharo的World以及启动流程</h1><time>26 Sep 2009</time>
 
+
 <p>Squeak的桌面有个很特别的名字，world，点击左键，就会出现world菜单。Squeak的world其实也是一个Morph，具体说来，是PasteUpMorph，相当于一个容器，可以包含其它Morph，甚至是其它World，所以在一个image中，world并不是唯一的。</p>
 <p>有两个全局变量与world相关，一个是World，另一个是ActiveWorld。Object有一个currentWorld消息，当有ActiveWorld时，返回它，否则返回World，那究竟World和ActiveWorld有什么关系呢？那应该去看看Pharo的启动过程。</p>
 <p>然而，Pharo的启动流程有些特别，具体的流程可以看<a href="http://lists.squeakfoundation.org/pipermail/beginners/2006-October/001172.html">这里</a>和<a href="http://lists.squeakfoundation.org/pipermail/beginners/2006-October/001177.html">这里</a>。由于Pharo是用image的形式存放整个环境的，Pharo的启动其实就只是恢复到上次保存时的状态，而完全不需要对World，ActiveWorld之类的变量进行初始化。</p>

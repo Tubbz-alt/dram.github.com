@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>NetBSD关机时硬盘异响</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>NetBSD关机时硬盘异响</h1><time>07 Oct 2008</time>
 
+
 <p>我现在用的NetBSD版本是4.0，一个华硕的本子，在关机时发现内核没等硬盘完全停止就切断电源，感觉这对硬盘的损伤应该挺大。</p>
 <p>先是想自己在shutdown命令中加延时来解决，追查shutdown代码，可以发现它调用了reboot命令，再去看reboot的代码，虽然其中有sync函数的调用，但在其后加sleep依然没用。后来发现NetBSD在关机时，一开始提示文字为白色，在关机的最后时刻变为绿色，而在绿色的提示文字中依然有对硬盘的操作，看来应该是内核的问题，在内核代码中可以找到<code>cpu_reboot</code>函数，但看不懂。-_-!!</p>
 <p>看来想简单的加个sleep是行不通了，还是用新点版本试试吧。先是尝试NetBSD 4_STABLE，依然有此问题，之后试了下NetBSD current，正常了。看来这个问题已经解决，但没有pull up到4_STABLE中，那大概是只能等到5.0了。</p>

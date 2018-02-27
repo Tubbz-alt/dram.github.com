@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>数值类型安全</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>数值类型安全</h1><time>14 May 2017</time>
 
+
 <p>Swift语言有比较严格的类型安全检查，由此可以暴露出一些较难发现的问题。</p>
 <p>例如，随机数种子的初始化动作，在C语言中，可以这样处理：</p>
 <pre><code>#include &lt;stdio.h&gt;

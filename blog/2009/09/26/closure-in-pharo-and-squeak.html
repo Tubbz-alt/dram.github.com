@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Pharo和Squeak中的Closure</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Pharo和Squeak中的Closure</h1><time>26 Sep 2009</time>
 
+
 <p>Smalltalk支持Closure，Squeak是不完全支持，而Pharo中则加入了完全的Closure支持。不过最新的Squeak trunk中也加入了完全Closure的支持。看了挺多资料，但都说得不是很清楚，最是<a href="http://lists.squeakfoundation.org/pipermail/squeak-dev/1999-November/025166.html">这篇</a>文章讲的浅显易懂。</p>
 <p>但他的例子稍显复杂，而且在Pharo中也跑不起来。我这里来一个简单的：</p>
 <pre><code>adder := [:base | [:n | base + n]].

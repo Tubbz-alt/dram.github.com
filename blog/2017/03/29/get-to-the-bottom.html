@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>寻根究底</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>寻根究底</h1><time>29 Mar 2017</time>
 
+
 <p>这几天在讨论一个问题：为什么 <code>prolog::append([a], [b], L)</code>能在Logtalk中成功返回结果。</p>
 <p>在询问Logtalk作者之后得知，Logtalk在找不到<code>object</code>时，会尝试进行Prolog模块。另外他还提到SWI-Prolog在调用不存在的模块时，会自动创建。</p>
 <p>在向SWI-Prolog<a href="https://github.com/SWI-Prolog/swipl-devel/issues/213">提交</a>问题报告之后，SWI-Prolog作者提到另一个问题，<code>append/3</code>会自动载入，这就又引入了一个新的问题。</p>

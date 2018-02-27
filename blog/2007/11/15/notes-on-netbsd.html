@@ -1,15 +1,18 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>NetBSD零碎笔记</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>NetBSD零碎笔记</h1><time>15 Nov 2007</time>
 
+
 <p>[2008/11/14更新]</p>
 <section>
 <h2>sudo设置</h2>
+
 <p>以前一直没有去尝试过sudo，现在发现这确实是个好东西。如果只是需要简单的功能，设置也并不复杂。运行visudo之后：</p>
 <pre><code>danran ALL=(ALL) ALL
 Defaults:danran runaspw</code></pre>
 </section>
 <section>
 <h2>ksh提示符</h2>
+
 <p>NetBSD默认安装了三个shell，sh, csh和ksh，我用的是ksh，下面是一个简单的提示符，有颜色，同时当命令出错时会提示返回值或者接收到的信号值。</p>
 <pre><code>my_prompt () {
         status=$?
@@ -23,6 +26,7 @@ PS1='$(my_prompt)'</code></pre>
 </section>
 <section>
 <h2>更改终端字体</h2>
+
 <p>在<code>/etc/wscons.conf</code>中加入：</p>
 <pre><code>font	sfnt	-	-	-	/root/s.fnt
 
@@ -32,6 +36,7 @@ setvar ttyE0 font sfnt</code></pre>
 </section>
 <section>
 <h2>网络设置</h2>
+
 <p>如果网络环境是DHCP的话，在/etc/rc.conf中加入<code>dhclient=YES</code>再运行<code>/etc/rc.d/dhclient start</code>即可启用网络。 如果要设置静态IP，则需要在<code>/etc/rc.conf</code>中加入：</p>
 <pre><code>hostname="name"
 defaultroute="网关"
@@ -42,12 +47,14 @@ ifconfig_rtk0="inet IP地址 netmask 掩码"</code></pre>
 </section>
 <section>
 <h2>ctags 没有 -R</h2>
+
 <p>NetBSD 中的 ctags 好像没有 -R 选项，去网上查了下，可以配合 find 实现：</p>
 <pre><code>find  dirname -name "*.[ch]" | xargs ctags</code></pre>
 <p>但这不是长久之计，应该NetBSD自带的ctags不支持tag重复的情况，所以最好还是安装pkgsrc中的exctags。</p>
 </section>
 <section>
 <h2>stardict安装</h2>
+
 <p>wip 里的好像和 gnome 的依赖性太大，所以没有从那安装，自己下了 stardict-2.4.8 的包，然后再用下面的 configure 一下：</p>
 <pre><code>./configure  -prefix=/usr --sysconfdir=/etc --mandir=/usr/man --disable-gnome-support</code></pre>
 <p>编译到最后会出现无法编译 stardict.desktop 的问题，不管它，反正这东西我也不用，所以直接进入 data 目录，将 stardict.desktop.in 改名为 stardict.desktop，这样就可以编译通过了。</p>
@@ -55,14 +62,17 @@ ifconfig_rtk0="inet IP地址 netmask 掩码"</code></pre>
 </section>
 <section>
 <h2>readline 问题</h2>
+
 <p>NetBSD 下的 readline 好像有点问题，Python 历史，方向键等都不能使用，挺恼人的。找了下，好像 rlwrap，socat，rlfe 这些都是专门提供这种功能的软件，效果还不错。其实 python 的 readline 问题也可以通过安装 py-readline 这个包来解决。</p>
 </section>
 <section>
 <h2>gimmie 编译时 intltool 版本过低问题</h2>
+
 <p>原本也是摸不着头脑，但无意间 ls -l 可以看到 intltool-update.in 等三个文件链接到 /usr/share 上了，应该时 /usr/pkg/share 才对啊。</p>
 </section>
 <section>
 <h2>vim 编译</h2>
+
 <p>NetBSD 自带的 vim 不支持 python，但直接改 pkgsrc 好像又有问题，所以还是直接自己下载编译吧。</p>
 <p>其实编译VIM并没有想像中的那么难。下载用 aap 就可以了。编译的话，只要在 src/Makefile 上把一下几个开启就可以了。</p>
 <pre><code>CONF_OPT_GUI = --disable-gui
@@ -73,6 +83,7 @@ CONF_OPT_CSCOPE = --enable-cscope</code></pre>
 </section>
 <section>
 <h2>fcitx输入法</h2>
+
 <p>fcitx 我是直接从 www.fctix.org 下载的 fcitx 'GirlDog' 3.5-070703 版本。编译安装没什么问题，设置的话在 .xinitrc 中加入：</p>
 <pre><code>export LC_CTYPE=zh_CN.eucCN
 export XMODIFIERS="@im=fcitx"

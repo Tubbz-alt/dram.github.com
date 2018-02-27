@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于POSIX新增的openat及相关接口</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于POSIX新增的openat及相关接口</h1><time>25 Sep 2017</time>
 
+
 <p>前阵子（7月）Perl社区在<a href="https://www.nntp.perl.org/group/perl.perl5.porters/2017/07/msg245712.html">讨论</a>是否加入POSIX新增的<code>openat</code>及相关接口，虽然当时的讨论没有持续，但最近因为<code>-i</code>参数（用于直接更改文件）的一个<a href="https://rt.perl.org/Public/Bug/Display.html?id=127663">bug</a>，Perl开始<a href="https://github.com/Perl/perl5/commit/733612e0500c5f8f8dfedaa93a56d04d4f9c1930">使用</a><code>linkat</code>函数。</p>
 <p>那么<code>*at</code>究竟是做什么的呢？可以看看POSIX的<a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/openat.html">标准定义</a>，以及这里的<a href="https://stackoverflow.com/questions/35478448/">讨论</a>，还有这份<a href="https://www.eecs.harvard.edu/~cs161/notes/security-part-one.pptx">演示文档</a>。</p>
 <p>简单来说，是为防止在多个操作中目录被改动。</p>

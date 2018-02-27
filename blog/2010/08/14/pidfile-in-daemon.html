@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Daemon程序中的pidfile</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Daemon程序中的pidfile</h1><time>14 Aug 2010</time>
 
+
 <p>pidfile一般用于daemon程序，主要作用是保证在系统中只存在该daemon的一个进程，同时也便于系统统一管理这些daemon程序。</p>
 <p>那么程序在实现pidfile功能时具体需要做哪些处理呢？可以从<a href="http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/">这个</a>纯Python实现中入手。 一般的daemon程序，不管最终接口是直接用C实现还是用SHELL包装，都需要提供start，stop及restart功能。</p>
 <p>start过程需要处理的问题：</p>

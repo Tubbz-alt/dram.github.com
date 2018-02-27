@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>SQLite3、JSON和jq</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>SQLite3、JSON和jq</h1><time>09 Oct 2017</time>
 
+
 <p><a href="https://stedolan.github.io/jq/">jq</a>是较为流行的一个JSON处理命令行工具，虽然功能强大，但命令语法有一定的学习门槛，并且可记忆性不强。而SQLite3对JSON有较好的<a href="http://sqlite.org/json1.html">支持</a>，很多时候，完全可以用SQLite3替代jq。</p>
 <p>以下为一个示例：</p>
 <pre><code>cat &gt;foo.json &lt;&lt;EOF

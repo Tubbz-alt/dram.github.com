@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>配置jBPM控制台默认语言</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>配置jBPM控制台默认语言</h1><time>16 Nov 2017</time>
 
+
 <p>在登录jBPM控制台时，系统会根据浏览器的语言设置调整默认语言，但当前中文翻译质量并不理想，所以考虑默认使用英语。</p>
 <p>JBoss BPM Suite 6.4文档中有提及语言的<a href="https://access.redhat.com/documentation/en-us/red_hat_jboss_bpm_suite/6.4/html/administration_and_configuration_guide/chap_localization_and_customization#changing_language_settings">配置</a>，但在jBPM 7中无效（不确定是不是Tomcat的问题）。而jBPM控制台是基于GWT实现，查看GWT<a href="http://www.gwtproject.org/doc/latest/tutorial/i18n.html">官方文档</a>，其中有提及几种配置方式，这里采用URL追加参数的机制。</p>
 <p>具体方式是修改<code>kie-wb/index.jsp</code>代码，在<code>queryString</code>为空时追加<code>locale=en</code>参数。</p>

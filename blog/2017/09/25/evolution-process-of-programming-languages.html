@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>编程语言的演进</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>编程语言的演进</h1><time>25 Sep 2017</time>
 
+
 <p>题目有点大，实际上是想说说Perl 5和Perl 6在语言设计实现以及发展演进上截然不同的两种思路。</p>
 <p>“Perl 6 is anything that passes the official test suite”，这是Perl 6<a href="http://design.perl6.org/S01.html">设计文档</a>中的一句话。简单地说，Perl 5是由实现定义语言，而Perl 6则是由测试用例定义语言。正是这样出发点的不同，导致了不同的结果。</p>
 <p>举一个简单的例子，如果出现实现和文档不一致时，Perl 5往往会<a href="https://github.com/perl11/cperl/issues/269">更改</a>文档，以对应<a href="https://www.nntp.perl.org/group/perl.perl5.porters/2017/09/msg246406.html">实现</a>。（Perl 6是否是以测试用例为准，而非实现或者文档，待找例证。）</p>

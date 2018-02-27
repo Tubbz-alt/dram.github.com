@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>答案集编程练习（第一期）</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>答案集编程练习（第一期）</h1><time>28 Apr 2017</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <ol>
 <li>
 <p>该练习参考了Luger《人工智能》第二部分前言中的例子。—— 2017-04-28</p>
@@ -13,13 +15,16 @@
 <p>现在想通过实践的方式辅助理解，这里将题目与参考的程序加以整理。以下是第一期的题目及题解，完整的程序可以在<a href="https://github.com/dram/answer-set-programming-exercises/blob/master/issue-1/blocks.lp">这里</a>查看。</p>
 <section>
 <h2>题目</h2>
+
 <p>有<code>a</code>，<code>b</code>，<code>c</code>，<code>d</code>四个块，列举将他们叠加摆放在桌面的所有方法。其中<code>a</code>，<code>b</code>，<code>c</code>为正方形，<code>d</code>为三角形。</p>
 </section>
 <section>
 <h2>解题</h2>
+
 <p>解题基本按四个步骤进行。</p>
 <section>
 <h3>描述事实</h3>
+
 <pre><code>block(a).
 block(b).
 block(c).
@@ -32,11 +37,13 @@ pyramid(d).</code></pre>
 </section>
 <section>
 <h3>枚举答案</h3>
+
 <p>所有块必须摆放在桌面或者其他块之上，基于此可以列举备选的所有可能答案集。</p>
 <pre><code>on_table(X) ; on(X, Y) : block(Y) :- block(X).</code></pre>
 </section>
 <section>
 <h3>添加约束</h3>
+
 <p>在上一步骤获得的答案集中，有些答案集是无效的，需要加以筛选。</p>
 <p>只允许将其中一个块放置在桌面上：</p>
 <pre><code>:- on_table(X), on_table(Y), X != Y.</code></pre>
@@ -51,12 +58,14 @@ above(X, Y) :- on(X, Z), above(Z, Y).
 </section>
 <section>
 <h3>显示结果</h3>
+
 <pre><code>#show on/2.
 #show on_table/1.</code></pre>
 </section>
 </section>
 <section>
 <h2>结果</h2>
+
 <p>以下是在Clingo 5.2中运行的结果：</p>
 <pre><code>clingo version 5.2.0
 Reading from blocks.lp

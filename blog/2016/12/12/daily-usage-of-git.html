@@ -1,20 +1,25 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Git日常使用</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Git日常使用</h1><time>12 Dec 2016</time>
 
+
 <p><a href="https://git-scm.com/">Git</a>是非常流行的分布式版本控制工具。除了管理代码外，配置、文档等也可以依次管理。借助<a href="https://github.com/">GitHub</a>、<a href="https://bitbucket.org/">BitBucket</a>等在线系统，更是能获得完善的使用体验。</p>
 <p>本文主要介绍Git的日常使用，作为记录备忘。</p>
 <section>
 <h2>分支管理</h2>
+
 <section>
 <h3>创建分支</h3>
+
 <p><code>git checkout -b name</code>命令可以在本地创建分支。如果需要在远端创建，可以继续使用<code>git push origin name</code>将分支上传。</p>
 </section>
 <section>
 <h3>切换分支</h3>
+
 <p>如果在当前分支有未提交的更改，但需要切换到其他分支编辑，这时可以使用<code>git stash</code>缓存更改，然后创建或切换分支，再利用<code>git stash apply</code>还原更改。</p>
 </section>
 <section>
 <h3>上游同步</h3>
+
 <pre><code>git remote add upstream /path/to/upstream/repo.git
 git fetch upstream
 git checkout master
@@ -22,11 +27,13 @@ git merge upstream/master</code></pre>
 </section>
 <section>
 <h3>浅层克隆</h3>
+
 <pre><code>git clone --depth=1 --branch=name...</code></pre>
 </section>
 </section>
 <section>
 <h2>日志</h2>
+
 <ul>
 <li>
 <p><code>git log --summary</code> - 显示文件创建、删除、重命名等信息；</p>
@@ -38,12 +45,15 @@ git merge upstream/master</code></pre>
 </section>
 <section>
 <h2>SVN整合</h2>
+
 <section>
 <h3>初始化</h3>
+
 <pre><code>git svn clone /path/to/svn/repo local-path</code></pre>
 </section>
 <section>
 <h3>更新</h3>
+
 <pre><code>git svn rebase</code></pre>
 </section>
 </section>

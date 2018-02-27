@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Tcl中的列表类型</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Tcl中的列表类型</h1><time>22 Oct 2017</time>
 
+
 <p>Tcl的类型机制非常特殊，可以认为一切都是字符串，但实际上在内部实现时针对不同类型有不同的数据表示，“内部表示”和“字符串表示”保持惰性一致。</p>
 <p>而列表也是做了同样的处理。Tcl有较多与列表相关的接口，但在与CLIPS的对接过程中，发现缺少这样的接口，将列表的所有元素导出为C的字符串数组。</p>
 <p>当前是通过先将列表以字符串形式读取（<code>Tcl_GetString</code>），之后再拆分为数组元素（<code>Tcl_SplitList</code>）实现，其中存在性能问题，详见这个<a href="https://github.com/dram/clips-tcl/commit/d540f5faed4b7909583a279ef1de87d81ae1630c">提交</a>。</p>

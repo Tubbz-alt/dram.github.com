@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Squeak的包和Self的模块</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Squeak的包和Self的模块</h1><time>30 Oct 2016</time>
 
+
 <p>在对Squeak的<a href="http://wiki.squeak.org/squeak/5712">包机制</a>和Self的模块机制的比较中，可以清晰地看到功能设计上后期附加和设计之初就考虑的差异，同时也可以多方面体会到Self的模块机制和语言以及开发环境的融合性及整体一致性。</p>
 <p>首先需要说明的是，两者都是用于处理代码导出的机制，但在具体实现以及结果形式上有很大的差异，现试列举如下：</p>
 <ol>

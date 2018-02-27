@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Smalltalk的可扩展性</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Smalltalk的可扩展性</h1><time>08 Dec 2016</time>
 
+
 <p>Smalltalk由于没有关键词，所有的语言结构都由统一的消息语法定义，可扩展性极强。</p>
 <p>比如在Blue Book p.34提到，Smalltalk有<code>ifTrue:ifFalse:</code>消息，也有单分支的<code>ifTrue:</code>和<code>ifFalse:</code>。如果需要去除单分支判断（用函数式编程的思路考虑，<code>ifTrue:</code>和<code>ifFalse:</code>并不建议使用），在Smalltalk中，只需要删除<code>Object&gt;&gt;ifTrue:ifFalse:</code>即可（前提是未被使用）。而在有些语言中，复杂度则大大增加。原因有两点：</p>
 <ol>

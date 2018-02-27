@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS搭建Web服务</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS搭建Web服务</h1><time>03 Sep 2017</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <ol>
 <li>
 <p>本以为<code>fdopen</code>是C标准定义的接口，实则是POSIX<a href="http://pubs.opengroup.org/onlinepubs/9699919799/functions/fdopen.html">定义</a>的。如果CLIPS支持<code>fdopen</code>，可以先由外围程序建立socket连接，之后<code>fork</code>&amp;<code>exec</code>创建CLIPS进程，CLIPS再用<code>fdopen</code>打开继承的socket句柄，实现网络通信。—— 2017-09-25</p>

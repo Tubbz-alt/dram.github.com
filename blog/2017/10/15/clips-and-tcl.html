@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CLIPS和Tcl</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CLIPS和Tcl</h1><time>15 Oct 2017</time>
 
+
 <p>由于CLIPS完全基于ISO C编写，所以和外部系统的可交互性比较薄弱，另外CLIPS并没有完整地封装ISO C包含的系统相关接口，更是加剧了这一问题。</p>
 <p>以前的几篇文章中对此有所涉及，例如<a href="/blog/2017/09/03/create-temporary-files-in-clips.html">临时文件</a>、<a href="/blog/2017/09/03/clips-web-service.html">网络</a>、<a href="/blog/2017/10/02/writing-clips-c-extensions.html">C扩展</a>等。</p>
 <p>也尝试参考Lua的<a href="/blog/2017/10/04/about-popen-interface.html">思路</a>，将<code>popen</code>作为核心接口基于POSIX命令封装<a href="https://github.com/dram/clips-unnamed-library">常用功能</a>，但由于Cygwin启动进程的性能问题，结果并不理想。</p>

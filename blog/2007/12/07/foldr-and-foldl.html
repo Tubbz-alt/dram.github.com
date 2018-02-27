@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>foldr 与 foldl</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>foldr 与 foldl</h1><time>07 Dec 2007</time>
 
+
 <p>注：以前在其他地方写的笔记，现在重新开始学习 Haskell，所以先搬过来。</p>
 <p>在 The Haskell 98 Report 的 Standard Preload 中可以找到 foldl 和 foldr 的定义如下。</p>
 <pre><code>foldl             :: (a -&gt; b -&gt; a) -&gt; a -&gt; [b] -&gt; a

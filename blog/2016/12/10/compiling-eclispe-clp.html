@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>编译ECLiPSe</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>编译ECLiPSe</h1><time>10 Dec 2016</time>
 
+
 <section class="topic">
 <h2>补遗</h2>
+
 <ol>
 <li>
 <p>最近（2017-03-16）ECLiPSe<a href="http://eclipseclp.org/Distribution/ChangeLog.txt">添加</a>了对Tcl/Tk 8.6的支持。—— 2017-03-24</p>
@@ -15,12 +17,14 @@
 <p><a href="http://eclipseclp.org/">ECLiPSe</a>是基于Prolog的约束编程系统（Constraint Programming System）。本身编译不存在大的问题，这里只针对开发版本的编译作简单的记录备忘。</p>
 <section>
 <h2>下载</h2>
+
 <p>ECLiPSe当前代码基于CVS管理，可以先利用<code>rsync</code>拉取仓库元数据，再使用<code>cvs</code>读取本地源，以方便操作，示例如下：</p>
 <pre><code>rsync -avz rsync://eclipse-clp.cvs.sourceforge.net/cvsroot/eclipse-clp/ cvsroot
 cvs -d/path/to/cvsroot Eclipse</code></pre>
 </section>
 <section>
 <h2>编译</h2>
+
 <p>编译ECLiPSe依赖Tcl、Tk、Graphivz和GMP开发包，当前还不支持Tcl/Tk 8.6版本。在Debian系统中，可以安装以下包：</p>
 <pre><code>tcl8.5-dev tk8.5-dev graphviz-dev libgmp-dev</code></pre>
 <p>编译过程如下：</p>
@@ -30,6 +34,7 @@ make -f Makefile.x86_64_linux</code></pre>
 </section>
 <section>
 <h2>运行</h2>
+
 <p>ECLiPSe在运行时依赖文档文件，因为不存在平台问题，可以直接下载并在<code>Eclipse</code>目录解压，URL地址如下：</p>
 <pre><code>http://eclipseclp.org/Distribution/Dev/&lt;version&gt;/common/eclipse_doc.tgz</code></pre>
 </section>

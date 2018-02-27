@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>编写Lua C模块</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>编写Lua C模块</h1><time>02 Oct 2017</time>
 
+
 <p>在Lua的lua-users wiki中，包含有<a href="http://lua-users.org/wiki/BindingCodeToLua">两篇</a>与C模块编写<a href="http://lua-users.org/wiki/BuildingModules">相关</a>的文章，描述得并不清楚，另外使用的是共享链接的模式。</p>
 <p>以下介绍静态链接Lua C模块编写方法，整体目录结构如下：</p>
 <pre><code>foo/
