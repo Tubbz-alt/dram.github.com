@@ -29,8 +29,7 @@ re_ll_marker = r'\|(?P<label>\S.*?)(?<!\\)\|'
 re_spaces = r'\s+'
 re_one_space = r'\s'
 re_comment = r'#(?P<comment>.*)'
-re_citation = r'(\[\s*\*(?P<id>\S+)(?P<id_extra>.*?)\])|(\[\s*\#(?P<name>\S+)' \
-              r'(?P<name_extra>.*?)\])|(\[\s*(?P<citation>.*?)\])'
+re_citation = r'(\[\s*(?P<citation>.*?)\])'
 
 
 block_patterns = {
@@ -96,16 +95,28 @@ flow_patterns = {
             'code': re.compile(r'`(?P<text>(``|[^`])*)`', re.U),
             'inline-insert': re.compile(r'>((\((?P<insert>.+?)\)))' + re_attributes, re.U),
             'citation': re.compile(
-                r'((\[\s*\*(?P<id>\S+?)(\s+(?P<id_extra>.+?))?\])|(\[\s*\%(?P<key>\S+?)'
-                r'(\s+(?P<key_extra>.+?))?\])|(\[\s*\#(?P<name>\S+?)'
-                r'(\s+(?P<name_extra>.+?))?\])|(\[\s*(?P<citation>.*?)\]))',
+                r'(\[\s*(?P<citation>.*?)\])',
                 re.U)
         }
 
-ref_symbols = {'nameref': '#',
-               'idref': '*',
-               'keyref': '%',
-               'variableref': '$'}
+insert_reference_symbols = {'nameref': '#',
+                            'idref': '*',
+                            'keyref': '%',
+                            'variableref': '$'}
+
+insert_reference_methods = {'#': 'nameref',
+                            '*': 'idref',
+                            '%': 'keyref',
+                            '$': 'variableref'}
+
+citation_reference_symbols = {'nameref': '#',
+                              'idref': '*',
+                              'keyref': '%',
+                              'value': ''}
+
+citation_reference_methods = {'#': 'nameref' ,
+                              '*':'idref' ,
+                              '%':'keyref'}
 
 #smart quote patterns
 re_single_quote_close = '(?<=[\w\.\,\"!:;)}\?-])\'((?=[\.\s"},\?!:;\[])|$)'
@@ -368,10 +379,7 @@ class SamParser:
             attributes, citations = parse_attributes(match.group("attributes"), flagged="*#?")
         else:
             attributes, citations = {},[]
-        type, ref, item = parse_insert(match.group("insert"))
-        if type is None and ref is None:
-            raise SAMParserError("Invalid block insert statement. Found: " + match.group(0))
-        b = BlockInsert(indent, type, ref, item, attributes, citations)
+        b = BlockInsert(indent, parse_insert(match.group("insert")), attributes, citations)
         self.doc.add_block(b)
         return "SAM", context
 
@@ -868,51 +876,59 @@ class Block(ABC):
         yield '</{0}>\n'.format(self.html_tag)
 
 class BlockInsert(Block):
-    def __init__(self, indent, insert_type, ref_type, item, attributes={}, citations=None, namespace=None):
+    def __init__(self, indent, reference_parts, attributes={}, citations=None, namespace=None):
         super().__init__(block_type='insert', indent=indent, attributes=attributes,
                          citations=citations, namespace=namespace)
-        self.insert_type = insert_type
-        self.ref_type =ref_type
-        self.item = item
+        self.reference_parts = reference_parts
 
     def __str__(self):
         return ''.join(self.regurgitate())
 
     def regurgitate(self):
         yield " " * int(self.indent)
-        if self.ref_type:
-            ref_symbol = ref_symbols.get(self.ref_type)
-            yield '>>>({0}{1})'.format(ref_symbol, self.item)
+        if self.reference_parts[0][0] in insert_reference_symbols:
+            yield '>>>('
+            yield '/'.join(['{0}{1}'.format(insert_reference_symbols[m], v) for m, v in self.reference_parts])
+            yield ')'
         else:
-            yield '>>>({0} {1})'.format(self.insert_type, self.item)
+            yield '>>>({0} {1})'.format(self.reference_parts[0][0], self.reference_parts[0][1])
         yield from self._regurgitate_attributes(self._attribute_regurgitation)
         yield '\n'
         for c in self.children:
             yield from c.regurgitate()
         yield '\n'
 
-    def serialize_xml(self):
+    def serialize_xml(self, attrs=None, payload=None):
+
+        attributes = {}
+        if self.reference_parts[0][0] in insert_reference_symbols:
+            attributes[self.reference_parts[0][0]] = escape_for_xml_attribute(self.reference_parts[0][1])
+        else:
+            attributes['type'] = self.reference_parts[0][0]
+            attributes['item'] = escape_for_xml_attribute(self.reference_parts[0][1])
+        if self.conditions:
+            attributes['conditions'] =','.join(self.conditions)
+        if self.ID:
+            attributes['id'] = self.ID
+        if self.name:
+            attributes['name'] = self.name
+        if self.namespace is not None:
+            if type(self.parent) is Root or self.namespace != self.parent.namespace:
+                attributes['xmlns']= self.namespace
+        if self.language_code:
+            attributes['xml:lang']= self.language_code
 
         yield '<insert'
 
-        # Doing this the long way because of special rules for handling references.
-        if self.conditions:
-            yield ' conditions="{0}"'.format(','.join(self.conditions))
-        if self.ID:
-            yield ' id="{0}"'.format(self.ID)
-        if self.item and self.insert_type:
-            yield ' item="{0}"'.format(self.item)
-        if self.name:
-            yield ' name="{0}"'.format(self.name)
-        if self.ref_type:
-            yield ' {0}="{1}"'.format(self.ref_type, self.item)
-        if self.insert_type:
-            yield ' type="{0}"'.format(self.insert_type)
-        if self.namespace is not None:
-            if type(self.parent) is Root or self.namespace != self.parent.namespace:
-                yield ' xmlns="{0}"'.format(self.namespace)
-        if self.language_code:
-            yield ' xml:lang="{0}"'.format(self.language_code)
+        for key, value in sorted(attributes.items()):
+            yield ' {0}="{1}"'.format(key, value)
+
+
+        if len(self.reference_parts) > 1:
+            yield '><reference-elements>'
+            for method, value in self.reference_parts:
+                yield '<reference-element method="{0}" value="{1}"/>'.format(method, escape_for_xml(value))
+            yield '</reference-elements>'
 
         if self.citations or self.children:
             yield '>\n'
@@ -925,68 +941,75 @@ class BlockInsert(Block):
         else:
             yield '/>\n'
 
-    def serialize_html(self, duplicate=False, stings=[]):
 
-        if self.ref_type:
-            if self.ref_type == 'variableref':
-                SAM_parser_warning('Inserting variables with block inserts is not supported in HTML output mode. '
-                                   'Variable will be omitted from HTML output. At: {0}'.format(self.item))
-            elif self.ref_type == 'idref':
-                ob = self._doc().object_by_id(self.item)
-                variables = [x for x in self.children if type(x) is VariableDef]
-                if ob:
-                    yield from ob.serialize_html(duplicate=True, variables=variables)
+    def serialize_html(self, duplicate=False, variables=[]):
+
+        if len(self.reference_parts) == 1:
+            reference_method, reverence_value = self.reference_parts[0]
+
+            if reference_method in insert_reference_symbols:
+                if reference_method == 'variableref':
+                    SAM_parser_warning('Inserting variables with block inserts is not supported in HTML output mode. '
+                                       'Variable will be omitted from HTML output. At: {0}'.format(reverence_value))
+                elif reference_method == 'idref':
+                    ob = self._doc().object_by_id(reverence_value)
+                    if ob:
+                        variables = [x for x in self.children if type(x) is VariableDef]
+                        yield from ob.serialize_html(duplicate=True, variables=variables)
+                    else:
+                        SAM_parser_warning('ID reference "{0}" could not be resolved. '
+                                           'It will be omitted from HTML output.'.format(reverence_value))
+                elif reference_method == 'nameref':
+                    ob = self._doc().object_by_name(reverence_value)
+                    if ob:
+                        variables = [x for x in self.children if type(x) is VariableDef]
+                        yield from ob.serialize_html(duplicate=True, variables=variables)
+                    else:
+                        SAM_parser_warning(
+                            'Name reference "{0}" could not be resolved. '
+                            'It will be omitted from HTML output. At: '.format(
+                                reverence_value))
                 else:
-                    SAM_parser_warning('ID reference "{0}" could not be resolved. '
-                                       'It will be omitted from HTML output.'.format(self.item))
-            elif self.ref_type == 'nameref':
-                ob = self._doc().object_by_name(self.item)
-                if ob:
-                    variables = [x for x in self.children if type(x) is VariableDef]
-                    yield from ob.serialize_html(duplicate=True, variables=variables)
-                else:
-                    SAM_parser_warning(
-                        'Name reference "{0}" could not be resolved. '
-                        'It will be omitted from HTML output. At: '.format(
-                            self.item))
+                    SAM_parser_warning("HTML output mode does not support block inserts that use name or key references. "
+                                       "They will be omitted. At: {0}".format(reverence_value))
+
             else:
-                SAM_parser_warning("HTML output mode does not support block inserts that use name or key references. "
-                                   "They will be omitted. At: {0}".format(self.item))
+                yield '<div class="insert"'
+                if self.conditions:
+                    yield ' data-conditions="{0}"'.format(','.join(self.conditions))
+                if self.ID:
+                    yield ' id="{0}"'.format(self.ID)
+                if self.name:
+                    yield ' data-name="{0}"'.format(self.name)
+                if self.namespace is not None:
+                    SAM_parser_warning("Namespaces are ignored in HTML output mode.")
+                if self.language_code:
+                    yield ' lang="{0}"'.format(self.language_code)
+                yield ">"
+                if self.citations or self.children:
+
+                    for cit in self.citations:
+                        yield from cit.serialize_html()
+
+                    for c in self.children:
+                        yield from c.serialize_html()
+
+                _, item_extension = os.path.splitext(reverence_value)
+                if reference_method in known_insert_types and item_extension.lower() in known_file_types:
+                    yield '<object data="{0}"></object>'.format(reverence_value)
+                else:
+                    if not reference_method in known_insert_types:
+                        SAM_parser_warning('HTML output mode does not support the "{0}" insert type. '
+                                           'They will be omitted. At: {1}'.format(reference_method, str(self).strip()))
+                    if not item_extension.lower() in known_file_types:
+                        SAM_parser_warning('HTML output mode does not support the "{0}" file type. '
+                                           'They will be omitted.At: {1}'.format(item_extension, str(self).strip()))
+
+                yield '</div>\n'
 
         else:
-            yield '<div class="insert"'
-            if self.conditions:
-                yield ' data-conditions="{0}"'.format(','.join(self.conditions))
-            if self.ID:
-                yield ' id="{0}"'.format(self.ID)
-            if self.name:
-                yield ' data-name="{0}"'.format(self.name)
-            if self.namespace is not None:
-                SAM_parser_warning("Namespaces are ignored in HTML output mode.")
-            if self.language_code:
-                yield ' lang="{0}"'.format(self.language_code)
-            yield ">"
-            if self.citations or self.children:
-
-                for cit in self.citations:
-                    yield from cit.serialize_html()
-
-                for c in self.children:
-                    yield from c.serialize_html()
-
-            _, item_extension = os.path.splitext(self.item)
-            if self.insert_type in known_insert_types and item_extension.lower() in known_file_types:
-                yield '<object data="{0}"></object>'.format(self.item)
-            else:
-                if not self.insert_type in known_insert_types:
-                    SAM_parser_warning('HTML output mode does not support the "{0}" insert type. '
-                                       'They will be omitted. At: {1}'.format(self.insert_type, str(self).strip()))
-                if not item_extension.lower() in known_file_types:
-                    SAM_parser_warning('HTML output mode does not support the "{0}" file type. '
-                                       'They will be omitted.At: {1}'.format(item_extension, str(self).strip()))
-
-            yield '</div>\n'
-
+            SAM_parser_warning("HTML output mode does not support block inserts that use compound identifiers. "
+                           "They will be omitted. At: {0}".format(str(self).strip()))
 
 
 class Codeblock(Block):
@@ -2418,7 +2441,7 @@ class FlowParser:
                 if type(phrase) is Code:
                     phrase.encoding = unescape(annotation_type[1:])
                 else:
-                    raise SAMParserStructureError("Only code can have an embed attribute.")
+                    raise SAMParserStructureError("Only code can have an embed attribute. At: {0}".format(match.group(0)))
             elif annotation_type[0] == '!':
                 phrase.language_code = unescape(annotation_type[1:])
             elif annotation_type[0] == '*':
@@ -2449,42 +2472,7 @@ class FlowParser:
         if match:
             self.flow.append(self.current_string)
             self.current_string = ''
-
-            try:
-                idref = match.group('id')
-            except IndexError:
-                idref = None
-            try:
-                nameref = match.group('name')
-            except IndexError:
-                nameref = None
-            try:
-                keyref = match.group('key')
-            except IndexError:
-                keyref = None
-            try:
-                citation = match.group('citation')
-            except IndexError:
-                citation = None
-
-            if idref:
-                citation_type = 'idref'
-                citation_value = idref.strip()
-                extra = match.group('id_extra')
-            elif nameref:
-                citation_type = 'nameref'
-                citation_value = nameref.strip()
-                extra = match.group('name_extra')
-            elif keyref:
-                citation_type = 'keyref'
-                citation_value = keyref.strip()
-                extra = match.group('key_extra')
-            else:
-                citation_type = 'value'
-                citation_value = citation.strip()
-                extra = None
-
-            self.flow.append(Citation(citation_type, citation_value, extra))
+            self.flow.append(Citation(*parse_citation(match.group('citation'))))
             para.advance(len(match.group(0)))
             if flow_patterns['annotation'].match(para.rest_of_para):
                 return "ANNOTATION-START", para
@@ -2567,11 +2555,7 @@ class FlowParser:
                 attributes, citations = parse_attributes(match.group("attributes"))
             else:
                 attributes, citations = {},[]
-            type, ref, item = parse_insert(match.group("insert"))
-            if type is None and ref is None:
-                raise SAMParserError("Invalid inline insert statement. Found: " + match.group(0))
-
-            self.flow.append(InlineInsert(type, ref, item, attributes, citations))
+            self.flow.append(InlineInsert(parse_insert(match.group("insert")), attributes, citations))
             para.advance(len(match.group(0)) - 1)
         else:
             self.current_string += '>'
@@ -2903,9 +2887,6 @@ class Annotation:
             yield from recurse()
             yield '</span>'
 
-
-
-
     def append(self, thing):
         if not self.child:
             self.child = thing
@@ -2914,10 +2895,9 @@ class Annotation:
 
 
 class Citation:
-    def __init__(self, citation_type, citation_value, citation_extra):
-        self.citation_type = citation_type
-        self.citation_value = citation_value
-        self.citation_extra = None if citation_extra is None else citation_extra.strip()
+    def __init__(self, reference_parts, reference_extra):
+        self.reference_parts = reference_parts
+        self.reference_extra = None if reference_extra is None else reference_extra.strip()
         self.local=True
         self.child = None
         self.parent=None
@@ -2927,40 +2907,43 @@ class Citation:
 
     def regurgitate(self):
         yield '['
-        if self.citation_type == 'value':
-            pass
-        elif self.citation_type == 'idref':
-            yield '*'
-        elif self.citation_type == 'nameref':
-            yield '#'
-        elif self.citation_type == 'keyref':
-            yield '%'
-        elif self.citation_type == 'variableref':
-            yield '$'
-        else:
-            yield '{0} '.format(self.citation_type)
-        yield self.citation_value
-        if self.citation_extra:
-            yield ' {0}'.format(self.citation_extra)
+        yield '/'.join(['{0}{1}'.format(citation_reference_symbols[m], v) for m, v in self.reference_parts])
+        if self.reference_extra:
+            yield ' {0}'.format(self.reference_extra)
         yield ']'
 
-
-        #u'[{0:s} {1:s} {2:s}]'.format(self.citation_type, self.citation_value, cit_extra)
-
     def serialize_xml(self, attrs=None, payload=None):
+        has_children= False
+
         yield '<citation'
-        if self.citation_extra:
-            yield ' extra="{0}"'.format(escape_for_xml_attribute(self.citation_extra))
-        yield ' {0}="{1}"'.format(self.citation_type, escape_for_xml_attribute(self.citation_value))
+
+        if self.reference_extra:
+            yield ' extra="{0}"'.format(escape_for_xml_attribute(self.reference_extra))
+
+        if len(self.reference_parts) == 1:
+            yield ' {0}="{1}"'.format(self.reference_parts[0][0], escape_for_xml_attribute(self.reference_parts[0][1]))
+
+        if len(self.reference_parts) > 1:
+            has_children = True
+            yield '><reference-elements>'
+            for method, value in self.reference_parts:
+                yield '<reference-element method="{0}" value="{1}"/>'.format(method, escape_for_xml(value))
+            yield '</reference-elements>'
+
         #Nest attributes for serialization
         if attrs:
+            if not has_children:
+                yield '>'
+            has_children = True
             attr, *rest = attrs
-            yield '>'
             yield from attr.serialize_xml(rest, payload)
-            yield '</citation>'
         elif payload:
-            yield '>'
+            if not has_children:
+                yield '>'
+            has_children = True
             yield payload
+
+        if has_children:
             yield '</citation>'
         else:
             yield '/>'
@@ -2976,25 +2959,31 @@ class Citation:
             else:
                 yield ''
 
-        if self.citation_type == 'value':
-            yield '<cite>' + self.citation_value
-            if self.citation_extra:
-                yield ' {0}'.format(self.citation_extra)
-            yield from recurse()
-            yield '</cite>'
-        elif self.citation_type == 'idref':
-            if payload:
-                yield '<a href="#{0}">'.format(self.citation_value)
+        if len(self.reference_parts) == 1:
+            citation_method, citation_value = self.reference_parts[0]
+
+
+            if citation_method == 'value':
+                yield '<cite>' + citation_value
+                if self.reference_extra:
+                    yield ' {0}'.format(self.reference_extra)
                 yield from recurse()
-                yield '</a>'
+                yield '</cite>'
+            elif citation_method == 'idref':
+                if payload:
+                    yield '<a href="#{0}">'.format(citation_value)
+                    yield from recurse()
+                    yield '</a>'
+                else:
+                    SAM_parser_warning("HTML output mode does not support reference citations by ID except on phrases. "
+                                   "They will be omitted. At: " + str(self).strip())
+
             else:
-                SAM_parser_warning("HTML output mode does not reference citations by ID except on phrases. "
-                               "They will be omitted. At: " + str(self).strip())
-
+                SAM_parser_warning("HTML output mode does not support reference citations by name or key. "
+                                   "They will be omitted. At: " + str(self).strip())
         else:
-            SAM_parser_warning("HTML output mode does not suppor reference citations by name or key. "
+            SAM_parser_warning("HTML output mode does not support reference citations using compound identifiers. "
                                "They will be omitted. At: " + str(self).strip())
-
 
     def append(self, thing):
         if not self.child:
@@ -3004,10 +2993,8 @@ class Citation:
 
 
 class InlineInsert(Span):
-    def __init__(self, insert_type, ref_type, item, attributes={}, citations=None):
-        self.insert_type = insert_type
-        self.ref_type =ref_type
-        self.item = item
+    def __init__(self, reference_parts, attributes={}, citations=None):
+        self.reference_parts = reference_parts
         self.citations = citations
         self.parent=None
         self.namespace = None
@@ -3025,35 +3012,46 @@ class InlineInsert(Span):
         return ''.join(self.regurgitate())
 
     def regurgitate(self):
-        if self.ref_type:
-            ref_symbol = ref_symbols.get(self.ref_type)
-            yield '>({0}{1})'.format(ref_symbol, self.item)
+        if self.reference_parts[0][0] in insert_reference_symbols:
+            yield '>('
+            yield '/'.join(['{0}{1}'.format(insert_reference_symbols[m], v) for m, v in self.reference_parts])
+            yield ')'
         else:
-            yield '>({0} {1})'.format(self.insert_type, self.item)
-
+            yield '>({0} {1})'.format(self.reference_parts[0][0], self.reference_parts[0][1])
         yield from self._regurgitate_attributes(self._attribute_regurgitation)
 
+    def serialize_xml(self, attrs=None, payload=None):
 
-    def serialize_xml(self):
-        #Doing this the long way because of the special rules for handling references
-        yield '<inline-insert'
+        attributes = {}
+        if len(self.reference_parts) == 1:
+            if self.reference_parts[0][0] in insert_reference_symbols:
+                attributes[self.reference_parts[0][0]] = escape_for_xml_attribute(self.reference_parts[0][1])
+            else:
+                attributes['type'] = self.reference_parts[0][0]
+                attributes['item'] = escape_for_xml_attribute(self.reference_parts[0][1])
         if self.conditions:
-            yield ' conditions="{0}"'.format(','.join(self.conditions))
+            attributes['conditions'] =','.join(self.conditions)
         if self.ID:
-            yield ' id="{0}"'.format(self.ID)
-        if self.item and self.insert_type:
-            yield ' item="{0}"'.format(self.item)
+            attributes['id'] = self.ID
         if self.name:
-            yield ' name="{0}"'.format(self.name)
-        if self.ref_type:
-            yield ' {0}="{1}"'.format(self.ref_type, self.item)
-        if self.insert_type:
-            yield ' type="{0}"'.format(self.insert_type)
+            attributes['name'] = self.name
         if self.namespace is not None:
             if type(self.parent) is Root or self.namespace != self.parent.namespace:
-                yield ' xmlns="{0}"'.format(self.namespace)
+                attributes['xmlns']= self.namespace
         if self.language_code:
-            yield ' xml:lang="{0}"'.format(self.language_code)
+            attributes['xml:lang']= self.language_code
+
+        yield '<inline-insert'
+
+        for key, value in sorted(attributes.items()):
+            yield ' {0}="{1}"'.format(key, value)
+
+
+        if len(self.reference_parts) > 1:
+            yield '><reference-elements>'
+            for method, value in self.reference_parts:
+                yield '<reference-element method="{0}" value="{1}"/>'.format(method, escape_for_xml(value))
+            yield '</reference-elements>'
 
         if self.citations:
             yield '>'
@@ -3065,67 +3063,74 @@ class InlineInsert(Span):
 
     def serialize_html(self, duplicate=False, variables=[]):
 
-        if self.ref_type:
-            if self.ref_type == 'variableref':
-                variable_content = get_variable_def(self.item, self, variables)
-                if variable_content:
-                    yield from variable_content.serialize_html()
+        if len(self.reference_parts) == 1:
+            reference_method, reverence_value = self.reference_parts[0]
+
+            if reference_method in insert_reference_symbols:
+                if reference_method == 'variableref':
+                    variable_content = get_variable_def(reverence_value, self, variables)
+                    if variable_content:
+                        yield from variable_content.serialize_html()
+                    else:
+                        SAM_parser_warning('Variable reference "{0}" could not be resolved. '
+                                           'It will be omitted from HTML output.'.format(self.item))
+                elif reference_method == 'idref':
+                    ob = self._doc().object_by_id(reverence_value)
+                    if ob:
+                        yield from ob.serialize_html(duplicate=True)
+                    else:
+                        SAM_parser_warning(
+                            'ID reference "{0}" could not be resolved. It will be omitted from HTML output.'.format(
+                                reverence_value))
+                elif reference_method == 'nameref':
+                    ob = self._doc().object_by_name(reverence_value)
+                    if ob:
+                        yield from ob.serialize_html(duplicate=True)
+                    else:
+                        SAM_parser_warning(
+                            'Name reference "{0}" could not be resolved. It will be omitted from HTML output.'.format(
+                                self))
                 else:
-                    SAM_parser_warning('Variable reference "{0}" could not be resolved. '
-                                       'It will be omitted from HTML output.'.format(self.item))
-            elif self.ref_type == 'idref':
-                ob = self._doc().object_by_id(self.item)
-                if ob:
-                    yield from ob.serialize_html(duplicate=True)
-                else:
-                    SAM_parser_warning(
-                        'ID reference "{0}" could not be resolved. It will be omitted from HTML output.'.format(
-                            self.item))
-            elif self.ref_type == 'nameref':
-                ob = self._doc().object_by_name(self.item)
-                if ob:
-                    yield from ob.serialize_html(duplicate=True)
-                else:
-                    SAM_parser_warning(
-                        'Name reference "{0}" could not be resolved. It will be omitted from HTML output.'.format(
-                            self.item))
+                    SAM_parser_warning("HTML output mode does not support inline inserts that use key references. "
+                                       "They will be omitted. At: {0}".format(self))
+
             else:
-                SAM_parser_warning("HTML output mode does not support inline inserts that use key references. "
-                                   "They will be omitted. At: {0}".format(self.item))
+                yield '<span class="insert"'
+                if self.conditions:
+                    yield ' data-conditions="{0}"'.format(','.join(self.conditions))
+                if self.ID:
+                    if duplicate:
+                        yield ' data-copied-from-id="{0}"'.format(self.ID)
+                    else:
+                        yield ' id="{0}"'.format(self.ID)
+                if self.name:
+                    yield ' data-name="{0}"'.format(self.name)
+                if self.namespace is not None:
+                    SAM_parser_warning("Namespaces are ignored in HTML output mode.")
+                if self.language_code:
+                    yield ' lang="{0}"'.format(self.language_code)
+                yield ">"
+                if self.citations:
+
+                    for cit in self.citations:
+                        yield from cit.serialize_html()
+
+                _, item_extension = os.path.splitext(reverence_value)
+                if reference_method in known_insert_types and item_extension.lower() in known_file_types:
+                    yield '<object data="{0}"></object>'.format(reverence_value)
+                else:
+                    if not reference_method in known_insert_types:
+                        SAM_parser_warning('HTML output mode does not support the "{0}" insert type. '
+                                           'They will be omitted.'.format(reference_method))
+                    if not item_extension.lower() in known_file_types:
+                        SAM_parser_warning('HTML output mode does not support the "{0}" file type. '
+                                           'They will be omitted.'.format(item_extension))
+
+                yield '</span>\n'
 
         else:
-            yield '<span class="insert"'
-            if self.conditions:
-                yield ' data-conditions="{0}"'.format(','.join(self.conditions))
-            if self.ID:
-                if duplicate:
-                    yield ' data-copied-from-id="{0}"'.format(self.ID)
-                else:
-                    yield ' id="{0}"'.format(self.ID)
-            if self.name:
-                yield ' data-name="{0}"'.format(self.name)
-            if self.namespace is not None:
-                SAM_parser_warning("Namespaces are ignored in HTML output mode.")
-            if self.language_code:
-                yield ' lang="{0}"'.format(self.language_code)
-            yield ">"
-            if self.citations:
-
-                for cit in self.citations:
-                    yield from cit.serialize_html()
-
-            _, item_extension = os.path.splitext(self.item)
-            if self.insert_type in known_insert_types and item_extension.lower() in known_file_types:
-                yield '<object data="{0}"></object>'.format(self.item)
-            else:
-                if not self.insert_type in known_insert_types:
-                    SAM_parser_warning('HTML output mode does not support the "{0}" insert type. '
-                                       'They will be omitted.'.format(self.insert_type))
-                if not item_extension.lower() in known_file_types:
-                    SAM_parser_warning('HTML output mode does not support the "{0}" file type. '
-                                       'They will be omitted.'.format(item_extension))
-
-            yield '</span>\n'
+            SAM_parser_warning("HTML output mode does not support inline inserts that use compound identifiers. "
+                           "They will be omitted. At: {0}".format(str(self).strip()))
 
 
 class SAMParserError(Exception):
@@ -3199,77 +3204,53 @@ def parse_attributes(attributes_string, flagged="?#*!", unflagged=None):
     if conditions:
         attributes["conditions"] = conditions
 
-    re_citbody = r'(\s*\*(?P<id>\S+)(?P<id_extra>.*))|(\s*\%(?P<key>\S+)(?P<key_extra>.*))|(\s*\#(?P<name>\S+)' \
-                 r'(?P<name_extra>.*))|(\s*(?P<citation>.*))'
-
-
     for c in citations_list:
-        match = re.compile(re_citbody).match(c)
-        try:
-            idref = match.group('id')
-        except IndexError:
-            idref = None
-        try:
-            keyref = match.group('key')
-        except IndexError:
-            keyref = None
-        try:
-            nameref = match.group('name')
-        except IndexError:
-            nameref = None
-        try:
-            citation = match.group('citation')
-        except IndexError:
-            citation = None
+        citations.append(Citation(*parse_citation(c)))
 
-        if idref:
-            citation_type = 'idref'
-            citation_value = idref.strip()
-            extra = match.group('id_extra')
-        elif keyref:
-            citation_type = 'keyref'
-            citation_value = keyref.strip()
-            extra = match.group('key_extra')
-        elif nameref:
-            citation_type = 'nameref'
-            citation_value = nameref.strip()
-            extra = match.group('name_extra')
-        elif citation:
-            citation_type = 'value'
-            citation_value = citation.strip()
-            extra=None
-        else:
-            citation_type = None
-        if citation_type:
-            citations.append(Citation(citation_type, citation_value, extra))
     return attributes, citations
+
+def parse_citation(c):
+    reference_parts=[]
+    extra = None
+    if c[0] in citation_reference_methods:
+        try:
+            ref, extra = c.split(None, 1)
+        except ValueError:
+            ref = c
+        for x in ref.split('/'):
+            if x[0] not in citation_reference_methods:
+                raise SAMParserError('Invalid compound identifier at: {0}'.format(c))
+            reference_method = citation_reference_methods[x[0]]
+            reference_value = x[1:]
+            reference_parts.append((reference_method, reference_value))
+    else:
+        reference_parts.append(('value', c))
+
+    return reference_parts, extra
 
 
 def parse_insert(insert):
-    insert_type = None
-    ref_type = None
-    item = None
-
-    if insert[0] in "$*#%":
-        item = insert[1:]
-        if insert[0] == '$':
-            ref_type = 'variableref'
-        elif insert[0] == '*':
-            ref_type = 'idref'
-        elif insert[0] == '#':
-            ref_type = 'nameref'
-        elif insert[0] == '%':
-            ref_type = 'keyref'
+    reference_parts=[]
+    if insert[0] in insert_reference_methods:
+        if len(insert.split()) > 1:
+            raise SAMParserError("Extraneous characters in insert at: {0}".format(insert))
+        for x in insert.split('/'):
+            if x[0] not in insert_reference_methods:
+                raise SAMParserError('Invalid compound identifier at: {0}'.format(c))
+            reference_method = insert_reference_methods[x[0]]
+            reference_value = x[1:]
+            reference_parts.append((reference_method, reference_value))
     else:
         try:
-            insert_type, item = insert.split()
-        except IndexError:
+            reference_method, reference_value = insert.split(None, 1)
+        except ValueError:
             raise SAMParserStructureError("Insert item not specified in: {0}".format(insert))
         # strip unnecessary quotes from insert item
-        item = re.sub(r'^(["\'])|(["\'])$', '', item.strip())
-    if len(item.split())>1:
+        reference_value = re.sub(r'^(["\'])|(["\'])$', '', reference_value.strip())
+        reference_parts.append((reference_method, reference_value))
+    if len(reference_value.split())>1:
         raise SAMParserStructureError("Extraneous content in insert: {0}".format(insert))
-    return insert_type, ref_type, item
+    return reference_parts
 
 
 def escape_for_sam(s):
@@ -3465,6 +3446,8 @@ if __name__ == "__main__":
                         samParser.doc.css = args.css
                         samParser.doc.javascript = args.javascript
                         html_string = "".join(samParser.serialize('html')).encode('utf-8')
+                    elif args.regurgitate:
+                        pass
                     else:
                         xml_string = "".join(samParser.serialize('xml')).encode('utf-8')
 
