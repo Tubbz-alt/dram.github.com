@@ -1,0 +1,42 @@
+article: GnuCOBOL C扩展示例
+
+	以下是一个简单的GnuCOBOL调用cURL的扩展示例。
+
+	`curl-demo-c.c`代码：
+
+	```
+		#include <curl/curl.h>
+
+		int fetch_url(char const *url)
+		{
+		        CURL *curl = curl_easy_init();
+		        curl_easy_setopt(curl, CURLOPT_URL, url);
+		        curl_easy_perform(curl);
+		        curl_easy_cleanup(curl);
+		        return 0;
+		}
+
+	`curl-demo.cob`代码：
+
+	```
+		100100 IDENTIFICATION DIVISION.
+		       PROGRAM-ID.
+		           cobol-curl-demo.
+
+		100300 DATA DIVISION.
+		100310 WORKING-STORAGE SECTION.
+		       01  result USAGE IS BINARY-INT.
+		       01  url    PICTURE X(19) VALUE "http://example.com" & X"00".
+
+		100400 PROCEDURE DIVISION.
+		       CALL "fetch_url" USING url RETURNING result END-CALL.
+		       DISPLAY "Call result: " result END-DISPLAY.
+		       STOP RUN.
+
+	用以下命令编译运行：
+
+	```
+		gcc -c curl-demo-c.c `pkg-config --cflags libcurl`
+		cobc -x -j curl-demo.cob curl-demo-c.o `pkg-config --libs libcurl`
+
+	对于调用C代码的文档并不很详细，从编译后的C代码来看，当前GnuCOBOL应该是只支持指针传入被调用函数，整型获取返回结果。

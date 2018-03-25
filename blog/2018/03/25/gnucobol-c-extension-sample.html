@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>GnuCOBOL C扩展示例</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>GnuCOBOL C扩展示例</h1><time>25 Mar 2018</time>
+
+
+<p>以下是一个简单的GnuCOBOL调用cURL的扩展示例。</p>
+<p><code>curl-demo-c.c</code>代码：</p>
+<pre><code>#include &lt;curl/curl.h&gt;
+
+int fetch_url(char const *url)
+{
+        CURL *curl = curl_easy_init();
+        curl_easy_setopt(curl, CURLOPT_URL, url);
+        curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        return 0;
+}</code></pre>
+<p><code>curl-demo.cob</code>代码：</p>
+<pre><code>100100 IDENTIFICATION DIVISION.
+       PROGRAM-ID.
+           cobol-curl-demo.
+
+100300 DATA DIVISION.
+100310 WORKING-STORAGE SECTION.
+       01  result USAGE IS BINARY-INT.
+       01  url    PICTURE X(19) VALUE "http://example.com" &amp; X"00".
+
+100400 PROCEDURE DIVISION.
+       CALL "fetch_url" USING url RETURNING result END-CALL.
+       DISPLAY "Call result: " result END-DISPLAY.
+       STOP RUN.</code></pre>
+<p>用以下命令编译运行：</p>
+<pre><code>gcc -c curl-demo-c.c `pkg-config --cflags libcurl`
+cobc -x -j curl-demo.cob curl-demo-c.o `pkg-config --libs libcurl`</code></pre>
+<p>对于调用C代码的文档并不很详细，从编译后的C代码来看，当前GnuCOBOL应该是只支持指针传入被调用函数，整型获取返回结果。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
