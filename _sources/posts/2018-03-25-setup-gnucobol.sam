@@ -1,0 +1,20 @@
+article: GnuCOBOL安装
+
+	GnuCOBOL除了在Debian中已经有打包外，其他发行版本的软件仓库中大多并没有包含，需要自行编译安装。
+
+	总体流程并不复杂，只需要标准的几步命令：
+
+	```
+		./configure --prefix=$HOME/cobol/v2.2
+		make
+		make install
+
+	需要注意的一点是，在完成安装后，通过`cobc`编译生成的二进制程序会无法自行找到动态库，可以封装简单的脚本在link阶段指定`rpath`：
+
+	```
+		#!/bin/sh
+
+		COB_HOME="$HOME/cobol/v2.2"
+		exec "$COB_HOME/bin/cobc" -Q "-Wl,-rpath,$COB_HOME/lib" "$@"
+
+	另外，在Cygwin环境中，指定`rpath`的机制无效，只需要直接在`PATH`环境变量中加入`$HOME/cobol/v2.2/bin`即可，该目录已包含有所需的动态库。

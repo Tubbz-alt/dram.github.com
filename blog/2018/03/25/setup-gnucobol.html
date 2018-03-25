@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>GnuCOBOL安装</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>GnuCOBOL安装</h1><time>25 Mar 2018</time>
+
+
+<p>GnuCOBOL除了在Debian中已经有打包外，其他发行版本的软件仓库中大多并没有包含，需要自行编译安装。</p>
+<p>总体流程并不复杂，只需要标准的几步命令：</p>
+<pre><code>./configure --prefix=$HOME/cobol/v2.2
+make
+make install</code></pre>
+<p>需要注意的一点是，在完成安装后，通过<code>cobc</code>编译生成的二进制程序会无法自行找到动态库，可以封装简单的脚本在link阶段指定<code>rpath</code>：</p>
+<pre><code>#!/bin/sh
+
+COB_HOME="$HOME/cobol/v2.2"
+exec "$COB_HOME/bin/cobc" -Q "-Wl,-rpath,$COB_HOME/lib" "$@"</code></pre>
+<p>另外，在Cygwin环境中，指定<code>rpath</code>的机制无效，只需要直接在<code>PATH</code>环境变量中加入<code>$HOME/cobol/v2.2/bin</code>即可，该目录已包含有所需的动态库。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

@@ -1,0 +1,16 @@
+article: COBOL参考文档
+
+	作为一个历史悠久的编程语言，COBOL的文档总体还是丰富的，但有些散乱，以下是整理的一些资源，可作入门使用，建议依序阅读。
+
+	* {Fujitsu COBOL85 Reference Manual V2.3}(http://manuals.ts.fujitsu.com/file/1135/cb85_bs.pdf)
+	* {GnuCOBOL 2.2 NOV2017 Programmers Guide}(https://open-cobol.sourceforge.io/guides/GnuCOBOL%202.2%20NOV2017%20Programmers%20Guide%20\(A4\).pdf)
+	* {ISO/IEC JTC 001/SC 22/WG 04 "COBOL"}(https://isotc.iso.org/livelink/livelink?func=ll&objId=8918758)
+
+	另外以下有一些历史文档，也可供参考：
+
+	* {COBOL: Initial Specifications for a COmmon Business Oriented Language, 1960.}(https://babel.hathitrust.org/cgi/pt?id=mdp.39015000482565)
+	* {COBOL: Revised Specifications for a COmmon Business Oriented Language, 1961.}(https://babel.hathitrust.org/cgi/pt?id=mdp.39015000482557)
+	* {COBOL: Extended Specifications for a COmmon Business Oriented Language, 1962.}(https://babel.hathitrust.org/cgi/pt?id=mdp.39015000482540)
+	* {COBOL, A Self-Instructional Manual, 1963.}(https://babel.hathitrust.org/cgi/pt?id=mdp.39015000482466)
+	* {COBOL, 1965.}(https://babel.hathitrust.org/cgi/pt?id=mdp.39015000482532)
+	* {CODASYL COBOL Journal of Development, 1968.}(https://babel.hathitrust.org/cgi/pt?id=mdp.39015086491860)
