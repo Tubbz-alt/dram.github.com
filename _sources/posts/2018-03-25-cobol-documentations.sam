@@ -1,5 +1,9 @@
 article: COBOL参考文档
 
+    topic: 补遗
+
+        1. 另外还有GnuCOBOL的{官方手册}(https://open-cobol.sourceforge.io/doc/gnucobol.pdf)，也是重要的参考资料。—— 2018-03-25
+
 	作为一个历史悠久的编程语言，COBOL的文档总体还是丰富的，但有些散乱，以下是整理的一些资源，可作入门使用，建议依序阅读。
 
 	* {Fujitsu COBOL85 Reference Manual V2.3}(http://manuals.ts.fujitsu.com/file/1135/cb85_bs.pdf)
