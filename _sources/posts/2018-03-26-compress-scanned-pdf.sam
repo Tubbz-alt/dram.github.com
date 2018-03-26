@@ -1,0 +1,9 @@
+article: 压缩扫描PDF文档
+
+	扫描PDF文档中图片分辨率可能较高（例如{Internet Archive}(https://www.archive.org/)的文档），在手机等手持设备阅读时渲染较慢，可以通过以下命令优化：
+
+	```
+		pdftocairo -r 300 -mono -tiff in.pdf p
+		tiff2ps -O out.ps p-*.tif
+		ps2pdf out.ps out.pdf
+

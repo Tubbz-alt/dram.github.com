@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>压缩扫描PDF文档</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>压缩扫描PDF文档</h1><time>26 Mar 2018</time>
+
+
+<p>扫描PDF文档中图片分辨率可能较高（例如<a href="https://www.archive.org/">Internet Archive</a>的文档），在手机等手持设备阅读时渲染较慢，可以通过以下命令优化：</p>
+<pre><code>pdftocairo -r 300 -mono -tiff in.pdf p
+tiff2ps -O out.ps p-*.tif
+ps2pdf out.ps out.pdf
+</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
