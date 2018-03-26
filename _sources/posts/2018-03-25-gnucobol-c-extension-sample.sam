@@ -1,5 +1,9 @@
 article: GnuCOBOL C扩展示例
 
+    topic: 补遗
+
+        1. 以`NUL`结尾的字符串常量在GnuCOBOL中可以直接用`Z"..."`表示。—— 2018-03-26
+
 	以下是一个简单的GnuCOBOL调用cURL的扩展示例。
 
 	`curl-demo-c.c`代码：
