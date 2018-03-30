@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>COBOL中连接字符串</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>COBOL中连接字符串</h1><time>30 Mar 2018</time>
+
+
+<p>在COBOL中连接字符串有这样几种机制：</p>
+<ol>
+<li>
+<p>在固定格式中，可以通过在标记列使用<code>-</code>连接多行字符串常量；</p>
+</li>
+<li>
+<p>可以通过<code>"-</code>或<code>'-</code>连接多行字符串常量；</p>
+</li>
+<li>
+<p>可以通过运算符<code>&amp;</code>连接字符串常量；</p>
+</li>
+<li>
+<p>可以通过<code>FUNCTION CONCATENATE</code>连接字符串。</p>
+</li>
+</ol>
+<p>以上方法中，1-3都为编译时处理，第4种方法是运行时处理。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
