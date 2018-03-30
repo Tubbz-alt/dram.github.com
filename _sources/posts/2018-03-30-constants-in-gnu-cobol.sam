@@ -1,0 +1,9 @@
+article: GnuCOBOL中的常量
+
+	在GnuCOBOL中，有三种定义常量的方法：
+
+	1. 使用`>> DEFINE`定义，已经被弃用；
+	2. 使用`>> SET`定义，虽然未被弃用，但不建议使用；
+	3. 在数据分部（DATA DIVISION）中使用`01 ... CONSTANT`表示。
+
+	第三种方式是ISO COBOL标准支持的，最具有可移植性。
