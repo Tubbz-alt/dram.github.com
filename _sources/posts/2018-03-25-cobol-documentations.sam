@@ -4,6 +4,7 @@ article: COBOL参考文档
 
         1. 另外还有GnuCOBOL的{官方手册}(https://open-cobol.sourceforge.io/doc/gnucobol.pdf)，也是重要的参考资料。—— 2018-03-25
         2. {Beginning COBOL for Programmers}(https://github.com/Apress/beg-cobol-for-programmers)的代码可以作为学习COBOL过程中的阅读补充。—— 2018-03-31
+        2. 另外GnuCOBOL中的{测试用例}(https://sourceforge.net/p/open-cobol/code/HEAD/tree/trunk/tests/)也是很好的基础代码阅读材料。—— 2018-03-31
 
 	作为一个历史悠久的编程语言，COBOL的文档总体还是丰富的，但有些散乱，以下是整理的一些资源，可作入门使用，建议依序阅读。
 
