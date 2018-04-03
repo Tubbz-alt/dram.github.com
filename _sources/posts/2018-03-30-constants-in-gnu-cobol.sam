@@ -1,5 +1,9 @@
 article: GnuCOBOL中的常量
 
+    topic: 补遗
+
+        1. 通过78-level数据也可以定义常量。—— 2018-04-03
+
 	在GnuCOBOL中，有三种定义常量的方法：
 
 	1. 使用`>> DEFINE`定义，已经被弃用；
