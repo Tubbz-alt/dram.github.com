@@ -1,5 +1,9 @@
 article: Fortran和C整合
 
+    topic: 补遗
+
+        1. 由C分配的内存需要使用C的`free`接口清理，在Fortran中定义`free`的接口时，注意给入参添加`VALUE`属性，这样可以单层指针传入。—— 2018-04-06
+
 	Fortran标准中已经较好地支持了和C的整合。这里简单说明从C向Fortran传送数组型数据时的处理机制。
 
 	可以通过文本方式，Fortran端以字符串数组指针结合`C_F_POINTER`接收数据，之后通过`READ`读取。
