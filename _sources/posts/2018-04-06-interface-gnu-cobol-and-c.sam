@@ -1,0 +1,5 @@
+article: GnuCOBOL和C整合
+
+	因为GnuCOBOL将C作为中间编译语言，所以在和C整合时相对还是比较直接的，之前已有过一个简单{示例}(link "/blog/2018/03/25/gnucobol-c-extension-sample.html")。以下说明从C向COBOL端传送数组型的大量数据时的处理方式。
+
+	整体思路是以文本的方式传送，COBOL端基于`BASED`定义数组单个元素的数据结构，之后在调用C函数时将数据内存指针传出，结合`SET ADDRESS OF ...`命令设置`BASED`数据指向。如果需要遍历数据，可以通过`SET ... UP BY LENGTH OF ...`调整指针值。

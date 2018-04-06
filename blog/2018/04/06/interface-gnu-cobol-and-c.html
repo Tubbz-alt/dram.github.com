@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>GnuCOBOL和C整合</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>GnuCOBOL和C整合</h1><time>06 Apr 2018</time>
+
+
+<p>因为GnuCOBOL将C作为中间编译语言，所以在和C整合时相对还是比较直接的，之前已有过一个简单<a href="/blog/2018/03/25/gnucobol-c-extension-sample.html">示例</a>。以下说明从C向COBOL端传送数组型的大量数据时的处理方式。</p>
+<p>整体思路是以文本的方式传送，COBOL端基于<code>BASED</code>定义数组单个元素的数据结构，之后在调用C函数时将数据内存指针传出，结合<code>SET ADDRESS OF ...</code>命令设置<code>BASED</code>数据指向。如果需要遍历数据，可以通过<code>SET ... UP BY LENGTH OF ...</code>调整指针值。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

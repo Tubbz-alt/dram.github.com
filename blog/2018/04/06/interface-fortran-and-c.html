@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Fortran和C整合</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Fortran和C整合</h1><time>06 Apr 2018</time>
+
+
+<p>Fortran标准中已经较好地支持了和C的整合。这里简单说明从C向Fortran传送数组型数据时的处理机制。</p>
+<p>可以通过文本方式，Fortran端以字符串数组指针结合<code>C_F_POINTER</code>接收数据，之后通过<code>READ</code>读取。</p>
+<p>但这样的方式因为需要类型转换，可能存在性能问题，如果对性能有较高要求，可以直接通过结构体传递，这样代码也相对更为整洁。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
