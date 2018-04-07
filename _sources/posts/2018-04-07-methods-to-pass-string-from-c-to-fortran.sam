@@ -26,13 +26,17 @@ article: 将Fortran字符串传入C的几种方式
 		  end interface
 
 		  block
-		    use iso_c_binding, only: c_loc, c_null_char, c_signed_char
+		    use iso_c_binding, only: c_char, c_loc, c_null_char, c_signed_char
 
-		    integer(c_signed_char), target :: s (4) = (/ 97, 98, 99, 0 /)
+		    character(c_char),      target :: s1 * (4) = 'abc' // c_null_char
+		    integer(c_signed_char), target :: s2 (4)   = (/ 97, 98, 99, 0 /)
 
 		    call c_print_v1('abc' // c_null_char)
-		    call c_print_v2(s)
-		    call c_print_v3(c_loc(s))
+		    call c_print_v1(s1)
+		    call c_print_v3(c_loc(s1))
+		    call c_print_v2(s2)
+		    call c_print_v3(c_loc(s2))
+
 		  end block
 		end program main
 
