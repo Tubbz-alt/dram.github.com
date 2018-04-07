@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Fortran编码风格</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Fortran编码风格</h1><time>07 Apr 2018</time>
+
+
+<p>和其他早期编程语言（COBOL、Lisp、Ada）一样，Fortran对于除字符串之外的代码文本是大小写无关的。这样就给代码编写者很大的自由度，因为包括关键字在内的所以标识符都可以任意选择大小写风格。</p>
+<p>但是大小写无关也带来以下几点问题：</p>
+<ol>
+<li>
+<p>字面上看上去不同大小写方式的标识符，实际上是同一样东西，这可能给代码阅读者带来困扰；</p>
+</li>
+<li>
+<p>编译器在错误信息中可能没有保留代码中的大小写模式，而是做了统一处理，这样会导致不对应；</p>
+</li>
+<li>
+<p>通过大小写而非命名区分不同类型的标识符，并不十分显而易见，如果没有广泛接受的统一规范，可能反而成为负担；</p>
+</li>
+</ol>
+<p>基于以上这些原因，现在暂定编写Fortran代码统一使用小写。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
