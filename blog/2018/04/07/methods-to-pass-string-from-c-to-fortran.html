@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>将Fortran字符串传入C的几种方式</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>将Fortran字符串传入C的几种方式</h1><time>07 Apr 2018</time>
+
+
+<p>在C中，字符串可以理解为数组，也可以看作指针，所以对应的在Fortran中也可以基于这两种模式将字符串传入C。</p>
+<p>以下代码中，<code>c_print_v1</code>是作为字符数组处理，<code>c_print_v2</code>作为数值数组处理，而<code>c_print_v3</code>则是作为指针处理。</p>
+<pre><code>program main
+  implicit none
+
+  interface
+     subroutine c_print_v1(string) bind(c, name='print')
+       use iso_c_binding, only: c_char
+       character(c_char), intent(in) :: string (*)
+     end subroutine c_print_v1
+
+     subroutine c_print_v2(string) bind(c, name='print')
+       use iso_c_binding, only: c_signed_char
+       integer(c_signed_char), intent(in) :: string (*)
+     end subroutine c_print_v2
+
+     subroutine c_print_v3(string) bind(c, name='print')
+       use iso_c_binding, only: c_ptr
+       type(c_ptr), value :: string
+     end subroutine c_print_v3
+  end interface
+
+  block
+    use iso_c_binding, only: c_loc, c_null_char, c_signed_char
+
+    integer(c_signed_char), target :: s (4) = (/ 97, 98, 99, 0 /)
+
+    call c_print_v1('abc' // c_null_char)
+    call c_print_v2(s)
+    call c_print_v3(c_loc(s))
+  end block
+end program main</code></pre>
+<p>对应的C代码如下：</p>
+<pre><code>#include &lt;stdio.h&gt;
+
+void print(char const *s)
+{
+	puts(s);
+}</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

@@ -1,0 +1,47 @@
+article: 将Fortran字符串传入C的几种方式
+
+	在C中，字符串可以理解为数组，也可以看作指针，所以对应的在Fortran中也可以基于这两种模式将字符串传入C。
+
+	以下代码中，`c_print_v1`是作为字符数组处理，`c_print_v2`作为数值数组处理，而`c_print_v3`则是作为指针处理。
+
+	```
+		program main
+		  implicit none
+
+		  interface
+		     subroutine c_print_v1(string) bind(c, name='print')
+		       use iso_c_binding, only: c_char
+		       character(c_char), intent(in) :: string (*)
+		     end subroutine c_print_v1
+
+		     subroutine c_print_v2(string) bind(c, name='print')
+		       use iso_c_binding, only: c_signed_char
+		       integer(c_signed_char), intent(in) :: string (*)
+		     end subroutine c_print_v2
+
+		     subroutine c_print_v3(string) bind(c, name='print')
+		       use iso_c_binding, only: c_ptr
+		       type(c_ptr), value :: string
+		     end subroutine c_print_v3
+		  end interface
+
+		  block
+		    use iso_c_binding, only: c_loc, c_null_char, c_signed_char
+
+		    integer(c_signed_char), target :: s (4) = (/ 97, 98, 99, 0 /)
+
+		    call c_print_v1('abc' // c_null_char)
+		    call c_print_v2(s)
+		    call c_print_v3(c_loc(s))
+		  end block
+		end program main
+
+	对应的C代码如下：
+
+	```
+		#include <stdio.h>
+
+		void print(char const *s)
+		{
+			puts(s);
+		}
