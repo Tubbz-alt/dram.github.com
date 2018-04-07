@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Fortran中的块结构</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Fortran中的块结构</h1><time>07 Apr 2018</time>
+
+
+<p>在<a href="https://en.wikipedia.org/wiki/Fortran#Fortran_2008">Fortran 2008</a>中引入了块结构支持，通过合理使用，可以让代码的框架结构更为清晰，以下是一个不包含模块的示例：</p>
+<pre><code>program Main
+  use ...
+
+  implicit none
+
+  interface and type declartions ...
+
+  block
+    use ...
+
+    variable declartions ...
+
+    code ...
+  end block
+
+contains
+
+  function and subroutine definitions ...
+
+end program Main</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

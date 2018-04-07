@@ -1,0 +1,26 @@
+article: Fortran中的块结构
+
+	在{Fortran 2008}(https://en.wikipedia.org/wiki/Fortran#Fortran_2008)中引入了块结构支持，通过合理使用，可以让代码的框架结构更为清晰，以下是一个不包含模块的示例：
+
+
+	```
+		program Main
+		  use ...
+
+		  implicit none
+
+		  interface and type declartions ...
+
+		  block
+		    use ...
+
+		    variable declartions ...
+
+		    code ...
+		  end block
+
+		contains
+
+		  function and subroutine definitions ...
+
+		end program Main
