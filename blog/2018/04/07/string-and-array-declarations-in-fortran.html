@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Fortran中字符串和数组声明</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Fortran中字符串和数组声明</h1><time>07 Apr 2018</time>
+
+
+<p>可能因为Fortran发展历史较长，同时也是对向后兼容性的重视，导致很多特性可以通过多种方式实现，这在一定程度上增加了语言的复杂性。</p>
+<p>这里主要说明Fortran在字符串和数组声明的多种处理机制，基于<a href="https://wg5-fortran.org/f2018.html">Fortran 2018</a>标准文档草稿（N2146）解读。</p>
+<p>标准在8.2 Type declaration statement中集中说明了类型声明的语法。其中可以看出，对于字符串长度的声明，可以包括两种格式，且第二种优先级更高（如果<code>N</code>是数值字面值，括号可以省略）：</p>
+<pre><code>character(len=N) :: s
+character :: s * (N)</code></pre>
+<p>而对数组维度的声明，同样包括两种格式，且第二种优先级更高：</p>
+<pre><code>integer, dimension(N) :: A
+integer :: A (N)</code></pre>
+<p>至于具体的历史沿革，这些特性分别是在什么时候出于什么原因引入的，后续可以再做研究。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
