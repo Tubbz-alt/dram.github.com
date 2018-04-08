@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>C字符串传入Fortran的方式</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>C字符串传入Fortran的方式</h1><time>08 Apr 2018</time>
+
+
+<p>以下为从C向Fortran传递字符串的示例代码，暂未想到其他方式。</p>
+<pre><code>program main
+  implicit none
+
+  interface
+     subroutine c_get_string(string, size) bind(c, name='get_string')
+       use iso_c_binding, only: c_int, c_ptr
+       type   (c_ptr), intent(out) :: string
+       integer(c_int), intent(out) :: size
+     end subroutine c_get_string
+  end interface
+
+  block
+    use iso_c_binding, only: c_char, c_f_pointer, c_int, c_ptr
+
+    character(:, c_char), allocatable :: data
+    character(kind=c_char), pointer   :: fptr (:)
+    type(c_ptr)                       :: cptr
+    integer(c_int)                    :: size
+
+    call c_get_string(cptr, size)
+    allocate(character(size, c_char) :: data)
+    call c_f_pointer(cptr, fptr, [size])
+    data = transfer(fptr, data)
+    print *, data
+  end block
+end program main</code></pre>
+<p>对应的C代码如下：</p>
+<pre><code>#include &lt;stdio.h&gt;
+
+void get_string(char const **s, int *size)
+{
+	*s = "abc";
+	*size = 3;
+}</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

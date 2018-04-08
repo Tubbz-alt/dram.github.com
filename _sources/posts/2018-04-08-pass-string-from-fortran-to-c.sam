@@ -1,0 +1,42 @@
+article: C字符串传入Fortran的方式
+
+	以下为从C向Fortran传递字符串的示例代码，暂未想到其他方式。
+
+	```
+		program main
+		  implicit none
+		
+		  interface
+		     subroutine c_get_string(string, size) bind(c, name='get_string')
+		       use iso_c_binding, only: c_int, c_ptr
+		       type   (c_ptr), intent(out) :: string
+		       integer(c_int), intent(out) :: size
+		     end subroutine c_get_string
+		  end interface
+		
+		  block
+		    use iso_c_binding, only: c_char, c_f_pointer, c_int, c_ptr
+		
+		    character(:, c_char), allocatable :: data
+		    character(kind=c_char), pointer   :: fptr (:)
+		    type(c_ptr)                       :: cptr
+		    integer(c_int)                    :: size
+		
+		    call c_get_string(cptr, size)
+		    allocate(character(size, c_char) :: data)
+		    call c_f_pointer(cptr, fptr, [size])
+		    data = transfer(fptr, data)
+		    print *, data
+		  end block
+		end program main
+
+	对应的C代码如下：
+
+	```
+		#include <stdio.h>
+		
+		void get_string(char const **s, int *size)
+		{
+			*s = "abc";
+			*size = 3;
+		}
