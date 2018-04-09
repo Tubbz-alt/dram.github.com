@@ -2,6 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>C字符串传入Fortran的方式</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>C字符串传入Fortran的方式</h1><time>08 Apr 2018</time>
 
 
+<section class="topic">
+<h2>补遗</h2>
+
+<ol>
+<li>
+<p><a href="https://github.com/sourceryinstitute/fidbits/tree/master/src/interoperable-strings">这里</a>有一个不需要分配内存的方案。—— 2018-04-09</p>
+</li>
+</ol>
+</section>
 <p>以下为从C向Fortran传递字符串的示例代码，暂未想到其他方式。</p>
 <pre><code>program main
   implicit none
