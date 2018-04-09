@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>使用Fortran内置模块</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>使用Fortran内置模块</h1><time>09 Apr 2018</time>
+
+
+<p>在GNU Fortran中，使用内置模块有一个<a href="https://gcc.gnu.org/bugzilla/show_bug.cgi?id=82065">bug</a>：如果在多个子过程中导入相同内置模块，在编译时会提示重复定义。</p>
+<p>暂时建议在使用内置模块时，统一在全局直接全部导入。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
