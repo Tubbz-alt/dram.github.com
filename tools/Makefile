@@ -14,10 +14,7 @@ run: build
 	@${PROGRAM}
 
 %.o: %.f90
-	${CC} -pipe -Wall -J ${MODULES_DIR} -o $@ -c $^
-
-%.o: %.F90
-	${CC} -Wall -J ${MODULES_DIR} -o $@ -c $^
+	${CC} -pipe -Wall -J ${MODULES_DIR} -fbackslash -o $@ -c $^
 
 ${PROGRAM}: ${OBJECT_FILES}
 	${CC} -pipe -Wl,-s -o $@ $^ -lgfortran -lexslt -lxml2 -lxslt

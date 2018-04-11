@@ -1,5 +1,3 @@
-#define cstring(s) (s // c_null_char)
-
 program main
   use iso_c_binding
 
@@ -37,8 +35,7 @@ program main
 
     call exslt_register_all()
 
-    call c_find_files( &
-         cstring("_sources/posts/*.sam"), name_max, cptr, post_count)
+    call c_find_files("_sources/posts/*.sam\0", name_max, cptr, post_count)
 
     call c_f_pointer(cptr, sources, [post_count])
 
@@ -106,8 +103,8 @@ contains
     integer        :: i, count
     type   (c_ptr) :: node, root
 
-    doc = xml_new_doc(cstring("1.0"))
-    root = xml_new_node(c_null_ptr, cstring("posts"))
+    doc = xml_new_doc("1.0\0")
+    root = xml_new_node(c_null_ptr, "posts\0")
     node = xml_set_root_element(doc, root)
 
     if (limit == 0 .or. limit > post_count) then
@@ -121,19 +118,19 @@ contains
          type     (c_ptr)            :: cptr, post
          character(name_max), target :: date, title, uri
 
-         post = xml_new_child(root, c_null_ptr, cstring("post"), c_null_ptr)
+         post = xml_new_child(root, c_null_ptr, "post\0", c_null_ptr)
 
-         title = cstring(trim(posts(i) % title))
+         title = trim(posts(i) % title) // "\0"
          cptr = xml_encode_entities_reentrant(doc, title)
          node = xml_new_child( &
-              post, c_null_ptr, cstring("title"), cptr)
+              post, c_null_ptr, "title\0", cptr)
 
-         date = cstring(posts(i) % date)
+         date = posts(i) % date // "\0"
          node = xml_new_child( &
-              post, c_null_ptr, cstring("creation-date"), c_loc(date))
+              post, c_null_ptr, "creation-date\0", c_loc(date))
 
-         uri = cstring('/' // trim(posts(i) % target))
-         node = xml_new_child(post, c_null_ptr, cstring("uri"), c_loc(uri))
+         uri = '/' // trim(posts(i) % target) // "\0"
+         node = xml_new_child(post, c_null_ptr, "uri\0", c_loc(uri))
        end block
     end do
   end function get_post_list
@@ -147,20 +144,20 @@ contains
     integer(c_int) :: n
 
     archive_stylesheet = xslt_parse_stylesheet_file( &
-         cstring("tools/stylesheets/archive.xsl"))
+         "tools/stylesheets/archive.xsl\0")
     main_stylesheet = xslt_parse_stylesheet_file( &
-         cstring("tools/stylesheets/main.xsl"))
+         "tools/stylesheets/main.xsl\0")
 
     params(1) = c_null_ptr
     doc = xslt_apply_stylesheet(archive_stylesheet, get_post_list(0), params)
-    param_strings(1) = cstring("title")
-    param_strings(2) = cstring("Archive")
+    param_strings(1) = "title\0"
+    param_strings(2) = "Archive\0"
     params(1) = c_loc(param_strings(1))
     params(2) = c_loc(param_strings(2))
     params(3) = c_null_ptr
     doc = xslt_apply_stylesheet(main_stylesheet, doc, params)
     n = xslt_save_result_to_filename( &
-         cstring("blog/archive.html"), doc, main_stylesheet, 0)
+         "blog/archive.html\0", doc, main_stylesheet, 0)
   end subroutine generate_post_archives
 
   subroutine generate_pages
@@ -170,8 +167,7 @@ contains
     integer                              :: i, page_count
     character(name_max, c_char), pointer :: pages (:)
 
-    call c_find_files( &
-         cstring("_sources/pages/*/*.sam"), name_max, cptr, page_count)
+    call c_find_files("_sources/pages/*/*.sam\0", name_max, cptr, page_count)
 
     call c_f_pointer(cptr, pages, [page_count])
 
@@ -209,19 +205,18 @@ contains
     integer(c_int) :: n
 
     home_stylesheet = xslt_parse_stylesheet_file( &
-         cstring("tools/stylesheets/home.xsl"))
+         "tools/stylesheets/home.xsl\0")
     main_stylesheet = xslt_parse_stylesheet_file( &
-         cstring("tools/stylesheets/main.xsl"))
+         "tools/stylesheets/main.xsl\0")
 
     params(1) = c_null_ptr
     doc = xslt_apply_stylesheet(home_stylesheet, get_post_list(10), params)
-    param_strings(1) = cstring("title")
-    param_strings(2) = cstring("dram.me")
+    param_strings(1) = "title\0"
+    param_strings(2) = "dram.me\0"
     params(1) = c_loc(param_strings(1))
     params(2) = c_loc(param_strings(2))
     params(3) = c_null_ptr
     doc = xslt_apply_stylesheet(main_stylesheet, doc, params)
-    n = xslt_save_result_to_filename( &
-         cstring("index.html"), doc, main_stylesheet, 0)
+    n = xslt_save_result_to_filename("index.html\0", doc, main_stylesheet, 0)
   end subroutine generate_home_page
 end program main
