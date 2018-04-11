@@ -28,10 +28,10 @@ program main
     use posix, only: posix_free
     use exslt,  only: exslt_register_all
 
-    type     (c_ptr)                       :: cptr
-    integer                                :: i, j
-    integer,                     parameter :: n = len('_sources/posts/') + 1
-    character(name_max, c_char), pointer   :: sources (:)
+    type     (c_ptr)               :: cptr
+    integer                        :: i, j
+    integer,             parameter :: n = len('_sources/posts/') + 1
+    character(name_max), pointer   :: sources (:)
 
     call exslt_register_all()
 
@@ -138,10 +138,10 @@ contains
   subroutine generate_post_archives
     use xslt
 
-    type   (c_ptr) :: archive_stylesheet, main_stylesheet, doc
-    character (8, c_char), target :: param_strings (2)
-    type   (c_ptr) :: params (3)
-    integer(c_int) :: n
+    type     (c_ptr)        :: archive_stylesheet, main_stylesheet, doc
+    character(8),    target :: param_strings (2)
+    type     (c_ptr)        :: params (3)
+    integer  (c_int)        :: n
 
     archive_stylesheet = xslt_parse_stylesheet_file( &
          "tools/stylesheets/archive.xsl\0")
@@ -163,9 +163,9 @@ contains
   subroutine generate_pages
     use posix, only: posix_free
 
-    type     (c_ptr)                     :: cptr
-    integer                              :: i, page_count
-    character(name_max, c_char), pointer :: pages (:)
+    type     (c_ptr)             :: cptr
+    integer                      :: i, page_count
+    character(name_max), pointer :: pages (:)
 
     call c_find_files("_sources/pages/*/*.sam\0", name_max, cptr, page_count)
 
@@ -199,10 +199,10 @@ contains
   subroutine generate_home_page
     use xslt
 
-    type   (c_ptr) :: home_stylesheet, main_stylesheet, doc
-    character (8, c_char), target :: param_strings (2)
-    type   (c_ptr) :: params (3)
-    integer(c_int) :: n
+    type     (c_ptr)        :: home_stylesheet, main_stylesheet, doc
+    character(8),    target :: param_strings (2)
+    type     (c_ptr)        :: params (3)
+    integer  (c_int)        :: n
 
     home_stylesheet = xslt_parse_stylesheet_file( &
          "tools/stylesheets/home.xsl\0")
