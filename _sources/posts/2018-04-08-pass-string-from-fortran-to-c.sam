@@ -1,8 +1,10 @@
 article: C字符串传入Fortran的方式
 
-    topic: 补遗
+	topic: 补遗
 
-        1. {这里}(https://github.com/sourceryinstitute/fidbits/tree/master/src/interoperable-strings)有一个不需要分配内存的方案。—— 2018-04-09
+		1. {这里}(https://github.com/sourceryinstitute/fidbits/tree/master/src/interoperable-strings)有一个不需要分配内存的方案。—— 2018-04-09
+		2. Intel Fortran Compiler的{文档}(https://software.intel.com/en-us/fortran-compiler-18.0-developer-guide-and-reference-bind)中也有提到这一问题。—— 2018-04-11
+		3. 想到一种更为简洁的{方案}(link "/blog/2018/04/08/pass-string-from-fortran-to-c.html")。—— 2018-04-11
 
 	以下为从C向Fortran传递字符串的示例代码，暂未想到其他方式。
 
