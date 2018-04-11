@@ -1,0 +1,32 @@
+article: C字符串传入Fortran的方式（续）
+
+	之前有写过如何将{C字符串传入Fortran}(link "/blog/2018/04/08/pass-string-from-fortran-to-c.html")，但方法过于复杂，以下是更为简单的一种方案：
+
+	```
+		program main
+		  implicit none
+
+		  interface
+		     subroutine c_get_string(string, size) bind(c, name='get_string')
+		       use iso_c_binding, only: c_int, c_ptr
+		       type   (c_ptr), intent(out) :: string
+		       integer(c_int), intent(out) :: size
+		     end subroutine c_get_string
+		  end interface
+
+		  block
+		    use iso_c_binding, only: c_f_pointer, c_int, c_ptr
+
+		    type(c_ptr)                       :: cptr
+		    integer(c_int)                    :: size
+
+		    call c_get_string(cptr, size)
+		    block
+		      character(size), pointer :: fptr
+		      call c_f_pointer(cptr, fptr)
+		      print *, fptr
+		    end block
+		  end block
+		end program main
+
+	C代码没有改动。
