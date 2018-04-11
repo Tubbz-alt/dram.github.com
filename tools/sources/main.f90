@@ -139,7 +139,7 @@ contains
     use xslt
 
     type     (c_ptr)        :: archive_stylesheet, main_stylesheet, doc
-    character(8),    target :: param_strings (2)
+    character(10),   target :: param_strings (2)
     type     (c_ptr)        :: params (3)
     integer  (c_int)        :: n
 
@@ -151,7 +151,7 @@ contains
     params(1) = c_null_ptr
     doc = xslt_apply_stylesheet(archive_stylesheet, get_post_list(0), params)
     param_strings(1) = "title\0"
-    param_strings(2) = "Archive\0"
+    param_strings(2) = '"Archive"\0'
     params(1) = c_loc(param_strings(1))
     params(2) = c_loc(param_strings(2))
     params(3) = c_null_ptr
@@ -200,7 +200,7 @@ contains
     use xslt
 
     type     (c_ptr)        :: home_stylesheet, main_stylesheet, doc
-    character(8),    target :: param_strings (2)
+    character(10),   target :: param_strings (2)
     type     (c_ptr)        :: params (3)
     integer  (c_int)        :: n
 
@@ -212,7 +212,7 @@ contains
     params(1) = c_null_ptr
     doc = xslt_apply_stylesheet(home_stylesheet, get_post_list(10), params)
     param_strings(1) = "title\0"
-    param_strings(2) = "dram.me\0"
+    param_strings(2) = '"dram.me"\0'
     params(1) = c_loc(param_strings(1))
     params(2) = c_loc(param_strings(2))
     params(3) = c_null_ptr
