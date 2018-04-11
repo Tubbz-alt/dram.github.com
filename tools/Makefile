@@ -2,9 +2,11 @@ PROGRAM = sources/generate
 MODULES_DIR = modules
 OBJECT_FILES += external/fortran-exslt/sources/exslt.o
 OBJECT_FILES += external/fortran-posix/sources/posix.o
+OBJECT_FILES += external/fortran-python/sources/python.o
 OBJECT_FILES += external/fortran-xml/sources/xml.o
 OBJECT_FILES += external/fortran-xslt/sources/xslt.o
 OBJECT_FILES += sources/main.o sources/find_files.o
+LIBRARYS = -lgfortran -lexslt -lpython3.6m -lxml2 -lxslt
 
 .PHONY: build clean run setup
 
@@ -17,7 +19,7 @@ run: build
 	${CC} -pipe -Wall -J ${MODULES_DIR} -fbackslash -o $@ -c $^
 
 ${PROGRAM}: ${OBJECT_FILES}
-	${CC} -pipe -Wl,-s -o $@ $^ -lgfortran -lexslt -lxml2 -lxslt
+	${CC} -pipe -Wl,-s -o $@ $^ ${LIBRARYS}
 
 setup: ${MODULES_DIR}
 
