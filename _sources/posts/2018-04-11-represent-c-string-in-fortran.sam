@@ -1,0 +1,7 @@
+article: 在Fortran中表示C字符串
+
+	Fortran中的字符串和C不同，不以NUL字符结束，所以在调用C函数时，需要显式追加NUL，有以下两种方式：
+
+	1. 利用字符串拼接，如：`foo // c_null_char`；
+	2. 如果在GNU Fortran中，可以使用`-fbackslash`参数，之后在字符串中以`\0`表示，例如：`"foo\0"`。
+
