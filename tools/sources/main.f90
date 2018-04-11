@@ -1,8 +1,8 @@
 program main
   use exslt
   use iso_c_binding
-  use python
   use posix
+  use python
   use xml
   use xslt
 
@@ -17,7 +17,8 @@ program main
 
   integer                     :: post_count
   type    (post), allocatable :: posts (:)
-  type    (c_ptr)             :: python_globals, main_stylesheet
+  type    (c_ptr)             :: python_globals
+  type    (c_ptr)             :: article_stylesheet, main_stylesheet
 
   interface
      subroutine c_find_files(pattern, name_max, output, count) &
@@ -53,6 +54,9 @@ program main
 
     main_stylesheet = &
          xslt_parse_stylesheet_file('tools/stylesheets/main.xsl\0')
+
+    article_stylesheet = &
+         xslt_parse_stylesheet_file('tools/stylesheets/article.xsl\0')
 
     call c_find_files('_sources/posts/*.sam\0', name_max, cptr, post_count)
 
@@ -118,13 +122,10 @@ contains
              cptr = py_unicode_as_utf8_and_size(cptr, size)
              cptr = xml_parse_memory(cptr, int(size))
              block
-               type     (c_ptr)        :: article_stylesheet, doc
+               type     (c_ptr)        :: doc
                character(13),   target :: param_strings (2)
                type     (c_ptr)        :: params (3)
                integer  (c_int)        :: res
-
-               article_stylesheet = xslt_parse_stylesheet_file( &
-                    'tools/stylesheets/article.xsl\0')
 
                param_strings(1) = 'date\0'
                param_strings(2) = '"' // posts(i) % date // '"\0'
@@ -133,10 +134,11 @@ contains
                params(3) = c_null_ptr
                doc = xslt_apply_stylesheet(article_stylesheet, cptr, params)
                params(1) = c_null_ptr
-               doc = xslt_apply_stylesheet(main_stylesheet, doc, params)
-               res = xslt_save_result_to_filename( &
+               res = xslt_run_stylesheet_user( &
+                    main_stylesheet, doc, params, &
                     trim(posts(i) % target) // c_null_char, &
-                    doc, main_stylesheet, 0)
+                    c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr &
+                    )
              end block
           else
              call py_err_print()
@@ -190,8 +192,8 @@ contains
     type     (c_ptr)        :: params (3)
     integer  (c_int)        :: res
 
-    archive_stylesheet = xslt_parse_stylesheet_file( &
-         'tools/stylesheets/archive.xsl\0')
+    archive_stylesheet = &
+         xslt_parse_stylesheet_file('tools/stylesheets/archive.xsl\0')
 
     params(1) = c_null_ptr
     doc = xslt_apply_stylesheet(archive_stylesheet, get_post_list(0), params)
@@ -216,6 +218,7 @@ contains
 
     do i = 1, page_count
        block
+         integer(c_size_t)                 :: size
          integer,            dimension(13) :: source_stat, target_stat
          character(name_max)               :: target
 
@@ -226,12 +229,36 @@ contains
          call stat(pages(i), source_stat)
          call stat(target, target_stat)
          if (source_stat(10) > target_stat(10)) then
-            call execute_command_line ( &
-                 'python3 tools/sam/samparser.py ' // trim(pages(i)) // &
-                 ' | xsltproc tools/stylesheets/article.xsl -' // &
-                 ' | xsltproc --output ' // trim(target) // &
-                 ' tools/stylesheets/main.xsl -' &
-                 )
+            cptr = py_run_string( &
+                 'p = samparser.SamParser();' // &
+                 'p.parse(open("' // trim(pages(i)) // '"));' // &
+                 c_null_char, &
+                 py_file_input, python_globals, c_null_ptr)
+
+            cptr = py_run_string( &
+                 '"".join(p.serialize("xml"))' // c_null_char, &
+                 py_eval_input, python_globals, c_null_ptr)
+
+            if (c_associated(cptr)) then
+               cptr = py_unicode_as_utf8_and_size(cptr, size)
+               cptr = xml_parse_memory(cptr, int(size))
+               block
+                 type   (c_ptr) :: doc
+                 type   (c_ptr) :: params (1)
+                 integer(c_int) :: res
+
+                 params(1) = c_null_ptr
+                 doc = xslt_apply_stylesheet(article_stylesheet, cptr, params)
+                 params(1) = c_null_ptr
+                 res = xslt_run_stylesheet_user( &
+                      main_stylesheet, doc, params, &
+                      trim(target) // c_null_char, &
+                      c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr &
+                      )
+               end block
+            else
+               call py_err_print()
+            end if
          end if
        end block
     end do
@@ -245,8 +272,8 @@ contains
     type     (c_ptr)        :: params (3)
     integer  (c_int)        :: res
 
-    home_stylesheet = xslt_parse_stylesheet_file( &
-         'tools/stylesheets/home.xsl\0')
+    home_stylesheet = &
+         xslt_parse_stylesheet_file('tools/stylesheets/home.xsl\0')
 
     params(1) = c_null_ptr
     doc = xslt_apply_stylesheet(home_stylesheet, get_post_list(10), params)
