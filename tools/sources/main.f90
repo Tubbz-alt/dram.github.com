@@ -33,7 +33,7 @@ program main
 
   block
     type     (c_ptr)               :: cptr
-    integer                        :: i, j, res
+    integer                        :: i, j, res, unit
     integer,             parameter :: n = len('_sources/posts/') + 1
     character(name_max), pointer   :: sources (:)
 
@@ -82,9 +82,9 @@ program main
             // '/' // posts(i) % date (9 : 10) & ! day
             // '/' // trim(posts(i) % name) // '.html'
 
-       open(unit=1, file=sources(j))
-       read(1, '(9x, a)') posts(i) % title
-       close(1)
+       open(newunit=unit, file=sources(j))
+       read(unit, '(9x, a)') posts(i) % title
+       close(unit)
     end do
 
     call generate_posts
