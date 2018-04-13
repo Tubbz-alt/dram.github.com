@@ -1,5 +1,9 @@
 article: C字符串传入Fortran的方式（续）
 
+	topic: 补遗
+
+		1. 这一方法是基于Fortran 2008引入的BLOCK结构，在BLOCK中字符串长度可以基于变量定义，详见{这里}(https://www.ibm.com/support/knowledgecenter/SSAT4T_15.1.6/com.ibm.xlf1516.lelinux.doc/language_ref/autoobj.html)。—— 2018-04-13
+
 	之前有写过如何将{C字符串传入Fortran}(link "/blog/2018/04/08/pass-string-from-fortran-to-c.html")，但方法过于复杂，以下是更为简单的一种方案：
 
 	```

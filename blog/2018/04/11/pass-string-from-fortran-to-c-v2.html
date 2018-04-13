@@ -2,6 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>C字符串传入Fortran的方式（续）</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>C字符串传入Fortran的方式（续）</h1><time>11 Apr 2018</time>
 
 
+<section class="topic">
+<h2>补遗</h2>
+
+<ol>
+<li>
+<p>这一方法是基于Fortran 2008引入的BLOCK结构，在BLOCK中字符串长度可以基于变量定义，详见<a href="https://www.ibm.com/support/knowledgecenter/SSAT4T_15.1.6/com.ibm.xlf1516.lelinux.doc/language_ref/autoobj.html">这里</a>。—— 2018-04-13</p>
+</li>
+</ol>
+</section>
 <p>之前有写过如何将<a href="/blog/2018/04/08/pass-string-from-fortran-to-c.html">C字符串传入Fortran</a>，但方法过于复杂，以下是更为简单的一种方案：</p>
 <pre><code>program main
   implicit none
