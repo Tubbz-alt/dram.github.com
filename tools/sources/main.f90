@@ -42,15 +42,15 @@ program main
     python_globals = py_dict_new()
 
     res = py_dict_set_item_string( &
-         python_globals, '__builtins__' // c_null_char, py_eval_get_builtins())
+         python_globals, '__builtins__\0', py_eval_get_builtins())
 
     cptr = py_run_string( &
          'import sys; &
          & sys.path.append("tools/sam"); &
-         & import samparser' // c_null_char, &
+         & import samparser\0', &
          py_file_input, python_globals, c_null_ptr)
 
-    call exslt_register_all()
+    call exslt_date_register()
 
     main_stylesheet = &
          xslt_parse_stylesheet_file('tools/stylesheets/main.xsl\0')
@@ -111,11 +111,10 @@ contains
        if (source_stat(10) > target_stat(10)) then
           cptr = py_run_string( &
                'p = samparser.SamParser();' // &
-               'p.parse(open("' // trim(posts(i) % source) // '"));' // &
-               c_null_char, &
+               'p.parse(open("' // trim(posts(i) % source) // '"))\0', &
                py_file_input, python_globals, c_null_ptr)
 
-          cptr = py_run_string('"".join(p.serialize("xml"))' // c_null_char, &
+          cptr = py_run_string('"".join(p.serialize("xml"))\0', &
                py_eval_input, python_globals, c_null_ptr)
 
           if (c_associated(cptr)) then
@@ -125,7 +124,7 @@ contains
                type     (c_ptr)        :: doc
                character(13),   target :: param_strings (2)
                type     (c_ptr)        :: params (3)
-               integer  (c_int)        :: res
+               integer                 :: res
 
                param_strings(1) = 'date\0'
                param_strings(2) = '"' // posts(i) % date // '"\0'
@@ -136,7 +135,7 @@ contains
                params(1) = c_null_ptr
                res = xslt_run_stylesheet_user( &
                     main_stylesheet, doc, params, &
-                    trim(posts(i) % target) // c_null_char, &
+                    trim(posts(i) % target) // char(0), &
                     c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr &
                     )
              end block
@@ -147,16 +146,16 @@ contains
     end do
   end subroutine generate_posts
 
-  function get_post_list(limit) result(doc)
-    integer,        intent(in) :: limit
-    type    (c_ptr)            :: doc
+  function post_list(limit)
+    integer,       intent(in) :: limit
+    type   (c_ptr)            :: post_list
 
     integer        :: i, count
     type   (c_ptr) :: node, root
 
-    doc = xml_new_doc('1.0\0')
+    post_list = xml_new_doc('1.0\0')
     root = xml_new_node(c_null_ptr, 'posts\0')
-    node = xml_set_root_element(doc, root)
+    node = xml_set_root_element(post_list, root)
 
     if (limit == 0 .or. limit > post_count) then
        count = post_count
@@ -172,7 +171,7 @@ contains
          post = xml_new_child(root, c_null_ptr, 'post\0', c_null_ptr)
 
          title = trim(posts(i) % title) // '\0'
-         cptr = xml_encode_entities_reentrant(doc, title)
+         cptr = xml_encode_entities_reentrant(post_list, title)
          node = xml_new_child( &
               post, c_null_ptr, 'title\0', cptr)
 
@@ -184,19 +183,19 @@ contains
          node = xml_new_child(post, c_null_ptr, 'uri\0', c_loc(uri))
        end block
     end do
-  end function get_post_list
+  end function post_list
 
   subroutine generate_post_archives
     type     (c_ptr)        :: archive_stylesheet, doc
     character(10),   target :: param_strings (2)
     type     (c_ptr)        :: params (3)
-    integer  (c_int)        :: res
+    integer                 :: res
 
     archive_stylesheet = &
          xslt_parse_stylesheet_file('tools/stylesheets/archive.xsl\0')
 
     params(1) = c_null_ptr
-    doc = xslt_apply_stylesheet(archive_stylesheet, get_post_list(0), params)
+    doc = xslt_apply_stylesheet(archive_stylesheet, post_list(0), params)
     param_strings(1) = 'title\0'
     param_strings(2) = '"Archive"\0'
     params(1) = c_loc(param_strings(1))
@@ -218,25 +217,22 @@ contains
 
     do i = 1, page_count
        block
-         integer(c_size_t)                 :: size
-         integer,            dimension(13) :: source_stat, target_stat
-         character(name_max)               :: target
+         integer  (c_size_t) :: size
+         character(name_max) :: target
 
          target = pages(i) ( &
               len('_sources/pages/') + 1 &
               : index(pages(i), '.sam', back=.true.) - 1 &
               ) // '.html'
-         call stat(pages(i), source_stat)
-         call stat(target, target_stat)
-         if (source_stat(10) > target_stat(10)) then
+
+         if (source_modified(pages(i), target)) then
             cptr = py_run_string( &
                  'p = samparser.SamParser();' // &
-                 'p.parse(open("' // trim(pages(i)) // '"));' // &
-                 c_null_char, &
+                 'p.parse(open("' // trim(pages(i)) // '"))\0', &
                  py_file_input, python_globals, c_null_ptr)
 
             cptr = py_run_string( &
-                 '"".join(p.serialize("xml"))' // c_null_char, &
+                 '"".join(p.serialize("xml"))\0', &
                  py_eval_input, python_globals, c_null_ptr)
 
             if (c_associated(cptr)) then
@@ -245,14 +241,14 @@ contains
                block
                  type   (c_ptr) :: doc
                  type   (c_ptr) :: params (1)
-                 integer(c_int) :: res
+                 integer        :: res
 
                  params(1) = c_null_ptr
                  doc = xslt_apply_stylesheet(article_stylesheet, cptr, params)
                  params(1) = c_null_ptr
                  res = xslt_run_stylesheet_user( &
                       main_stylesheet, doc, params, &
-                      trim(target) // c_null_char, &
+                      trim(target) // char(0), &
                       c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr &
                       )
                end block
@@ -270,13 +266,13 @@ contains
     type     (c_ptr)        :: home_stylesheet, doc
     character(10),   target :: param_strings (2)
     type     (c_ptr)        :: params (3)
-    integer  (c_int)        :: res
+    integer                 :: res
 
     home_stylesheet = &
          xslt_parse_stylesheet_file('tools/stylesheets/home.xsl\0')
 
     params(1) = c_null_ptr
-    doc = xslt_apply_stylesheet(home_stylesheet, get_post_list(10), params)
+    doc = xslt_apply_stylesheet(home_stylesheet, post_list(10), params)
     param_strings(1) = 'title\0'
     param_strings(2) = '"dram.me"\0'
     params(1) = c_loc(param_strings(1))
@@ -285,4 +281,16 @@ contains
     doc = xslt_apply_stylesheet(main_stylesheet, doc, params)
     res = xslt_save_result_to_filename('index.html\0', doc, main_stylesheet, 0)
   end subroutine generate_home_page
+
+  function source_modified(source, target)
+    character(*) :: source, target
+    logical :: source_modified
+
+    integer, dimension(13) :: source_stat, target_stat
+
+    call stat(source, source_stat)
+    call stat(target, target_stat)
+    source_modified = source_stat(10) > target_stat(10)
+  end function source_modified
+
 end program main
