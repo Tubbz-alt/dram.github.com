@@ -1,0 +1,14 @@
+article: Fortran中的参数传递以及内存管理
+
+	在Fortran中，参数以及返回值在内存处理上较为复杂，不过可以抓住以下核心：
+
+	* 基于引用传递是Fortran参数传递最基本的模式（通过`VALUE`修饰可以理解为将参数副本通过引用传递）；
+	* 在可能的情况下，Fortran会尽量保证内存安全。
+
+	结合以上两点，以及计算机内存管理的基本概念（数据段、BSS、栈、堆等，详见XL Fortran的{文档}(https://www.ibm.com/support/knowledgecenter/SSAT4T_15.1.6/com.ibm.xlf1516.lelinux.doc/language_ref/langref08.html)），可以这样理解Fortran函数返回数组的模式：
+
+	1. 函数返回值作为内部变量，在栈中分配；
+	2. 函数返回后，栈空间需要回收；
+	3. 所以返回值需要先拷贝到堆空间或者调用者的栈空间，然后通过引用返回。
+
+	这就可以解释在Fortran中，为何函数的性能可能不如过程，详见{这里}(https://software.intel.com/en-us/forums/intel-visual-fortran-compiler-for-windows/topic/734872)的讨论。当然，编译器可以对此优化。
