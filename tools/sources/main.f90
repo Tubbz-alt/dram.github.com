@@ -111,10 +111,10 @@ contains
        if (source_stat(10) > target_stat(10)) then
           cptr = py_run_string( &
                'p = samparser.SamParser();' // &
-               'p.parse(open("' // trim(posts(i) % source) // '"))\0', &
+               'p.parse_file("' // trim(posts(i) % source) // '")\0', &
                py_file_input, python_globals, c_null_ptr)
 
-          cptr = py_run_string('"".join(p.serialize("xml"))\0', &
+          cptr = py_run_string('"".join(p.doc.serialize_xml())\0', &
                py_eval_input, python_globals, c_null_ptr)
 
           if (c_associated(cptr)) then
@@ -228,11 +228,11 @@ contains
          if (source_modified(pages(i), target)) then
             cptr = py_run_string( &
                  'p = samparser.SamParser();' // &
-                 'p.parse(open("' // trim(pages(i)) // '"))\0', &
+                 'p.parse("' // trim(pages(i)) // '")\0', &
                  py_file_input, python_globals, c_null_ptr)
 
             cptr = py_run_string( &
-                 '"".join(p.serialize("xml"))\0', &
+                 '"".join(p.doc.serialize_xml())\0', &
                  py_eval_input, python_globals, c_null_ptr)
 
             if (c_associated(cptr)) then
