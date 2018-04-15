@@ -6,6 +6,10 @@ module render
 
   implicit none
 
+  private
+
+  public render_initialize, render_archive, render_article, render_home
+
   logical initialized
   type(c_ptr) &
        article_stylesheet, main_stylesheet, archive_stylesheet, home_stylesheet

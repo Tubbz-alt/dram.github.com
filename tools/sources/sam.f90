@@ -4,6 +4,10 @@ module sam
 
   implicit none
 
+  private
+
+  public sam_initialize, sam_parse, sam_finalize
+
   logical initialized
   type(c_ptr) globals
 

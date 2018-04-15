@@ -10,12 +10,12 @@ program main
   integer, parameter :: name_max = 132
 
   type post
-     character(10)       :: date
-     character(name_max) :: source, target, name, title
+     character(10) date
+     character(name_max) source, target, name, title
   end type post
 
-  integer                     :: post_count
-  type    (post), allocatable :: posts (:)
+  integer post_count
+  type(post), allocatable :: posts (:)
 
   interface
      subroutine c_find_files(pattern, name_max, output, count) &
@@ -29,10 +29,10 @@ program main
   end interface
 
   block
-    type     (c_ptr)               :: cptr
-    integer                        :: i, j, unit
-    integer,             parameter :: n = len('_sources/posts/') + 1
-    character(name_max), pointer   :: sources (:)
+    type(c_ptr) cptr
+    integer i, j, unit
+    integer, parameter :: n = len('_sources/posts/') + 1
+    character(name_max), pointer :: sources (:)
 
     call c_find_files('_sources/posts/*.sam\0', name_max, cptr, post_count)
 
@@ -48,8 +48,7 @@ program main
        posts(i) % date = sources(j) (n : n + 9)
 
        posts(i) % name = sources(j) ( &
-            n + 11 &
-            : index(sources(j), '.sam', back=.true.) - 1 &
+            n + 11 : index(sources(j), '.sam', back=.true.) - 1 &
             )
 
        posts(i) % target = 'blog' &
@@ -108,7 +107,7 @@ contains
 
     do i = 1, count
        block
-         type     (c_ptr)            :: cptr, post
+         type(c_ptr) cptr, post
          character(name_max), target :: date, title, uri
 
          post = xml_new_child(root, c_null_ptr, 'post\0', c_null_ptr)
@@ -129,8 +128,8 @@ contains
   end function post_list
 
   subroutine generate_pages
-    type     (c_ptr)             :: cptr
-    integer                      :: i, page_count
+    type(c_ptr) cptr
+    integer i, page_count
     character(name_max), pointer :: pages (:)
 
     call c_find_files('_sources/pages/*/*.sam\0', name_max, cptr, page_count)
@@ -139,8 +138,8 @@ contains
 
     do i = 1, page_count
        block
-         integer  (c_size_t) :: size
-         character(name_max) :: target
+         integer(c_size_t) size
+         character(name_max) target
 
          target = pages(i) ( &
               len('_sources/pages/') + 1 &
