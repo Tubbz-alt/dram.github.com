@@ -2,7 +2,7 @@ program main
   use exslt
   use iso_c_binding
   use posix
-  use python
+  use sam, only: sam_parse
   use xml
   use xslt
 
@@ -17,7 +17,6 @@ program main
 
   integer                     :: post_count
   type    (post), allocatable :: posts (:)
-  type    (c_ptr)             :: python_globals
   type    (c_ptr)             :: article_stylesheet, main_stylesheet
 
   interface
@@ -33,22 +32,9 @@ program main
 
   block
     type     (c_ptr)               :: cptr
-    integer                        :: i, j, res, unit
+    integer                        :: i, j, unit
     integer,             parameter :: n = len('_sources/posts/') + 1
     character(name_max), pointer   :: sources (:)
-
-    call py_initialize()
-
-    python_globals = py_dict_new()
-
-    res = py_dict_set_item_string( &
-         python_globals, '__builtins__\0', py_eval_get_builtins())
-
-    cptr = py_run_string( &
-         'import sys; &
-         & sys.path.append("tools/sam"); &
-         & import samparser\0', &
-         py_file_input, python_globals, c_null_ptr)
 
     call exslt_date_register()
 
@@ -92,33 +78,21 @@ program main
     call generate_pages
     call generate_home_page
 
-    call py_finalize()
-
     call posix_free(cptr)
   end block
 
 contains
 
   subroutine generate_posts
-    type(c_ptr)                     :: cptr
-    integer                         :: i
-    integer(c_size_t)               :: size
-    integer,          dimension(13) :: source_stat, target_stat
+    type(c_ptr) cptr
+    integer i
+    integer(c_size_t) size
 
     do i = 1, post_count
-       call stat(posts(i) % source, source_stat)
-       call stat(posts(i) % target, target_stat)
-       if (source_stat(10) > target_stat(10)) then
-          cptr = py_run_string( &
-               'p = samparser.SamParser();' // &
-               'p.parse_file("' // trim(posts(i) % source) // '")\0', &
-               py_file_input, python_globals, c_null_ptr)
-
-          cptr = py_run_string('"".join(p.doc.serialize_xml())\0', &
-               py_eval_input, python_globals, c_null_ptr)
+       if (source_modified(posts(i) % source, posts(i) % target)) then
+          call sam_parse(posts(i) % source, cptr, size)
 
           if (c_associated(cptr)) then
-             cptr = py_unicode_as_utf8_and_size(cptr, size)
              cptr = xml_parse_memory(cptr, int(size))
              block
                type     (c_ptr)        :: doc
@@ -139,8 +113,6 @@ contains
                     c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr &
                     )
              end block
-          else
-             call py_err_print()
           end if
        end if
     end do
@@ -170,16 +142,16 @@ contains
 
          post = xml_new_child(root, c_null_ptr, 'post\0', c_null_ptr)
 
-         title = trim(posts(i) % title) // '\0'
+         title = trim(posts(i) % title) // char(0)
          cptr = xml_encode_entities_reentrant(post_list, title)
          node = xml_new_child( &
               post, c_null_ptr, 'title\0', cptr)
 
-         date = posts(i) % date // '\0'
+         date = posts(i) % date // char(0)
          node = xml_new_child( &
               post, c_null_ptr, 'creation-date\0', c_loc(date))
 
-         uri = '/' // trim(posts(i) % target) // '\0'
+         uri = '/' // trim(posts(i) % target) // char(0)
          node = xml_new_child(post, c_null_ptr, 'uri\0', c_loc(uri))
        end block
     end do
@@ -226,17 +198,9 @@ contains
               ) // '.html'
 
          if (source_modified(pages(i), target)) then
-            cptr = py_run_string( &
-                 'p = samparser.SamParser();' // &
-                 'p.parse("' // trim(pages(i)) // '")\0', &
-                 py_file_input, python_globals, c_null_ptr)
-
-            cptr = py_run_string( &
-                 '"".join(p.doc.serialize_xml())\0', &
-                 py_eval_input, python_globals, c_null_ptr)
+            call sam_parse(pages(i), cptr, size)
 
             if (c_associated(cptr)) then
-               cptr = py_unicode_as_utf8_and_size(cptr, size)
                cptr = xml_parse_memory(cptr, int(size))
                block
                  type   (c_ptr) :: doc
@@ -252,8 +216,6 @@ contains
                       c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr &
                       )
                end block
-            else
-               call py_err_print()
             end if
          end if
        end block
@@ -283,14 +245,15 @@ contains
   end subroutine generate_home_page
 
   function source_modified(source, target)
-    character(*) :: source, target
-    logical :: source_modified
+    character(*), intent(in) :: source, target
 
-    integer, dimension(13) :: source_stat, target_stat
+    logical source_modified
+
+    integer status, source_stat(13), target_stat(13)
 
     call stat(source, source_stat)
-    call stat(target, target_stat)
-    source_modified = source_stat(10) > target_stat(10)
+    call stat(target, target_stat, status)
+    source_modified = status /= 0 .or. source_stat(10) > target_stat(10)
   end function source_modified
 
 end program main

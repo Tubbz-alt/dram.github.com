@@ -5,7 +5,7 @@ OBJECT_FILES += external/fortran-posix/sources/posix.o
 OBJECT_FILES += external/fortran-python/sources/python.o
 OBJECT_FILES += external/fortran-xml/sources/xml.o
 OBJECT_FILES += external/fortran-xslt/sources/xslt.o
-OBJECT_FILES += sources/main.o sources/find_files.o
+OBJECT_FILES += sources/sam.o sources/main.o sources/find_files.o
 LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
 LIBRARYS += $(shell pkg-config --libs python3)
 
