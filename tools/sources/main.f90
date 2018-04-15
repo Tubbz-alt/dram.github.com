@@ -1,11 +1,9 @@
 program main
-  use exslt
   use iso_c_binding
   use posix
   use sam, only: sam_parse
   use render, only: render_archive, render_article, render_home
   use xml
-  use xslt
 
   implicit none
 
