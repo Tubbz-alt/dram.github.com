@@ -3,6 +3,7 @@ program main
   use iso_c_binding
   use posix
   use sam, only: sam_parse
+  use render, only: render_archive, render_article, render_home
   use xml
   use xslt
 
@@ -17,7 +18,6 @@ program main
 
   integer                     :: post_count
   type    (post), allocatable :: posts (:)
-  type    (c_ptr)             :: article_stylesheet, main_stylesheet
 
   interface
      subroutine c_find_files(pattern, name_max, output, count) &
@@ -35,14 +35,6 @@ program main
     integer                        :: i, j, unit
     integer,             parameter :: n = len('_sources/posts/') + 1
     character(name_max), pointer   :: sources (:)
-
-    call exslt_date_register()
-
-    main_stylesheet = &
-         xslt_parse_stylesheet_file('tools/stylesheets/main.xsl\0')
-
-    article_stylesheet = &
-         xslt_parse_stylesheet_file('tools/stylesheets/article.xsl\0')
 
     call c_find_files('_sources/posts/*.sam\0', name_max, cptr, post_count)
 
@@ -74,9 +66,9 @@ program main
     end do
 
     call generate_posts
-    call generate_post_archives
     call generate_pages
-    call generate_home_page
+    call render_home(post_list(limit=10), 'index.html')
+    call render_archive(post_list(limit=0), 'blog/archive.html')
 
     call posix_free(cptr)
   end block
@@ -91,39 +83,20 @@ contains
     do i = 1, post_count
        if (source_modified(posts(i) % source, posts(i) % target)) then
           call sam_parse(posts(i) % source, cptr, size)
-
           if (c_associated(cptr)) then
              cptr = xml_parse_memory(cptr, int(size))
-             block
-               type     (c_ptr)        :: doc
-               character(13),   target :: param_strings (2)
-               type     (c_ptr)        :: params (3)
-               integer                 :: res
-
-               param_strings(1) = 'date\0'
-               param_strings(2) = '"' // posts(i) % date // '"\0'
-               params(1) = c_loc(param_strings(1))
-               params(2) = c_loc(param_strings(2))
-               params(3) = c_null_ptr
-               doc = xslt_apply_stylesheet(article_stylesheet, cptr, params)
-               params(1) = c_null_ptr
-               res = xslt_run_stylesheet_user( &
-                    main_stylesheet, doc, params, &
-                    trim(posts(i) % target) // char(0), &
-                    c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr &
-                    )
-             end block
+             call render_article(cptr, posts(i) % target, date=posts(i) % date)
           end if
        end if
     end do
   end subroutine generate_posts
 
   function post_list(limit)
-    integer,       intent(in) :: limit
-    type   (c_ptr)            :: post_list
+    integer, intent(in) :: limit
+    type(c_ptr) post_list
 
-    integer        :: i, count
-    type   (c_ptr) :: node, root
+    integer i, count
+    type(c_ptr) node, root
 
     post_list = xml_new_doc('1.0\0')
     root = xml_new_node(c_null_ptr, 'posts\0')
@@ -157,27 +130,6 @@ contains
     end do
   end function post_list
 
-  subroutine generate_post_archives
-    type     (c_ptr)        :: archive_stylesheet, doc
-    character(10),   target :: param_strings (2)
-    type     (c_ptr)        :: params (3)
-    integer                 :: res
-
-    archive_stylesheet = &
-         xslt_parse_stylesheet_file('tools/stylesheets/archive.xsl\0')
-
-    params(1) = c_null_ptr
-    doc = xslt_apply_stylesheet(archive_stylesheet, post_list(0), params)
-    param_strings(1) = 'title\0'
-    param_strings(2) = '"Archive"\0'
-    params(1) = c_loc(param_strings(1))
-    params(2) = c_loc(param_strings(2))
-    params(3) = c_null_ptr
-    doc = xslt_apply_stylesheet(main_stylesheet, doc, params)
-    res = xslt_save_result_to_filename( &
-         'blog/archive.html\0', doc, main_stylesheet, 0)
-  end subroutine generate_post_archives
-
   subroutine generate_pages
     type     (c_ptr)             :: cptr
     integer                      :: i, page_count
@@ -202,20 +154,7 @@ contains
 
             if (c_associated(cptr)) then
                cptr = xml_parse_memory(cptr, int(size))
-               block
-                 type   (c_ptr) :: doc
-                 type   (c_ptr) :: params (1)
-                 integer        :: res
-
-                 params(1) = c_null_ptr
-                 doc = xslt_apply_stylesheet(article_stylesheet, cptr, params)
-                 params(1) = c_null_ptr
-                 res = xslt_run_stylesheet_user( &
-                      main_stylesheet, doc, params, &
-                      trim(target) // char(0), &
-                      c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr &
-                      )
-               end block
+               call render_article(cptr, target)
             end if
          end if
        end block
@@ -223,26 +162,6 @@ contains
 
     call posix_free(cptr)
   end subroutine generate_pages
-
-  subroutine generate_home_page
-    type     (c_ptr)        :: home_stylesheet, doc
-    character(10),   target :: param_strings (2)
-    type     (c_ptr)        :: params (3)
-    integer                 :: res
-
-    home_stylesheet = &
-         xslt_parse_stylesheet_file('tools/stylesheets/home.xsl\0')
-
-    params(1) = c_null_ptr
-    doc = xslt_apply_stylesheet(home_stylesheet, post_list(10), params)
-    param_strings(1) = 'title\0'
-    param_strings(2) = '"dram.me"\0'
-    params(1) = c_loc(param_strings(1))
-    params(2) = c_loc(param_strings(2))
-    params(3) = c_null_ptr
-    doc = xslt_apply_stylesheet(main_stylesheet, doc, params)
-    res = xslt_save_result_to_filename('index.html\0', doc, main_stylesheet, 0)
-  end subroutine generate_home_page
 
   function source_modified(source, target)
     character(*), intent(in) :: source, target
