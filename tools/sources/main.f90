@@ -82,9 +82,9 @@ program main
 contains
 
   subroutine generate_posts
-    type(c_ptr) cptr
-    integer i
     integer(c_size_t) length
+    integer i
+    type(c_ptr) cptr
 
     do i = 1, size(posts)
        if (source_modified(posts(i) % source, posts(i) % target)) then
@@ -101,11 +101,14 @@ contains
     integer, intent(in) :: limit
     type(c_ptr) post_list
 
+    character(:), allocatable, target :: version, tag
     integer i, count
     type(c_ptr) node, root
 
-    post_list = xml_new_doc('1.0\0')
-    root = xml_new_node(c_null_ptr, 'posts\0')
+    version = '1.0' // char(0)
+    post_list = xml_new_doc(c_loc(version))
+    tag = 'posts' // char(0)
+    root = xml_new_node(c_null_ptr, c_loc(tag))
     node = xml_set_root_element(post_list, root)
 
     if (limit == 0 .or. limit > size(posts)) then
@@ -116,31 +119,33 @@ contains
 
     do i = 1, count
        block
-         type(c_ptr) cptr, post
          character(:), allocatable, target :: date, title, uri
+         type(c_ptr) cptr, post
 
-         post = xml_new_child(root, c_null_ptr, 'post\0', c_null_ptr)
+         tag = 'post' // char(0)
+         post = xml_new_child(root, c_null_ptr, c_loc(tag), c_null_ptr)
 
          title = trim(posts(i) % title) // char(0)
-         cptr = xml_encode_entities_reentrant(post_list, title)
-         node = xml_new_child( &
-              post, c_null_ptr, 'title\0', cptr)
+         cptr = xml_encode_entities_reentrant(post_list, c_loc(title))
+         tag = 'title' // char(0)
+         node = xml_new_child(post, c_null_ptr, c_loc(tag), cptr)
 
          date = posts(i) % date // char(0)
-         node = xml_new_child( &
-              post, c_null_ptr, 'creation-date\0', c_loc(date))
+         tag = 'creation-date' // char(0)
+         node = xml_new_child(post, c_null_ptr, c_loc(tag), c_loc(date))
 
+         tag = 'uri' // char(0)
          uri = '/' // trim(posts(i) % target) // char(0)
-         node = xml_new_child(post, c_null_ptr, 'uri\0', c_loc(uri))
+         node = xml_new_child(post, c_null_ptr, c_loc(tag), c_loc(uri))
        end block
     end do
   end function post_list
 
   subroutine generate_pages
-    type(c_ptr) cptr
-    type(apr_array_header_t), pointer :: fptr
-    integer di, i
     character(*), parameter :: directories(*) = ['blog/', 'logo/']
+    integer di, i
+    type(apr_array_header_t), pointer :: fptr
+    type(c_ptr) cptr
 
     do di = 1, size(directories)
        block

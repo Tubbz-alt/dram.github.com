@@ -17,19 +17,21 @@ module render
 contains
 
   subroutine render_initialize
+    character(:), allocatable, target :: name
+
     call exslt_date_register()
 
-    main_stylesheet = &
-         xslt_parse_stylesheet_file('tools/stylesheets/main.xsl\0')
+    name = 'tools/stylesheets/main.xsl' // char(0)
+    main_stylesheet = xslt_parse_stylesheet_file(c_loc(name))
 
-    article_stylesheet = &
-         xslt_parse_stylesheet_file('tools/stylesheets/article.xsl\0')
+    name = 'tools/stylesheets/article.xsl' // char(0)
+    article_stylesheet = xslt_parse_stylesheet_file(c_loc(name))
 
-    home_stylesheet = &
-         xslt_parse_stylesheet_file('tools/stylesheets/home.xsl\0')
+    name = 'tools/stylesheets/home.xsl' // char(0)
+    home_stylesheet = xslt_parse_stylesheet_file(c_loc(name))
 
-    archive_stylesheet = &
-         xslt_parse_stylesheet_file('tools/stylesheets/archive.xsl\0')
+    name = 'tools/stylesheets/archive.xsl' // char(0)
+    archive_stylesheet = xslt_parse_stylesheet_file(c_loc(name))
 
     initialized = .true.
   end subroutine render_initialize
@@ -40,8 +42,9 @@ contains
     character(*), optional, intent(in) :: date
 
     character(13), target :: param_strings (2)
-    type(c_ptr) p, params (3)
+    character(:), allocatable, target :: path
     integer i
+    type(c_ptr) p, params (3)
 
     if (.not. initialized) call render_initialize
 
@@ -59,8 +62,9 @@ contains
 
     params(1) = c_null_ptr
 
+    path = trim(output) // char(0)
     i = xslt_run_stylesheet_user( &
-         main_stylesheet, p, params, trim(output) // char(0), &
+         main_stylesheet, p, params, c_loc(path), &
          c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr)
   end subroutine render_article
 
@@ -95,8 +99,9 @@ contains
     character(*), intent(in) :: output
     character(*), optional, intent(in) :: title
 
-    integer i
     character(10), target :: param_strings (2)
+    character(:), allocatable, target :: path
+    integer i
     type(c_ptr) params (3)
 
     if (.not. initialized) call render_initialize
@@ -111,8 +116,9 @@ contains
        params(1) = c_null_ptr
     end if
 
+    path = trim(output) // char(0)
     i = xslt_run_stylesheet_user( &
-         main_stylesheet, content, params, trim(output) // char(0), &
+         main_stylesheet, content, params, c_loc(path), &
          c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr)
   end subroutine render_main
 end module render
