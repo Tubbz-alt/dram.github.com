@@ -18,17 +18,6 @@ program main
   type(c_ptr) apr_pool
   type(post), allocatable :: posts (:)
 
-  interface
-     subroutine c_find_files(pattern, name_max, output, count) &
-          bind(c, name='find_files')
-       use :: iso_c_binding, only: c_char, c_int, c_ptr
-       character(kind=c_char), intent(in)  :: pattern (*)
-       integer  (c_int),       value       :: name_max
-       type     (c_ptr),       intent(out) :: output
-       integer  (c_int),       intent(out) :: count
-     end subroutine c_find_files
-  end interface
-
   block
     type(c_ptr) cptr
     type(apr_array_header_t), pointer :: fptr
