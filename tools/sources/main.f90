@@ -39,7 +39,11 @@ program main
 
     i = apr_pool_create_ex(apr_pool, c_null_ptr, c_null_ptr, c_null_ptr)
 
-    i = apr_match_glob('_sources/posts/*.sam' // char(0), cptr, apr_pool)
+    block
+      character(:), allocatable, target :: pattern
+      pattern = '_sources/posts/*.sam' // char(0)
+      i = apr_match_glob(c_loc(pattern), cptr, apr_pool)
+    end block
 
     call c_f_pointer(cptr, fptr)
 
