@@ -8,7 +8,7 @@ OBJECTS += external/fortran-xml/sources/xml.o
 OBJECTS += external/fortran-xslt/sources/xslt.o
 OBJECTS += sources/render.o sources/sam.o sources/main.o
 LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
-LIBRARYS += $(shell pkg-config --libs apr-1 python3)
+LIBRARYS += $(shell pkg-config --libs apr-1 python-3.6)
 
 .PHONY: build clean setup
 
