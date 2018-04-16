@@ -5,6 +5,7 @@ article: C字符串传入Fortran的方式
 		1. {这里}(https://github.com/sourceryinstitute/fidbits/tree/master/src/interoperable-strings)有一个不需要分配内存的方案。—— 2018-04-09
 		2. Intel Fortran Compiler的{文档}(https://software.intel.com/en-us/fortran-compiler-18.0-developer-guide-and-reference-bind)中也有提到这一问题。—— 2018-04-11
 		3. 想到一种更为简洁的{方案}(link "/blog/2018/04/11/pass-string-from-fortran-to-c-v2.html")。—— 2018-04-11
+		4. 虽然有多种方法，但最为直接的方式还是使用指针，基于两点原因：被传入参数可能为`NULL`，被传入参数可能长度未知（例如`posix_strlen`函数）。所以结合deferred allocation和`C_LOC`实现字符串传入，增加了代码量，但处理上更为灵活。—— 2018-04-16
 
 	以下为从C向Fortran传递字符串的示例代码，暂未想到其他方式。
 
