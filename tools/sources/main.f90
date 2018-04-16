@@ -130,7 +130,7 @@ contains
     do i = 1, count
        block
          type(c_ptr) cptr, post
-         character(name_max), target :: date, title, uri
+         character(:), allocatable, target :: date, title, uri
 
          post = xml_new_child(root, c_null_ptr, 'post\0', c_null_ptr)
 
