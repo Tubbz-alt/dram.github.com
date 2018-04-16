@@ -1,5 +1,6 @@
 PROGRAM = sources/generate
 MODULES_DIR = modules
+OBJECTS += external/fortran-apr/sources/apr.o
 OBJECTS += external/fortran-exslt/sources/exslt.o
 OBJECTS += external/fortran-posix/sources/posix.o
 OBJECTS += external/fortran-python/sources/python.o
@@ -7,7 +8,7 @@ OBJECTS += external/fortran-xml/sources/xml.o
 OBJECTS += external/fortran-xslt/sources/xslt.o
 OBJECTS += sources/render.o sources/sam.o sources/find_files.o sources/main.o
 LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
-LIBRARYS += $(shell pkg-config --libs python3)
+LIBRARYS += $(shell pkg-config --libs apr-1 python3)
 
 .PHONY: build clean run setup
 

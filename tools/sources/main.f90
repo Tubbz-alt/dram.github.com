@@ -1,4 +1,5 @@
 program main
+  use apr
   use iso_c_binding
   use posix
   use sam, only: sam_parse
@@ -14,7 +15,7 @@ program main
      character(name_max) source, target, name, title
   end type post
 
-  integer post_count
+  type(c_ptr) apr_pool
   type(post), allocatable :: posts (:)
 
   interface
@@ -30,44 +31,61 @@ program main
 
   block
     type(c_ptr) cptr
-    integer i, j, unit
+    type(apr_array_header_t), pointer :: fptr
+    integer i, unit
     integer, parameter :: n = len('_sources/posts/') + 1
-    character(name_max), pointer :: sources (:)
 
-    call c_find_files('_sources/posts/*.sam\0', name_max, cptr, post_count)
+    i = apr_pool_initialize()
 
-    call c_f_pointer(cptr, sources, [post_count])
+    i = apr_pool_create_ex(apr_pool, c_null_ptr, c_null_ptr, c_null_ptr)
 
-    allocate(posts (post_count))
+    i = apr_match_glob('_sources/posts/*.sam' // char(0), cptr, apr_pool)
 
-    do i = 1, post_count
-       j = post_count + 1 - i
+    call c_f_pointer(cptr, fptr)
 
-       posts(i) % source = sources(j)
+    block
+      type(c_ptr), pointer :: entries (:)
 
-       posts(i) % date = sources(j) (n : n + 9)
+      call c_f_pointer(fptr % elts, entries, [fptr % nelts])
 
-       posts(i) % name = sources(j) ( &
-            n + 11 : index(sources(j), '.sam', back=.true.) - 1 &
-            )
+      allocate(posts (size(entries)))
 
-       posts(i) % target = 'blog' &
-            // '/' // posts(i) % date (1 : 4)  & ! year
-            // '/' // posts(i) % date (6 : 7)  & ! month
-            // '/' // posts(i) % date (9 : 10) & ! day
-            // '/' // trim(posts(i) % name) // '.html'
+      do i = 1, size(posts)
+         block
+           character(posix_strlen(entries(i))), pointer :: filename
 
-       open(newunit=unit, file=sources(j))
-       read(unit, '(9x, a)') posts(i) % title
-       close(unit)
-    end do
+           call c_f_pointer(entries(i), filename)
+           posts(i) % source = '_sources/posts/' // filename
+         end block
+
+         posts(i) % date = posts(i) % source (n : n + 9)
+
+         posts(i) % name = posts(i) % source ( &
+              n + 11 : index(posts(i) % source, '.sam', back=.true.) - 1 &
+              )
+
+         posts(i) % target = 'blog' &
+              // '/' // posts(i) % date (1 : 4)  & ! year
+              // '/' // posts(i) % date (6 : 7)  & ! month
+              // '/' // posts(i) % date (9 : 10) & ! day
+              // '/' // trim(posts(i) % name) // '.html'
+
+         open(newunit=unit, file=posts(i) % source, action='read')
+         read(unit, '(9x, a)') posts(i) % title
+         close(unit)
+      end do
+    end block
 
     call generate_posts
     call generate_pages
+
+    call sort_posts
+
     call render_home(post_list(limit=10), 'index.html')
     call render_archive(post_list(limit=0), 'blog/archive.html')
 
-    call posix_free(cptr)
+    call apr_pool_clear(apr_pool)
+    call apr_pool_terminate()
   end block
 
 contains
@@ -75,13 +93,13 @@ contains
   subroutine generate_posts
     type(c_ptr) cptr
     integer i
-    integer(c_size_t) size
+    integer(c_size_t) length
 
-    do i = 1, post_count
+    do i = 1, size(posts)
        if (source_modified(posts(i) % source, posts(i) % target)) then
-          call sam_parse(posts(i) % source, cptr, size)
+          call sam_parse(posts(i) % source, cptr, length)
           if (c_associated(cptr)) then
-             cptr = xml_parse_memory(cptr, int(size))
+             cptr = xml_parse_memory(cptr, int(length))
              call render_article(cptr, posts(i) % target, date=posts(i) % date)
           end if
        end if
@@ -99,8 +117,8 @@ contains
     root = xml_new_node(c_null_ptr, 'posts\0')
     node = xml_set_root_element(post_list, root)
 
-    if (limit == 0 .or. limit > post_count) then
-       count = post_count
+    if (limit == 0 .or. limit > size(posts)) then
+       count = size(posts)
     else
        count = limit
     end if
@@ -138,7 +156,7 @@ contains
 
     do i = 1, page_count
        block
-         integer(c_size_t) size
+         integer(c_size_t) length
          character(name_max) target
 
          target = pages(i) ( &
@@ -147,10 +165,10 @@ contains
               ) // '.html'
 
          if (source_modified(pages(i), target)) then
-            call sam_parse(pages(i), cptr, size)
+            call sam_parse(pages(i), cptr, length)
 
             if (c_associated(cptr)) then
-               cptr = xml_parse_memory(cptr, int(size))
+               cptr = xml_parse_memory(cptr, int(length))
                call render_article(cptr, target)
             end if
          end if
@@ -171,5 +189,20 @@ contains
     call stat(target, target_stat, status)
     source_modified = status /= 0 .or. source_stat(10) > target_stat(10)
   end function source_modified
+
+  subroutine sort_posts
+    integer i, j
+    type(post) t
+
+    do i = 1, size(posts)
+       do j = i + 1, size(posts)
+          if (posts(j) % source > posts(i) % source) then
+             t = posts(i)
+             posts(i) = posts(j)
+             posts(j) = t
+          end if
+       end do
+    end do
+  end subroutine sort_posts
 
 end program main
