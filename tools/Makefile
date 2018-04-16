@@ -10,12 +10,9 @@ OBJECTS += sources/render.o sources/sam.o sources/find_files.o sources/main.o
 LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
 LIBRARYS += $(shell pkg-config --libs apr-1 python3)
 
-.PHONY: build clean run setup
+.PHONY: build clean setup
 
 build: setup ${PROGRAM}
-
-run: build
-	@${PROGRAM}
 
 external/%.o:
 	${MAKE} -C $(dir $@).. MODULES_DIR=$(abspath ${MODULES_DIR})
