@@ -151,35 +151,47 @@ contains
 
   subroutine generate_pages
     type(c_ptr) cptr
-    integer i, page_count
-    character(name_max), pointer :: pages (:)
+    type(apr_array_header_t), pointer :: fptr
+    integer di, i
+    character(*), parameter :: directories(*) = ['blog/', 'logo/']
 
-    call c_find_files('_sources/pages/*/*.sam\0', name_max, cptr, page_count)
-
-    call c_f_pointer(cptr, pages, [page_count])
-
-    do i = 1, page_count
+    do di = 1, size(directories)
        block
-         integer(c_size_t) length
-         character(name_max) target
+         character(:), allocatable, target :: pattern
+         pattern = '_sources/pages/' // directories(di) // '*.sam' // char(0)
+         i = apr_match_glob(c_loc(pattern), cptr, apr_pool)
+       end block
 
-         target = pages(i) ( &
-              len('_sources/pages/') + 1 &
-              : index(pages(i), '.sam', back=.true.) - 1 &
-              ) // '.html'
+       call c_f_pointer(cptr, fptr)
 
-         if (source_modified(pages(i), target)) then
-            call sam_parse(pages(i), cptr, length)
+       block
+         type(c_ptr), pointer :: pages(:)
 
-            if (c_associated(cptr)) then
-               cptr = xml_parse_memory(cptr, int(length))
-               call render_article(cptr, target)
-            end if
-         end if
+         call c_f_pointer(fptr % elts, pages, [fptr % nelts])
+
+         do i = 1, size(pages)
+            block
+              character(posix_strlen(pages(i))), pointer :: name
+              integer(c_size_t) length
+              character(:), allocatable :: source, target
+
+              call c_f_pointer(pages(i), name)
+
+              source = '_sources/pages/' // directories(di) // name
+              target = directories(di) // name (:len(name) - 4) // '.html'
+
+              if (source_modified(source, target)) then
+                 call sam_parse(source, cptr, length)
+
+                 if (c_associated(cptr)) then
+                    cptr = xml_parse_memory(cptr, int(length))
+                    call render_article(cptr, target)
+                 end if
+              end if
+            end block
+         end do
        end block
     end do
-
-    call posix_free(cptr)
   end subroutine generate_pages
 
   function source_modified(source, target)
