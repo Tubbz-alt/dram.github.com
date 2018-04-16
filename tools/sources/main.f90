@@ -8,11 +8,9 @@ program main
 
   implicit none
 
-  integer, parameter :: name_max = 132
-
   type post
-     character(10) date
-     character(name_max) source, target, name, title
+     character(:), allocatable :: date, source, target, name
+     character(132) title
   end type post
 
   type(c_ptr) apr_pool
