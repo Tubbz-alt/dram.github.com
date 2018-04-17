@@ -18,7 +18,7 @@ external/%.o:
 	${MAKE} -C $(dir $@).. MODULES_DIR=$(abspath ${MODULES_DIR})
 
 %.o: %.f90
-	${CC} -pipe -Wall -J ${MODULES_DIR} -fbackslash -o $@ -c $^
+	${CC} -pipe -Wall -J ${MODULES_DIR} -o $@ -c $^
 
 ${PROGRAM}: ${OBJECTS}
 	${CC} -pipe -Wl,-s -o $@ $^ ${LIBRARYS}
