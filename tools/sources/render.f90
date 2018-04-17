@@ -44,7 +44,8 @@ contains
     character(13), target :: param_strings (2)
     character(:), allocatable, target :: path
     integer i
-    type(c_ptr) p, params (3)
+    type(c_ptr) p
+    type(c_ptr), target :: params (3)
 
     if (.not. initialized) call render_initialize
 
@@ -58,13 +59,11 @@ contains
        params(1) = c_null_ptr
     end if
 
-    p = xslt_apply_stylesheet(article_stylesheet, content, params)
-
-    params(1) = c_null_ptr
+    p = xslt_apply_stylesheet(article_stylesheet, content, c_loc(params))
 
     path = trim(output) // char(0)
     i = xslt_run_stylesheet_user( &
-         main_stylesheet, p, params, c_loc(path), &
+         main_stylesheet, p, c_null_ptr, c_loc(path), &
          c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr)
   end subroutine render_article
 
@@ -73,11 +72,10 @@ contains
     character(*), intent(in) :: output
 
     type(c_ptr) p
-    type(c_ptr), parameter :: params (*) = [c_null_ptr]
 
     if (.not. initialized) call render_initialize
 
-    p = xslt_apply_stylesheet(home_stylesheet, posts, params)
+    p = xslt_apply_stylesheet(home_stylesheet, posts, c_null_ptr)
     call render_main(p, output, title="dram.me")
   end subroutine render_home
 
@@ -86,11 +84,10 @@ contains
     character(*), intent(in) :: output
 
     type(c_ptr) p
-    type(c_ptr), parameter :: params (*) = [c_null_ptr]
 
     if (.not. initialized) call render_initialize
 
-    p = xslt_apply_stylesheet(archive_stylesheet, posts, params)
+    p = xslt_apply_stylesheet(archive_stylesheet, posts, c_null_ptr)
     call render_main(p, output, title="Archive")
   end subroutine render_archive
 
@@ -102,7 +99,7 @@ contains
     character(10), target :: param_strings (2)
     character(:), allocatable, target :: path
     integer i
-    type(c_ptr) params (3)
+    type(c_ptr), target :: params (3)
 
     if (.not. initialized) call render_initialize
 
@@ -118,7 +115,7 @@ contains
 
     path = trim(output) // char(0)
     i = xslt_run_stylesheet_user( &
-         main_stylesheet, content, params, c_loc(path), &
+         main_stylesheet, content, c_loc(params), c_loc(path), &
          c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr)
   end subroutine render_main
 end module render
