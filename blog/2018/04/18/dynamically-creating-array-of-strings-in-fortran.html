@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>在Fortran中动态构建字符串数组</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>在Fortran中动态构建字符串数组</h1><time>18 Apr 2018</time>
+
+
+<p>Fortran中，在初始化字符串数组时，字符串的长度必须相等。这在很多时候并不便利，而如果字符串长度无法在编译时获知，更可能会被截断。</p>
+<p>以下基于derived type和allocatable实现的一个方案，可以规避上述问题。</p>
+<pre><code>program main
+  implicit none
+
+  type string
+     character(:), allocatable :: value
+  end type string
+
+  call foo('a', [string('bc'), string('def'), string('ghij')])
+
+contains
+
+  subroutine foo(s, a)
+    character(*), intent(in) :: s
+    type(string), intent(in) :: a (:)
+
+    integer i
+
+    print '(i0, 1x, a)', len(s), s
+
+    do i = 1, size(a)
+       print '(i0, 1x, a)', len(a(i) % value), a(i) % value
+    end do
+  end subroutine foo
+
+end program main</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

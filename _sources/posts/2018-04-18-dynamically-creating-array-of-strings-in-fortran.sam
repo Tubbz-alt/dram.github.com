@@ -1,0 +1,32 @@
+article: 在Fortran中动态构建字符串数组
+
+	Fortran中，在初始化字符串数组时，字符串的长度必须相等。这在很多时候并不便利，而如果字符串长度无法在编译时获知，更可能会被截断。
+
+	以下基于derived type和allocatable实现的一个方案，可以规避上述问题。
+
+	```
+		program main
+		  implicit none
+
+		  type string
+		     character(:), allocatable :: value
+		  end type string
+
+		  call foo('a', [string('bc'), string('def'), string('ghij')])
+
+		contains
+
+		  subroutine foo(s, a)
+		    character(*), intent(in) :: s
+		    type(string), intent(in) :: a (:)
+
+		    integer i
+
+		    print '(i0, 1x, a)', len(s), s
+
+		    do i = 1, size(a)
+		       print '(i0, 1x, a)', len(a(i) % value), a(i) % value
+		    end do
+		  end subroutine foo
+
+		end program main
