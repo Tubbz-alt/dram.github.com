@@ -1,5 +1,5 @@
 program main
-  use apr
+  use glib
   use iso_c_binding
   use posix
   use sam, only: sam_parse
@@ -8,64 +8,56 @@ program main
 
   implicit none
 
-  type post
+  type post_t
      character(:), allocatable :: date, source, target, name
      character(132) title
-  end type post
+  end type post_t
 
-  type(c_ptr) apr_pool
-  type(post), allocatable :: posts (:)
+  type(post_t), allocatable :: posts (:)
 
   block
-    type(c_ptr) cptr
-    type(apr_array_header_t), pointer :: fptr
-    integer i, unit
+    character(:), allocatable, target :: path
+    integer unit
     integer, parameter :: n = len('_sources/posts/') + 1
+    type(c_ptr) dir, filename
+    type(post_t) post
 
-    i = apr_pool_initialize()
+    allocate(posts(0))
 
-    i = apr_pool_create_ex(apr_pool, c_null_ptr, c_null_ptr, c_null_ptr)
+    path = '_sources/posts' // char(0)
+    dir = g_dir_open(c_loc(path), 0, c_null_ptr)
 
-    block
-      character(:), allocatable, target :: pattern
-      pattern = '_sources/posts/*.sam' // char(0)
-      i = apr_match_glob(c_loc(pattern), cptr, apr_pool)
-    end block
+    do
+       filename = g_dir_read_name(dir)
 
-    call c_f_pointer(cptr, fptr)
+       if (.not. c_associated(filename)) exit
 
-    block
-      type(c_ptr), pointer :: entries (:)
+       block
+         character(posix_strlen(filename)), pointer :: name
+         call c_f_pointer(filename, name)
+         post % source = '_sources/posts/' // name
+       end block
 
-      call c_f_pointer(fptr % elts, entries, [fptr % nelts])
+       post % date = post % source (n : n + 9)
 
-      allocate(posts (size(entries)))
+       post % name = post % source ( &
+            n + 11 : index(post % source, '.sam', back=.true.) - 1 &
+            )
 
-      do i = 1, size(posts)
-         block
-           character(posix_strlen(entries(i))), pointer :: filename
+       post % target = 'blog' &
+            // '/' // post % date (1 : 4)  & ! year
+            // '/' // post % date (6 : 7)  & ! month
+            // '/' // post % date (9 : 10) & ! day
+            // '/' // trim(post % name) // '.html'
 
-           call c_f_pointer(entries(i), filename)
-           posts(i) % source = '_sources/posts/' // filename
-         end block
+       open(newunit=unit, file=post % source, action='read')
+       read(unit, '(9x, a)') post % title
+       close(unit)
 
-         posts(i) % date = posts(i) % source (n : n + 9)
+       posts = [posts, post]
+    end do
 
-         posts(i) % name = posts(i) % source ( &
-              n + 11 : index(posts(i) % source, '.sam', back=.true.) - 1 &
-              )
-
-         posts(i) % target = 'blog' &
-              // '/' // posts(i) % date (1 : 4)  & ! year
-              // '/' // posts(i) % date (6 : 7)  & ! month
-              // '/' // posts(i) % date (9 : 10) & ! day
-              // '/' // trim(posts(i) % name) // '.html'
-
-         open(newunit=unit, file=posts(i) % source, action='read')
-         read(unit, '(9x, a)') posts(i) % title
-         close(unit)
-      end do
-    end block
+    call g_dir_close(dir)
 
     call generate_posts
     call generate_pages
@@ -74,9 +66,6 @@ program main
 
     call render_home(post_list(limit=10), 'index.html')
     call render_archive(post_list(limit=0), 'blog/archive.html')
-
-    call apr_pool_clear(apr_pool)
-    call apr_pool_terminate()
   end block
 
 contains
@@ -143,46 +132,44 @@ contains
 
   subroutine generate_pages
     character(*), parameter :: directories(*) = ['blog/', 'logo/']
-    integer di, i
-    type(apr_array_header_t), pointer :: fptr
-    type(c_ptr) cptr
+    integer i
+    type(c_ptr) dir, filename
 
-    do di = 1, size(directories)
+    do i = 1, size(directories)
        block
-         character(:), allocatable, target :: pattern
-         pattern = '_sources/pages/' // directories(di) // '*.sam' // char(0)
-         i = apr_match_glob(c_loc(pattern), cptr, apr_pool)
+         character(:), allocatable, target :: path
+         path = '_sources/pages/' // directories(i) // char(0)
+         dir = g_dir_open(c_loc(path), 0, c_null_ptr)
        end block
 
-       call c_f_pointer(cptr, fptr)
+       do
+          filename = g_dir_read_name(dir)
 
-       block
-         type(c_ptr), pointer :: pages(:)
+          if (.not. c_associated(filename)) exit
 
-         call c_f_pointer(fptr % elts, pages, [fptr % nelts])
+          block
+            character(:), allocatable :: source, target
+            character(posix_strlen(filename)), pointer :: name
+            integer(c_size_t) length
+            type(c_ptr) cptr
 
-         do i = 1, size(pages)
-            block
-              character(posix_strlen(pages(i))), pointer :: name
-              integer(c_size_t) length
-              character(:), allocatable :: source, target
+            call c_f_pointer(filename, name)
 
-              call c_f_pointer(pages(i), name)
+            source = '_sources/pages/' // directories(i) // name
+            target = directories(i) // name (:len(name) - 4) // '.html'
 
-              source = '_sources/pages/' // directories(di) // name
-              target = directories(di) // name (:len(name) - 4) // '.html'
+            if (source_modified(source, target)) then
+               call sam_parse(source, cptr, length)
 
-              if (source_modified(source, target)) then
-                 call sam_parse(source, cptr, length)
+               if (c_associated(cptr)) then
+                  cptr = xml_parse_memory(cptr, int(length))
+                  call render_article(cptr, target)
+               end if
+            end if
+          end block
+       end do
 
-                 if (c_associated(cptr)) then
-                    cptr = xml_parse_memory(cptr, int(length))
-                    call render_article(cptr, target)
-                 end if
-              end if
-            end block
-         end do
-       end block
+       call g_dir_close(dir)
     end do
   end subroutine generate_pages
 
@@ -200,7 +187,7 @@ contains
 
   subroutine sort_posts
     integer i, j
-    type(post) t
+    type(post_t) t
 
     do i = 1, size(posts)
        do j = i + 1, size(posts)
