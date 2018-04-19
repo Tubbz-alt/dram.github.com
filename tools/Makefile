@@ -6,7 +6,7 @@ OBJECTS += external/fortran-posix/sources/posix.o
 OBJECTS += external/fortran-python/sources/python.o
 OBJECTS += external/fortran-xml/sources/xml.o
 OBJECTS += external/fortran-xslt/sources/xslt.o
-OBJECTS += sources/render.o sources/sam.o sources/main.o
+OBJECTS += sources/strings.o sources/render.o sources/sam.o sources/main.o
 LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
 LIBRARYS += $(shell pkg-config --libs glib-2.0 python-3.6)
 

@@ -1,6 +1,7 @@
 module render
   use exslt
   use iso_c_binding
+  use strings
   use xml
   use xslt
 
@@ -37,26 +38,32 @@ contains
   end subroutine render_initialize
 
   subroutine render_article(content, output, date)
-    type(c_ptr), intent(in) :: content
-    character(*), intent(in) :: output
-    character(*), optional, intent(in) :: date
+    character(*) date, output
+    type(c_ptr) content
+    intent(in) content, date, output
+    optional date
 
-    character(13), target :: param_strings (2)
-    character(:), allocatable, target :: path
+    character(:) path
     integer i
-    type(c_ptr) p
-    type(c_ptr), target :: params (3)
+    type(c_ptr) p, params (:)
+    type(string) param_strings (:)
+    allocatable path, param_strings, params
+    target path, param_strings, params
 
     if (.not. initialized) call render_initialize
 
     if (present(date)) then
-       param_strings(1) = 'date' // char(0)
-       param_strings(2) = '"' // date // '"' // char(0)
-       params(1) = c_loc(param_strings(1))
-       params(2) = c_loc(param_strings(2))
-       params(3) = c_null_ptr
+       param_strings = [ &
+            string('date' // char(0)), &
+            string('"' // date // '"' // char(0)) &
+            ]
+       params = [ &
+            c_loc(param_strings(1) % value), &
+            c_loc(param_strings(2) % value), &
+            c_null_ptr &
+            ]
     else
-       params(1) = c_null_ptr
+       params = [c_null_ptr]
     end if
 
     p = xslt_apply_stylesheet(article_stylesheet, content, c_loc(params))
@@ -92,25 +99,32 @@ contains
   end subroutine render_archive
 
   subroutine render_main(content, output, title)
-    type(c_ptr), intent(in) :: content
-    character(*), intent(in) :: output
-    character(*), optional, intent(in) :: title
+    character(*) output, title
+    type(c_ptr) content
+    intent(in) content, output, title
+    optional title
 
-    character(10), target :: param_strings (2)
-    character(:), allocatable, target :: path
+    character(:) path
     integer i
-    type(c_ptr), target :: params (3)
+    type(c_ptr) params (:)
+    type(string) param_strings (:)
+    allocatable path, param_strings, params
+    target path, param_strings, params
 
     if (.not. initialized) call render_initialize
 
     if (present(title)) then
-       param_strings(1) = 'title' // char(0)
-       param_strings(2) = '"' // title // '"' // char(0)
-       params(1) = c_loc(param_strings(1))
-       params(2) = c_loc(param_strings(2))
-       params(3) = c_null_ptr
+       param_strings = [ &
+            string('title' // char(0)), &
+            string('"' // title // '"' // char(0)) &
+            ]
+       params = [ &
+            c_loc(param_strings(1) % value), &
+            c_loc(param_strings(2) % value), &
+            c_null_ptr &
+            ]
     else
-       params(1) = c_null_ptr
+       params = [c_null_ptr]
     end if
 
     path = trim(output) // char(0)
