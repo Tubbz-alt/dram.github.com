@@ -1,0 +1,20 @@
+article: Fortran数组动态扩容
+
+	通过利用allocatable，可以实现对Fortran数组动态扩容，示例代码如下：
+
+	```
+		program main
+		  implicit none
+
+		  block
+		    integer, allocatable :: array (:)
+
+		    array = [1, 2]
+
+		    print *, array
+
+		    array = [array, 3, 4, 5]
+
+		    print *, array
+		  end block
+		end program main
