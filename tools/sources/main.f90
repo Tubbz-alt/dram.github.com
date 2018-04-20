@@ -1,10 +1,13 @@
 program main
-  use glib
-  use iso_c_binding
-  use posix
+  use glib, only: g_dir_close, g_dir_open, g_dir_read_name
+  use iso_c_binding, only: &
+       c_associated, c_f_pointer, c_loc, c_null_ptr, c_ptr, c_size_t
+  use posix, only: posix_strlen
   use sam, only: sam_parse
   use render, only: render_archive, render_article, render_home
-  use xml
+  use xml, only: &
+       xml_encode_entities_reentrant, xml_new_child, xml_new_doc, &
+       xml_new_node, xml_parse_memory, xml_set_root_element
 
   implicit none
 

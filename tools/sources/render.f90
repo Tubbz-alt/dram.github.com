@@ -1,9 +1,10 @@
 module render
-  use exslt
-  use iso_c_binding
-  use strings
-  use xml
-  use xslt
+  use exslt, only: exslt_date_register
+  use iso_c_binding, only: c_loc, c_null_ptr, c_ptr
+  use strings, only: string
+  use xslt, only: &
+       xslt_apply_stylesheet, xslt_parse_stylesheet_file, &
+       xslt_run_stylesheet_user
 
   implicit none
 

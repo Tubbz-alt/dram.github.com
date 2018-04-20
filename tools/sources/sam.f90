@@ -1,6 +1,10 @@
 module sam
-  use iso_c_binding
-  use python
+  use iso_c_binding, only: c_associated, c_loc, c_null_ptr, c_ptr, c_size_t
+  use python, only: &
+       py_dict_new, py_dict_set_item_string, py_err_print, &
+       py_eval_get_builtins, py_eval_input, py_file_input, &
+       py_finalize, py_initialize, py_run_string, &
+       py_unicode_as_utf8_and_size
 
   implicit none
 
