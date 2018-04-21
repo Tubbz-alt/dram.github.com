@@ -1,11 +1,7 @@
 PROGRAM = sources/generate
 MODULES_DIR = modules
-OBJECTS += external/fortran-exslt/sources/exslt.o
-OBJECTS += external/fortran-glib/sources/glib.o
-OBJECTS += external/fortran-posix/sources/posix.o
-OBJECTS += external/fortran-python/sources/python.o
-OBJECTS += external/fortran-xml/sources/xml.o
-OBJECTS += external/fortran-xslt/sources/xslt.o
+EXTERNALS = exslt glib posix python xml xslt
+OBJECTS += $(foreach x,${EXTERNALS},external/fortran-$x/sources/$x.o)
 OBJECTS += sources/strings.o sources/render.o sources/sam.o sources/main.o
 LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
 LIBRARYS += $(shell pkg-config --libs glib-2.0 python-3.6)
@@ -29,4 +25,5 @@ ${MODULES_DIR}:
 	mkdir -p $@
 
 clean:
+	for x in ${EXTERNALS}; do ${MAKE} -C external/fortran-$$x/ clean; done
 	rm -rf ${PROGRAM} ${OBJECTS} ${MODULES_DIR}
