@@ -1,9 +1,16 @@
 module render
-  use exslt, only: exslt_date_register
-  use iso_c_binding, only: c_loc, c_null_ptr, c_ptr
-  use strings, only: string
+  use exslt, only: &
+       exslt_date_register
+  use iso_c_binding, only: &
+       c_loc, &
+       c_null_ptr, &
+       c_ptr
+  use strings, only: &
+       cstring, &
+       string
   use xslt, only: &
-       xslt_apply_stylesheet, xslt_parse_stylesheet_file, &
+       xslt_apply_stylesheet, &
+       xslt_parse_stylesheet_file, &
        xslt_run_stylesheet_user
 
   implicit none
@@ -55,8 +62,8 @@ contains
 
     if (present(date)) then
        param_strings = [ &
-            string('date' // char(0)), &
-            string('"' // date // '"' // char(0)) &
+            cstring('date'), &
+            cstring('"' // date // '"') &
             ]
        params = [ &
             c_loc(param_strings(1) % value), &
@@ -116,8 +123,8 @@ contains
 
     if (present(title)) then
        param_strings = [ &
-            string('title' // char(0)), &
-            string('"' // title // '"' // char(0)) &
+            cstring('title'), &
+            cstring('"' // title // '"') &
             ]
        params = [ &
             c_loc(param_strings(1) % value), &
