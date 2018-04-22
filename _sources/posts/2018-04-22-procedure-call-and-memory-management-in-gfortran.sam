@@ -1,0 +1,69 @@
+article: GFortran中的过程调用和内存管理
+
+	对于以下程序结果的分析，可以得出这样一些结论（只针对特定版本的GFortran，暂不确定标准是否有相关约定）：
+
+	1. `ALLOCATABLE`作为函数返回值返回时，做了拷贝（内存地址不同）；
+	2. `ALLOCATABLE`传入子程序的`INTENT(out)`参数时，原内存被释放；
+	3. 传入`INTENT(inout)`参数时，原内存没有释放（内存地址不变，但如果内存需求大于原有内存，猜测可能还是会重新分配）；
+	4. 传入`INTENT(in)`参数时，作为引用传入（内存地址未变）。
+
+	可以发现，不管是函数返回还是子程序`INTENT(out)`调用，都存在内存分配或者释放的情况。总体来说，如果返回值不大，用函数更合适，反之，用子程序更好些。
+
+	```
+		program test
+		  use iso_c_binding
+
+		  character(:), allocatable, target :: foo
+		  print *, 'foo', loc(foo), c_loc(foo)
+		  foo = 'foo'
+		  print *, 'foo', loc(foo), c_loc(foo)
+		  foo = bar()
+		  print *, 'foo', loc(foo), c_loc(foo), foo
+		  call baz(foo)
+		  print *, 'foo', loc(foo), c_loc(foo), foo
+		  call qux(foo)
+		  print *, 'foo', loc(foo), c_loc(foo), foo
+
+		  print *
+		  call quux(bar())
+
+		contains
+
+		  function bar()
+		    character(:), allocatable, target :: bar
+		    bar = 'bar'
+		    print *, bar, loc(bar), c_loc(bar)
+		  end function bar
+
+		  subroutine baz(a)
+		    character(:), allocatable, target, intent(out) :: a
+		    a = 'baz'
+		    print *, a, loc(a), c_loc(a)
+		  end subroutine baz
+
+		  subroutine qux(a)
+		    character(:), allocatable, target, intent(inout) :: a
+		    a = 'qux'
+		    print *, a, loc(a), c_loc(a)
+		  end subroutine qux
+
+		  subroutine quux(a)
+		    character(:), allocatable, target, intent(in) :: a
+		    print *, a, loc(a), c_loc(a)
+		  end subroutine quux
+		end program test
+
+	输出（GCC 6.4.0）：
+
+	```
+		 foo                    0                    0
+		 foo          25769804800          25769804800
+		 bar          25769804832          25769804832
+		 foo          25769804800          25769804800 bar
+		 baz          25769804800          25769804800
+		 foo          25769804800          25769804800 baz
+		 qux          25769804800          25769804800
+		 foo          25769804800          25769804800 qux
+
+		 bar          25769804832          25769804832
+		 bar          25769804832          25769804832

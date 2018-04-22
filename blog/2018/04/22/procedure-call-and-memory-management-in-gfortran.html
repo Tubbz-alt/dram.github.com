@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>GFortran中的过程调用和内存管理</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>GFortran中的过程调用和内存管理</h1><time>22 Apr 2018</time>
+
+
+<p>对于以下程序结果的分析，可以得出这样一些结论（只针对特定版本的GFortran，暂不确定标准是否有相关约定）：</p>
+<ol>
+<li>
+<p><code>ALLOCATABLE</code>作为函数返回值返回时，做了拷贝（内存地址不同）；</p>
+</li>
+<li>
+<p><code>ALLOCATABLE</code>传入子程序的<code>INTENT(out)</code>参数时，原内存被释放；</p>
+</li>
+<li>
+<p>传入<code>INTENT(inout)</code>参数时，原内存没有释放（内存地址不变，但如果内存需求大于原有内存，猜测可能还是会重新分配）；</p>
+</li>
+<li>
+<p>传入<code>INTENT(in)</code>参数时，作为引用传入（内存地址未变）。</p>
+</li>
+</ol>
+<p>可以发现，不管是函数返回还是子程序<code>INTENT(out)</code>调用，都存在内存分配或者释放的情况。总体来说，如果返回值不大，用函数更合适，反之，用子程序更好些。</p>
+<pre><code>program test
+  use iso_c_binding
+
+  character(:), allocatable, target :: foo
+  print *, 'foo', loc(foo), c_loc(foo)
+  foo = 'foo'
+  print *, 'foo', loc(foo), c_loc(foo)
+  foo = bar()
+  print *, 'foo', loc(foo), c_loc(foo), foo
+  call baz(foo)
+  print *, 'foo', loc(foo), c_loc(foo), foo
+  call qux(foo)
+  print *, 'foo', loc(foo), c_loc(foo), foo
+
+  print *
+  call quux(bar())
+
+contains
+
+  function bar()
+    character(:), allocatable, target :: bar
+    bar = 'bar'
+    print *, bar, loc(bar), c_loc(bar)
+  end function bar
+
+  subroutine baz(a)
+    character(:), allocatable, target, intent(out) :: a
+    a = 'baz'
+    print *, a, loc(a), c_loc(a)
+  end subroutine baz
+
+  subroutine qux(a)
+    character(:), allocatable, target, intent(inout) :: a
+    a = 'qux'
+    print *, a, loc(a), c_loc(a)
+  end subroutine qux
+
+  subroutine quux(a)
+    character(:), allocatable, target, intent(in) :: a
+    print *, a, loc(a), c_loc(a)
+  end subroutine quux
+end program test</code></pre>
+<p>输出（GCC 6.4.0）：</p>
+<pre><code>foo                    0                    0
+foo          25769804800          25769804800
+bar          25769804832          25769804832
+foo          25769804800          25769804800 bar
+baz          25769804800          25769804800
+foo          25769804800          25769804800 baz
+qux          25769804800          25769804800
+foo          25769804800          25769804800 qux
+
+bar          25769804832          25769804832
+bar          25769804832          25769804832</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
