@@ -1,18 +1,15 @@
 program main
   use glib, only: &
-       g_dir_close, &
-       g_dir_read_name
+       g_dir_close
   use glib_aux, only: &
-       glib_aux_open_directory
+       glib_aux_open_directory, &
+       glib_aux_read_directory_entry_name
   use iso_c_binding, only: &
        c_associated, &
-       c_f_pointer, &
        c_loc, &
        c_null_ptr, &
        c_ptr, &
        c_size_t
-  use posix, only: &
-       posix_strlen
   use sam, only: &
        sam_parse
   use render, only: &
@@ -37,9 +34,10 @@ program main
   type(post_t), allocatable :: posts (:)
 
   block
+    character(:), allocatable :: name
     integer unit
     integer, parameter :: n = len('_sources/posts/') + 1
-    type(c_ptr) dir, filename
+    type(c_ptr) dir
     type(post_t) post
 
     allocate(posts(0))
@@ -47,15 +45,11 @@ program main
     dir = glib_aux_open_directory('_sources/posts')
 
     do
-       filename = g_dir_read_name(dir)
+       name = glib_aux_read_directory_entry_name(dir)
 
-       if (.not. c_associated(filename)) exit
+       if (name == '') exit
 
-       block
-         character(posix_strlen(filename)), pointer :: name
-         call c_f_pointer(filename, name)
-         post % source = '_sources/posts/' // name
-       end block
+       post % source = '_sources/posts/' // name
 
        post % date = post % source (n : n + 9)
 
@@ -151,24 +145,22 @@ contains
 
   subroutine generate_pages
     character(*), parameter :: directories(*) = ['blog/', 'logo/']
+    character(:), allocatable :: name
     integer i
-    type(c_ptr) dir, filename
+    type(c_ptr) dir
 
     do i = 1, size(directories)
        dir = glib_aux_open_directory('_sources/pages/' // directories(i))
 
        do
-          filename = g_dir_read_name(dir)
+          name = glib_aux_read_directory_entry_name(dir)
 
-          if (.not. c_associated(filename)) exit
+          if (name == '') exit
 
           block
             character(:), allocatable :: source, target
-            character(posix_strlen(filename)), pointer :: name
             integer(c_size_t) length
             type(c_ptr) cptr
-
-            call c_f_pointer(filename, name)
 
             source = '_sources/pages/' // directories(i) // name
             target = directories(i) // name (:len(name) - 4) // '.html'
