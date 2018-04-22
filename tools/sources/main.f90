@@ -1,13 +1,31 @@
 program main
-  use glib, only: g_dir_close, g_dir_open, g_dir_read_name
+  use glib, only: &
+       g_dir_close, &
+       g_dir_read_name
+  use glib_aux, only: &
+       glib_aux_open_directory
   use iso_c_binding, only: &
-       c_associated, c_f_pointer, c_loc, c_null_ptr, c_ptr, c_size_t
-  use posix, only: posix_strlen
-  use sam, only: sam_parse
-  use render, only: render_archive, render_article, render_home
+       c_associated, &
+       c_f_pointer, &
+       c_loc, &
+       c_null_ptr, &
+       c_ptr, &
+       c_size_t
+  use posix, only: &
+       posix_strlen
+  use sam, only: &
+       sam_parse
+  use render, only: &
+       render_archive, &
+       render_article, &
+       render_home
   use xml, only: &
-       xml_encode_entities_reentrant, xml_new_child, xml_new_doc, &
-       xml_new_node, xml_parse_memory, xml_set_root_element
+       xml_encode_entities_reentrant, &
+       xml_new_child, &
+       xml_new_doc, &
+       xml_new_node, &
+       xml_parse_memory, &
+       xml_set_root_element
 
   implicit none
 
@@ -19,7 +37,6 @@ program main
   type(post_t), allocatable :: posts (:)
 
   block
-    character(:), allocatable, target :: path
     integer unit
     integer, parameter :: n = len('_sources/posts/') + 1
     type(c_ptr) dir, filename
@@ -27,8 +44,7 @@ program main
 
     allocate(posts(0))
 
-    path = '_sources/posts' // char(0)
-    dir = g_dir_open(c_loc(path), 0, c_null_ptr)
+    dir = glib_aux_open_directory('_sources/posts')
 
     do
        filename = g_dir_read_name(dir)
@@ -139,11 +155,7 @@ contains
     type(c_ptr) dir, filename
 
     do i = 1, size(directories)
-       block
-         character(:), allocatable, target :: path
-         path = '_sources/pages/' // directories(i) // char(0)
-         dir = g_dir_open(c_loc(path), 0, c_null_ptr)
-       end block
+       dir = glib_aux_open_directory('_sources/pages/' // directories(i))
 
        do
           filename = g_dir_read_name(dir)

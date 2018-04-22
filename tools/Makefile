@@ -2,6 +2,7 @@ PROGRAM = sources/generate
 MODULES_DIR = modules
 EXTERNALS = exslt glib posix python xml xslt
 OBJECTS += $(foreach x,${EXTERNALS},external/fortran-$x/sources/$x.o)
+OBJECTS += external/fortran-glib/sources/glib_aux.o
 OBJECTS += sources/strings.o sources/render.o sources/sam.o sources/main.o
 LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
 LIBRARYS += $(shell pkg-config --libs glib-2.0 python-3.6)
