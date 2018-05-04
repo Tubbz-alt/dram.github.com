@@ -1,8 +1,12 @@
 program main
+  use cstrings, only: &
+       cstring, &
+       cstring_finalize, &
+       cstring_initialize
   use glib, only: &
-       g_dir_close
+       g_dir_close, &
+       g_dir_open
   use glib_aux, only: &
-       glib_aux_open_directory, &
        glib_aux_read_directory_entry_name
   use iso_c_binding, only: &
        c_associated, &
@@ -40,9 +44,11 @@ program main
     type(c_ptr) dir
     type(post_t) post
 
+    call cstring_initialize
+
     allocate(posts(0))
 
-    dir = glib_aux_open_directory('_sources/posts')
+    dir = g_dir_open(cstring('_sources/posts'), 0, c_null_ptr)
 
     do
        name = glib_aux_read_directory_entry_name(dir)
@@ -79,6 +85,8 @@ program main
 
     call render_home(post_list(limit=10), 'index.html')
     call render_archive(post_list(limit=0), 'blog/archive.html')
+
+    call cstring_finalize
   end block
 
 contains
@@ -103,14 +111,11 @@ contains
     integer, intent(in) :: limit
     type(c_ptr) post_list
 
-    character(:), allocatable, target :: version, tag
     integer i, count
     type(c_ptr) node, root
 
-    version = '1.0' // char(0)
-    post_list = xml_new_doc(c_loc(version))
-    tag = 'posts' // char(0)
-    root = xml_new_node(c_null_ptr, c_loc(tag))
+    post_list = xml_new_doc(cstring('1.0'))
+    root = xml_new_node(c_null_ptr, cstring('posts'))
     node = xml_set_root_element(post_list, root)
 
     if (limit == 0 .or. limit > size(posts)) then
@@ -121,24 +126,21 @@ contains
 
     do i = 1, count
        block
-         character(:), allocatable, target :: date, title, uri
          type(c_ptr) cptr, post
 
-         tag = 'post' // char(0)
-         post = xml_new_child(root, c_null_ptr, c_loc(tag), c_null_ptr)
+         post = xml_new_child(root, c_null_ptr, cstring('post'), c_null_ptr)
 
-         title = trim(posts(i) % title) // char(0)
-         cptr = xml_encode_entities_reentrant(post_list, c_loc(title))
-         tag = 'title' // char(0)
-         node = xml_new_child(post, c_null_ptr, c_loc(tag), cptr)
+         cptr = xml_encode_entities_reentrant( &
+              post_list, cstring(trim(posts(i) % title)))
+         node = xml_new_child(post, c_null_ptr, cstring('title'), cptr)
 
-         date = posts(i) % date // char(0)
-         tag = 'creation-date' // char(0)
-         node = xml_new_child(post, c_null_ptr, c_loc(tag), c_loc(date))
+         node = xml_new_child( &
+              post, c_null_ptr, &
+              cstring('creation-date'), cstring(posts(i) % date))
 
-         tag = 'uri' // char(0)
-         uri = '/' // trim(posts(i) % target) // char(0)
-         node = xml_new_child(post, c_null_ptr, c_loc(tag), c_loc(uri))
+         node = xml_new_child( &
+              post, c_null_ptr, &
+              cstring('uri'), cstring('/' // trim(posts(i) % target)))
        end block
     end do
   end function post_list
@@ -150,7 +152,8 @@ contains
     type(c_ptr) dir
 
     do i = 1, size(directories)
-       dir = glib_aux_open_directory('_sources/pages/' // directories(i))
+       dir = g_dir_open( &
+            cstring('_sources/pages/' // directories(i)), 0, c_null_ptr)
 
        do
           name = glib_aux_read_directory_entry_name(dir)

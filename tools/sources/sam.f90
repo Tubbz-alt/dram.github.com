@@ -1,4 +1,6 @@
 module sam
+  use cstrings, only: &
+       cstring
   use iso_c_binding, only: c_associated, c_loc, c_null_ptr, c_ptr, c_size_t
   use python, only: &
        py_dict_new, py_dict_set_item_string, py_err_print, &
@@ -18,7 +20,6 @@ module sam
 contains
 
   subroutine sam_initialize
-    character(:), allocatable, target :: command, name
     integer i
     type(c_ptr) p
 
@@ -26,14 +27,15 @@ contains
 
     globals = py_dict_new()
 
-    name = '__builtins__' // char(0)
-    i = py_dict_set_item_string(globals, c_loc(name), py_eval_get_builtins())
+    i = py_dict_set_item_string( &
+         globals, cstring('__builtins__'), py_eval_get_builtins())
 
-    command = &
+    p = py_run_string( &
+         cstring( &
          'import sys; &
          & sys.path.append("tools/sam"); &
-         & import samparser' // char(0)
-    p = py_run_string(c_loc(command), py_file_input, globals, c_null_ptr)
+         & import samparser'), &
+         py_file_input, globals, c_null_ptr)
 
     initialized = .true.
   end subroutine sam_initialize
@@ -43,18 +45,18 @@ contains
     type(c_ptr), intent(out) :: memory
     integer(c_size_t), intent(out) :: size
 
-    character(:), allocatable, target :: command
     type(c_ptr) p
 
     if (.not. initialized) call sam_initialize
 
-    command = &
-         'p = samparser.SamParser();' // &
-         'p.parse_file("' // trim(path) // '")' // char(0)
-    p = py_run_string(c_loc(command), py_file_input, globals, c_null_ptr)
+    p = py_run_string( &
+         cstring( &
+         'p = samparser.SamParser(); p.parse_file("' // trim(path) // '")'), &
+         py_file_input, globals, c_null_ptr)
 
-    command = '"".join(p.doc.serialize_xml())' // char(0)
-    p = py_run_string(c_loc(command), py_eval_input, globals, c_null_ptr)
+    p = py_run_string( &
+         cstring('"".join(p.doc.serialize_xml())'), &
+         py_eval_input, globals, c_null_ptr)
 
     if (c_associated(p)) then
        memory = py_unicode_as_utf8_and_size(p, size)

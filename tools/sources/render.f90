@@ -1,4 +1,6 @@
 module render
+  use cstrings, only: &
+       cstring
   use exslt, only: &
        exslt_date_register
   use iso_c_binding, only: &
@@ -6,7 +8,6 @@ module render
        c_null_ptr, &
        c_ptr
   use strings, only: &
-       cstring, &
        string
   use xslt, only: &
        xslt_apply_stylesheet, &
@@ -26,21 +27,19 @@ module render
 contains
 
   subroutine render_initialize
-    character(:), allocatable, target :: name
-
     call exslt_date_register()
 
-    name = 'tools/stylesheets/main.xsl' // char(0)
-    main_stylesheet = xslt_parse_stylesheet_file(c_loc(name))
+    main_stylesheet = xslt_parse_stylesheet_file( &
+         cstring('tools/stylesheets/main.xsl'))
 
-    name = 'tools/stylesheets/article.xsl' // char(0)
-    article_stylesheet = xslt_parse_stylesheet_file(c_loc(name))
+    article_stylesheet = xslt_parse_stylesheet_file( &
+         cstring('tools/stylesheets/article.xsl'))
 
-    name = 'tools/stylesheets/home.xsl' // char(0)
-    home_stylesheet = xslt_parse_stylesheet_file(c_loc(name))
+    home_stylesheet = xslt_parse_stylesheet_file( &
+         cstring('tools/stylesheets/home.xsl'))
 
-    name = 'tools/stylesheets/archive.xsl' // char(0)
-    archive_stylesheet = xslt_parse_stylesheet_file(c_loc(name))
+    archive_stylesheet = xslt_parse_stylesheet_file( &
+         cstring('tools/stylesheets/archive.xsl'))
 
     initialized = .true.
   end subroutine render_initialize
@@ -51,23 +50,16 @@ contains
     intent(in) content, date, output
     optional date
 
-    character(:) path
     integer i
-    type(c_ptr) p, params (:)
-    type(string) param_strings (:)
-    allocatable path, param_strings, params
-    target path, param_strings, params
+    type(c_ptr) p
+    type(c_ptr), allocatable, target :: params (:)
 
     if (.not. initialized) call render_initialize
 
     if (present(date)) then
-       param_strings = [ &
-            cstring('date'), &
-            cstring('"' // date // '"') &
-            ]
        params = [ &
-            c_loc(param_strings(1) % value), &
-            c_loc(param_strings(2) % value), &
+            cstring('date'), &
+            cstring('"' // date // '"'), &
             c_null_ptr &
             ]
     else
@@ -76,9 +68,8 @@ contains
 
     p = xslt_apply_stylesheet(article_stylesheet, content, c_loc(params))
 
-    path = trim(output) // char(0)
     i = xslt_run_stylesheet_user( &
-         main_stylesheet, p, c_null_ptr, c_loc(path), &
+         main_stylesheet, p, c_null_ptr, cstring(trim(output)), &
          c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr)
   end subroutine render_article
 
@@ -112,32 +103,23 @@ contains
     intent(in) content, output, title
     optional title
 
-    character(:) path
     integer i
-    type(c_ptr) params (:)
-    type(string) param_strings (:)
-    allocatable path, param_strings, params
-    target path, param_strings, params
+    type(c_ptr), allocatable, target :: params (:)
 
     if (.not. initialized) call render_initialize
 
     if (present(title)) then
-       param_strings = [ &
-            cstring('title'), &
-            cstring('"' // title // '"') &
-            ]
        params = [ &
-            c_loc(param_strings(1) % value), &
-            c_loc(param_strings(2) % value), &
+            cstring('title'), &
+            cstring('"' // title // '"'), &
             c_null_ptr &
             ]
     else
        params = [c_null_ptr]
     end if
 
-    path = trim(output) // char(0)
     i = xslt_run_stylesheet_user( &
-         main_stylesheet, content, c_loc(params), c_loc(path), &
+         main_stylesheet, content, c_loc(params), cstring(trim(output)), &
          c_null_ptr, c_null_ptr, c_null_ptr, c_null_ptr)
   end subroutine render_main
 end module render
