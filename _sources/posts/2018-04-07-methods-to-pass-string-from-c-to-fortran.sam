@@ -1,5 +1,9 @@
 article: 将Fortran字符串传入C的几种方式
 
+	topic: 补遗
+
+		1. 比较完善的将Fortran字符串传入C接口的方式可以参考{这里}(https://github.com/dram/fortran-sqlite/commit/9912de17549db247cbcf9768a462e52ed7907af0)。—— 2018-05-04
+
 	在C中，字符串可以理解为数组，也可以看作指针，所以对应的在Fortran中也可以基于这两种模式将字符串传入C。
 
 	以下代码中，`c_print_v1`是作为字符数组处理，`c_print_v2`作为数值数组处理，而`c_print_v3`则是作为指针处理。
