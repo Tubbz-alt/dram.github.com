@@ -1,0 +1,13 @@
+article: 在Cygwin中安装Synapse
+
+	{Synapse}(https://github.com/matrix-org/synapse)是{Matrix}(https://matrix.org/)的参考homeserver实现，在Cygwin中安装Synapse和其他系统类似，除了安装{这里}(https://github.com/matrix-org/synapse#windows-install)提到的一些依赖包外，还需要做如下操作:
+
+	* 安装python2-devel；
+	* 将`path/to/synapse-sources/setup.py`中参数`include_conditional`值更改为`False`；
+	* 下载{virtualenv}(https://pypi.org/project/virtualenv/#files)，并解压；
+	* 运行`path/to/virtualenv-sources/virtualenv.py synapse-env`，生成虚拟环境；
+	* 运行`source synapse-env/bin/activate`，载入虚拟环境；
+	* 运行`pip install path/to/synapse-sources`，编译安装Synapse；
+	* 运行`pip install matrix_angular_sdk`，安装客户端。
+
+	其中修改`setup.py`文件是为规避Synapse 0.31.1中的一个依赖包处理问题，详见{这里}(https://github.com/matrix-org/synapse/issues/3375)。
