@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于Synapse的Workers</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于Synapse的Workers</h1><time>10 Jun 2018</time>
+
+
+<p>Synapse基于Workers实现并发，这里的Workers和Apache、NGINX中的master/worker的架构不同。</p>
+<p>从<a href="https://github.com/matrix-org/synapse/blob/v0.31.1/docs/workers.rst">文档</a>中可以看出，Synapse的Workers类似于微服务的概念，不同的功能模块由独立的进程或进程组实现，所有接口交由HTTP服务器以反代或负载均衡的模式分发。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
