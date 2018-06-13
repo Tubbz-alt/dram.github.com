@@ -1,0 +1,7 @@
+article: 注册Matrix用户的脚本
+
+	在Synapse的{README}(https://github.com/matrix-org/synapse/blob/v0.31.1/README.rst)文档中，提及使用`register_new_matrix_user`脚本注册用户。
+
+	Synapse的默认配置文件没有启用在线注册功能，所以创建用户需要使用该脚本。脚本的代码可以查看{这里}(https://github.com/matrix-org/synapse/blob/v0.31.1/scripts/register_new_matrix_user)。
+
+	脚本的整体依赖于`/_matrix/client/api/v1/register`接口实现。另外还涉及Home Server配置参数`registration_shared_secret`，用以确保在注册功能被禁用时依然可以调用该接口，该配置作为HMAC数据签名的密钥。

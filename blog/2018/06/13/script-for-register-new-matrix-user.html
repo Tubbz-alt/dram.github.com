@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>注册Matrix用户的脚本</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>注册Matrix用户的脚本</h1><time>13 Jun 2018</time>
+
+
+<p>在Synapse的<a href="https://github.com/matrix-org/synapse/blob/v0.31.1/README.rst">README</a>文档中，提及使用<code>register_new_matrix_user</code>脚本注册用户。</p>
+<p>Synapse的默认配置文件没有启用在线注册功能，所以创建用户需要使用该脚本。脚本的代码可以查看<a href="https://github.com/matrix-org/synapse/blob/v0.31.1/scripts/register_new_matrix_user">这里</a>。</p>
+<p>脚本的整体依赖于<code>/_matrix/client/api/v1/register</code>接口实现。另外还涉及Home Server配置参数<code>registration_shared_secret</code>，用以确保在注册功能被禁用时依然可以调用该接口，该配置作为HMAC数据签名的密钥。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
