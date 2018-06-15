@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Matrix的Identity Server的使用</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Matrix的Identity Server的使用</h1><time>15 Jun 2018</time>
+
+
+<p>在Matrix系统中，存在一个Identity Server服务，主要作用是以下两点：</p>
+<ol>
+<li>
+<p>关联Email等第三方ID和Matrix ID；</p>
+</li>
+<li>
+<p>查询第三方ID对应的Matrix ID。</p>
+</li>
+</ol>
+<p>所以，如果是直接通过Matrix ID登录，不会涉及到和Identity Server的交互。详细的代码可以查看matrix-angular-sdk中<a href="https://github.com/matrix-org/matrix-angular-sdk/blob/v0.6.8/syweb/webclient/app/components/matrix/matrix-service.js">matrixService</a>模块的<code>linkEmail</code>和<code>lookup3pid</code>函数。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

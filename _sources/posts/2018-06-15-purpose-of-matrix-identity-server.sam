@@ -1,0 +1,8 @@
+article: Matrix的Identity Server的使用
+
+	在Matrix系统中，存在一个Identity Server服务，主要作用是以下两点：
+
+	1. 关联Email等第三方ID和Matrix ID；
+	2. 查询第三方ID对应的Matrix ID。
+
+	所以，如果是直接通过Matrix ID登录，不会涉及到和Identity Server的交互。详细的代码可以查看matrix-angular-sdk中{matrixService}(https://github.com/matrix-org/matrix-angular-sdk/blob/v0.6.8/syweb/webclient/app/components/matrix/matrix-service.js)模块的`linkEmail`和`lookup3pid`函数。
