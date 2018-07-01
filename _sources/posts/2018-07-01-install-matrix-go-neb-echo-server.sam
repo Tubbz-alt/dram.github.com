@@ -1,0 +1,84 @@
+article: 安装Matrix的Go-NEB的回显服务
+
+	Go-NEB是一个Matrix聊天机器人，其中的echo（回显）是一个简单的示例服务，通过以下命令可以完成安装（为便于实践，以下流程包含了部分Synapse的安装）。
+
+	以下命令中，`SERVER_NAME`需要替换为Matrix服务的域名或者IP，`GONEB_PASSWORD`需要替换为该Matrix HS中`goneb`的密码，`ACCESS_TOKEN`需要替换为获取到的token值。
+
+	另外`SYNAPSE_SOURCE_PATH`和`GONEB_SOURCE_PATH`分别是Synapse和Go-NEB的代码路径。
+
+	第一步是安装Synapse：
+
+	```
+		virtualenv -p python2.7 ~/.synapse
+		source ~/.synapse/bin/activate
+		pip install --upgrade pip
+		pip install --upgrade setuptools
+		pip install SYNAPSE_SOURCE_PATH
+
+	生成Synapse配置文件：
+
+	```
+		cd ~/.synapse
+		python -m synapse.app.homeserver \
+		    --server-name SERVER_NAME \
+		    --config-path homeserver.yaml \
+		    --generate-config \
+		    --report-stats=no
+
+	如果系统不支持IPv6，需要删除`homeserver.yaml`配置文件中`bind_addresses`项中的`::`（有两处，分别是加密服务和非加密服务）
+
+	启动Synapse服务：
+
+	```
+		synctl start
+
+	注册goneb用户：
+
+	```
+		register_new_matrix_user -c homeserver.yaml http://localhost:8008
+
+	获取goneb用户的access token：
+
+	```
+		curl -X POST localhost:8008/_matrix/client/r0/login --data-binary '{
+		  "type": "m.login.password",
+		  "user": "goneb",
+		  "password": "GONEB_PASSWORD",
+		  "initial_device_display_name": "Go-NEB"
+		}'
+
+
+	编译Go-NEB：
+
+	```
+		go get github.com/constabulary/gb/...
+		cd GONEB_SOURCE_PATH
+		gb build github.com/matrix-org/go-neb
+
+	运行Go-NEB：
+
+	```
+		BIND_ADDRESS=:4050 DATABASE_TYPE=sqlite3 DATABASE_URL=go-neb.db?_busy_timeout=5000 BASE_URL=http://localhost:4050 bin/go-neb
+
+
+	在Go-NEB服务中配置goneb账号：
+
+	```
+		curl -X POST localhost:4050/admin/configureClient --data-binary '{
+		  "UserID": "@goneb:192.168.1.101",
+		  "HomeserverURL": "http://localhost:8008",
+		  "AccessToken": "ACCESS_TOKEN",
+		  "Sync": true,
+		  "AutoJoinRooms": true,
+		  "DisplayName": "My Bot"
+		}'
+
+	启用echo服务：
+
+	```
+		curl -X POST localhost:4050/admin/configureService --data-binary '{
+		    "Type": "echo",
+		    "Id": "myserviceid",
+		    "UserID": "@goneb:SERVER_NAME",
+		    "Config": {}
+		}'

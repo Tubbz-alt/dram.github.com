@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>安装Matrix的Go-NEB的回显服务</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>安装Matrix的Go-NEB的回显服务</h1><time>01 Jul 2018</time>
+
+
+<p>Go-NEB是一个Matrix聊天机器人，其中的echo（回显）是一个简单的示例服务，通过以下命令可以完成安装（为便于实践，以下流程包含了部分Synapse的安装）。</p>
+<p>以下命令中，<code>SERVER_NAME</code>需要替换为Matrix服务的域名或者IP，<code>GONEB_PASSWORD</code>需要替换为该Matrix HS中<code>goneb</code>的密码，<code>ACCESS_TOKEN</code>需要替换为获取到的token值。</p>
+<p>另外<code>SYNAPSE_SOURCE_PATH</code>和<code>GONEB_SOURCE_PATH</code>分别是Synapse和Go-NEB的代码路径。</p>
+<p>第一步是安装Synapse：</p>
+<pre><code>virtualenv -p python2.7 ~/.synapse
+source ~/.synapse/bin/activate
+pip install --upgrade pip
+pip install --upgrade setuptools
+pip install SYNAPSE_SOURCE_PATH</code></pre>
+<p>生成Synapse配置文件：</p>
+<pre><code>cd ~/.synapse
+python -m synapse.app.homeserver \
+    --server-name SERVER_NAME \
+    --config-path homeserver.yaml \
+    --generate-config \
+    --report-stats=no</code></pre>
+<p>如果系统不支持IPv6，需要删除<code>homeserver.yaml</code>配置文件中<code>bind_addresses</code>项中的<code>::</code>（有两处，分别是加密服务和非加密服务）</p>
+<p>启动Synapse服务：</p>
+<pre><code>synctl start</code></pre>
+<p>注册goneb用户：</p>
+<pre><code>register_new_matrix_user -c homeserver.yaml http://localhost:8008</code></pre>
+<p>获取goneb用户的access token：</p>
+<pre><code>curl -X POST localhost:8008/_matrix/client/r0/login --data-binary '{
+  "type": "m.login.password",
+  "user": "goneb",
+  "password": "GONEB_PASSWORD",
+  "initial_device_display_name": "Go-NEB"
+}'</code></pre>
+<p>编译Go-NEB：</p>
+<pre><code>go get github.com/constabulary/gb/...
+cd GONEB_SOURCE_PATH
+gb build github.com/matrix-org/go-neb</code></pre>
+<p>运行Go-NEB：</p>
+<pre><code>BIND_ADDRESS=:4050 DATABASE_TYPE=sqlite3 DATABASE_URL=go-neb.db?_busy_timeout=5000 BASE_URL=http://localhost:4050 bin/go-neb</code></pre>
+<p>在Go-NEB服务中配置goneb账号：</p>
+<pre><code>curl -X POST localhost:4050/admin/configureClient --data-binary '{
+  "UserID": "@goneb:192.168.1.101",
+  "HomeserverURL": "http://localhost:8008",
+  "AccessToken": "ACCESS_TOKEN",
+  "Sync": true,
+  "AutoJoinRooms": true,
+  "DisplayName": "My Bot"
+}'</code></pre>
+<p>启用echo服务：</p>
+<pre><code>curl -X POST localhost:4050/admin/configureService --data-binary '{
+    "Type": "echo",
+    "Id": "myserviceid",
+    "UserID": "@goneb:SERVER_NAME",
+    "Config": {}
+}'</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
