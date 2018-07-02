@@ -1,0 +1,13 @@
+clients:
+  - UserID: "@goneb:SERVER_NAME"
+    AccessToken: "ACCESS_TOKEN"
+    HomeserverURL: "http://localhost:8008"
+    Sync: true
+    AutoJoinRooms: true
+    DisplayName: "Go-NEB!"
+
+services:
+  - ID: "echo_service"
+    Type: "echo"
+    UserID: "@goneb:SERVER_NAME"
+    Config:

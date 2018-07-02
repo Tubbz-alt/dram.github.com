@@ -1,0 +1,14 @@
+article: 使用Matrix中的RSS Bot
+
+	Matrix的Go-NEB中包含有RSS功能，具体配置如下：
+
+	```
+		services:
+		  - ID: "rss_service"
+		    Type: "rssbot"
+		    UserID: "@USER_NAME:SERVER_NAME"
+		    Config:
+		      feeds:
+		        "https://foo.bar/baz.rss":
+		          rooms: ["!ROOM_NAME:SERVER_NAME"]
+		          poll_interval_mins: 120

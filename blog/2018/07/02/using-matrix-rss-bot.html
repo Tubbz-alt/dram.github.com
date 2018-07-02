@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>使用Matrix中的RSS Bot</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>使用Matrix中的RSS Bot</h1><time>02 Jul 2018</time>
+
+
+<p>Matrix的Go-NEB中包含有RSS功能，具体配置如下：</p>
+<pre><code>services:
+  - ID: "rss_service"
+    Type: "rssbot"
+    UserID: "@USER_NAME:SERVER_NAME"
+    Config:
+      feeds:
+        "https://foo.bar/baz.rss":
+          rooms: ["!ROOM_NAME:SERVER_NAME"]
+          poll_interval_mins: 120</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

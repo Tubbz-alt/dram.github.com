@@ -2,6 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>安装Matrix的Go-NEB的回显服务</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>安装Matrix的Go-NEB的回显服务</h1><time>01 Jul 2018</time>
 
 
+<section class="topic">
+<h2>补遗</h2>
+
+<ol>
+<li>
+<p>对Go-NEB的配置，也可以采用配置文件的模式，之后调用<code>BIND_ADDRESS=:4050 CONFIG_FILE=config.yaml BASE_URL=http://localhost:4050 bin/go-neb</code>命令启动，详见配置文件<a href="/data/2018-07-02-goneb-config.yaml">示例</a>。—— 2018-07-02</p>
+</li>
+<li>
+<p>Access token也可以在Web端（Matrix Angular SDK或Riot）登录后在“设置”中查看。—— 2018-07-02</p>
+</li>
+</ol>
+</section>
 <p>Go-NEB是一个Matrix聊天机器人，其中的echo（回显）是一个简单的示例服务，通过以下命令可以完成安装（为便于实践，以下流程包含了部分Synapse的安装）。</p>
 <p>以下命令中，<code>SERVER_NAME</code>需要替换为Matrix服务的域名或者IP，<code>GONEB_PASSWORD</code>需要替换为该Matrix HS中<code>goneb</code>的密码，<code>ACCESS_TOKEN</code>需要替换为获取到的token值。</p>
 <p>另外<code>SYNAPSE_SOURCE_PATH</code>和<code>GONEB_SOURCE_PATH</code>分别是Synapse和Go-NEB的代码路径。</p>
