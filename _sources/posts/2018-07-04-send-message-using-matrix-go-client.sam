@@ -1,0 +1,67 @@
+article: Matrix Go客户端消息发送示例
+
+	以下是一个简单的示例，用以向特定聊天室发送消息，包括文本信息、HTML以及图片。
+
+	```
+		package main
+
+		import (
+			"crypto/tls"
+			"fmt"
+			matrix "github.com/matrix-org/gomatrix"
+			"net/http"
+			"os"
+		)
+
+		const (
+			server       = "https://..."
+			user_id      = "@...:..."
+			access_token = "..."
+			room_id      = "!...:..."
+		)
+
+		func main() {
+			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+			if cli, e := matrix.NewClient(server, user_id, access_token); e == nil {
+				// Send plain texts
+				if r, e := cli.SendText(room_id, "Hello, world!"); e == nil {
+					fmt.Println(r)
+				} else {
+					fmt.Println("SendText failed: ", e)
+				}
+
+				// Send HTML
+				msg := matrix.GetHTMLMessage("m.text", "Hello, <i>world</i>!")
+				if r, e := cli.SendMessageEvent(room_id, "m.room.message", msg); e == nil {
+					fmt.Println(r)
+				} else {
+					fmt.Println("SendMessageEvent failed: ", e)
+				}
+
+				// Send images
+				if file, e := os.Open("path/to/foo.png"); e == nil {
+					if stat, e := file.Stat(); e == nil {
+						if r, e := cli.UploadToContentRepo(file, "image/png", stat.Size()); e == nil {
+							msg := matrix.ImageMessage{
+								MsgType: "m.image",
+								Body:    "foo.png",
+								URL:     r.ContentURI}
+							if r, e := cli.SendMessageEvent(room_id, "m.room.message", msg); e == nil {
+								fmt.Println(r)
+							} else {
+								fmt.Println("SendMessageEvent failed: ", e)
+							}
+						} else {
+							fmt.Println("UploadLink failed: ", e)
+						}
+					} else {
+						fmt.Println("Stat failed: ", e)
+					}
+				} else {
+					fmt.Println("ReadFile failed: ", e)
+				}
+			} else {
+				fmt.Println("NewClient failed: ", e)
+			}
+		}

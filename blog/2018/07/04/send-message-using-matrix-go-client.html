@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Matrix Go客户端消息发送示例</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Matrix Go客户端消息发送示例</h1><time>04 Jul 2018</time>
+
+
+<p>以下是一个简单的示例，用以向特定聊天室发送消息，包括文本信息、HTML以及图片。</p>
+<pre><code>package main
+
+import (
+	"crypto/tls"
+	"fmt"
+	matrix "github.com/matrix-org/gomatrix"
+	"net/http"
+	"os"
+)
+
+const (
+	server       = "https://..."
+	user_id      = "@...:..."
+	access_token = "..."
+	room_id      = "!...:..."
+)
+
+func main() {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &amp;tls.Config{InsecureSkipVerify: true}
+
+	if cli, e := matrix.NewClient(server, user_id, access_token); e == nil {
+		// Send plain texts
+		if r, e := cli.SendText(room_id, "Hello, world!"); e == nil {
+			fmt.Println(r)
+		} else {
+			fmt.Println("SendText failed: ", e)
+		}
+
+		// Send HTML
+		msg := matrix.GetHTMLMessage("m.text", "Hello, &lt;i&gt;world&lt;/i&gt;!")
+		if r, e := cli.SendMessageEvent(room_id, "m.room.message", msg); e == nil {
+			fmt.Println(r)
+		} else {
+			fmt.Println("SendMessageEvent failed: ", e)
+		}
+
+		// Send images
+		if file, e := os.Open("path/to/foo.png"); e == nil {
+			if stat, e := file.Stat(); e == nil {
+				if r, e := cli.UploadToContentRepo(file, "image/png", stat.Size()); e == nil {
+					msg := matrix.ImageMessage{
+						MsgType: "m.image",
+						Body:    "foo.png",
+						URL:     r.ContentURI}
+					if r, e := cli.SendMessageEvent(room_id, "m.room.message", msg); e == nil {
+						fmt.Println(r)
+					} else {
+						fmt.Println("SendMessageEvent failed: ", e)
+					}
+				} else {
+					fmt.Println("UploadLink failed: ", e)
+				}
+			} else {
+				fmt.Println("Stat failed: ", e)
+			}
+		} else {
+			fmt.Println("ReadFile failed: ", e)
+		}
+	} else {
+		fmt.Println("NewClient failed: ", e)
+	}
+}</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

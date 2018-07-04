@@ -1,0 +1,13 @@
+article: 关于Matrix中的服务和API
+
+	在Matrix整个系统中，存在多个服务和API，例如在{技术规范}(https://matrix.org/docs/spec/)中列出了以下API：
+
+	1. Client-Server
+	2. Server-Server
+	3. Application Service
+	4. Identity Service
+	5. Push Gateway
+
+	至于这几个API的作用，简单介绍下。例如Riot和服务端的交互就是基于Client-Server这套API。而Server-Server主要用于Home Server之间的数据同步，Application Service用于为Home Server编写扩展应用。
+
+	如果想要将已有系统集成到Matrix，功能需求简单的话可以直接采用Client-Server API实现，复杂的可以使用Application Service。两者的区别具体可以查看{这里}(https://matrix.org/docs/guides/application_services.html)。

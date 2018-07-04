@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于Matrix中的服务和API</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于Matrix中的服务和API</h1><time>04 Jul 2018</time>
+
+
+<p>在Matrix整个系统中，存在多个服务和API，例如在<a href="https://matrix.org/docs/spec/">技术规范</a>中列出了以下API：</p>
+<ol>
+<li>
+<p>Client-Server</p>
+</li>
+<li>
+<p>Server-Server</p>
+</li>
+<li>
+<p>Application Service</p>
+</li>
+<li>
+<p>Identity Service</p>
+</li>
+<li>
+<p>Push Gateway</p>
+</li>
+</ol>
+<p>至于这几个API的作用，简单介绍下。例如Riot和服务端的交互就是基于Client-Server这套API。而Server-Server主要用于Home Server之间的数据同步，Application Service用于为Home Server编写扩展应用。</p>
+<p>如果想要将已有系统集成到Matrix，功能需求简单的话可以直接采用Client-Server API实现，复杂的可以使用Application Service。两者的区别具体可以查看<a href="https://matrix.org/docs/guides/application_services.html">这里</a>。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
