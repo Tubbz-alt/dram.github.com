@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>使用PostgreSQL作为Synapse数据存储</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>使用PostgreSQL作为Synapse数据存储</h1><time>05 Jul 2018</time>
+
+
+<p>默认配置中，Synapse使用SQLite作为数据存储方案，但生产环境更倾向于用PostgreSQL，具体配置可以参考<a href="https://github.com/matrix-org/synapse/blob/v0.31.2/docs/postgres.rst">这里</a>。</p>
+<p>首先需要在Synapse的virtualenv环境中利用pip安装psycopg2，再调整homeserver.yaml中的database段配置。</p>
+<pre><code>database:
+  name: "psycopg2"
+  args:
+    user: "sa"
+    password: "..."
+    database: "synapse"
+    host: "127.0.0.1"
+    cp_min: 5
+    cp_max: 10</code></pre>
+<p>PostgreSQL数据库的初始化和启动可以使用以下脚本：</p>
+<pre><code>#!/bin/sh
+
+DB=synapse
+HOST=localhost
+USER=sa
+
+export PGDATA="$(dirname "$(readlink -f "$0")")/data"
+
+case $1 in
+    init-cluster)
+        pg_ctl init -o "--auth=password --pwprompt"
+        cat &gt;&gt;"$PGDATA/postgresql.conf" &lt;&lt;EOF
+listen_addresses = '$HOST'
+logging_collector = on
+max_prepared_transactions = 100
+unix_socket_directories = '.'
+EOF
+        pg_ctl start
+        ;;
+    init-database)
+        echo "Creating user ..."
+        createuser -h $HOST -P $USER
+        echo "Creating database ..."
+        createdb -h $HOST -E UTF8 -O $USER $DB
+        ;;
+    shell)
+        psql -h $HOST -U $USER $DB
+        ;;
+    start)
+        pg_ctl start
+        ;;
+    stop)
+        pg_ctl stop
+        ;;
+    clean)
+        dropdb -h $HOST $DB
+        createdb -h $HOST -E UTF8 -O $USER $DB
+        ;;
+    *)
+        echo "Unknown command"
+        ;;
+esac</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

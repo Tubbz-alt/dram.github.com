@@ -1,0 +1,150 @@
+article: 整合Synapse和LDAP
+
+	Matrix社区中的{matrix-synapse-ldap3}(https://github.com/matrix-org/matrix-synapse-ldap3)项目可用以为Synapse提供LDAP支持。
+
+	在Synapse的virtualenv环境中利用pip安装matrix-synapse-ldap3之后，通过以下配置可以启用LDAP。
+
+	```
+		password_providers:
+		    - module: "ldap_auth_provider.LdapAuthProvider"
+		      config:
+		        enabled: true
+		        uri: "ldap://127.0.0.1:8389"
+		        start_tls: false
+		        base: "ou=people,dc=matrixchina,dc=org
+		        "
+		        attributes:
+		           uid: "uid"
+		           mail: "mail"
+		           name: "displayName"
+		        bind_dn: "cn=admin,cn=config"
+		        bind_password: "..."
+
+	LDAP的配置类似于之前介绍的与jBPM的{整合}(link "/blog/2017/11/23/config-ldap-for-jbpm-on-tomcat.html")，具体如下：
+
+	`00-setenv.sh`:
+
+	```
+		CONF=slapd.d
+		URL=ldap://127.0.0.1:8389/
+		ADMIN=admin
+		PASSWORD=...
+		DATABASE=$PWD/slapd.db
+
+	`01-init.sh`:
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		TMP=$(mktemp slap.conf.XXX)
+
+		trap "rm $TMP" EXIT
+
+		cat >$TMP <<EOF
+		disallow bind_anon
+
+		database config
+
+		rootdn "cn=$ADMIN,cn=config"
+		rootpw $PASSWORD
+		EOF
+
+		mkdir -p $CONF
+
+		slaptest -F $CONF -f $TMP
+
+	`02-run.sh`:
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		slapd -h $URL -F $CONF
+
+	`03-add-schema.sh`:
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD -f /etc/openldap/schema/core.ldif
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD -f /etc/openldap/schema/cosine.ldif
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD -f /etc/openldap/schema/inetorgperson.ldif
+
+		# https://tools.ietf.org/html/draft-stroeder-mailboxrelatedobject-07
+
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD <<EOF
+		dn: cn=mailboxrelatedobject,cn=schema,cn=config
+		objectClass: olcSchemaConfig
+		cn: mailboxrelatedobject
+		olcAttributeTypes: ( 1.3.6.1.4.1.5427.1.389.4.18
+		  NAME 'intlMailAddr'
+		  DESC 'Internationalized Email Address'
+		  EQUALITY caseIgnoreMatch
+		  SUBSTR caseIgnoreSubstringsMatch
+		  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+		olcObjectClasses: ( 1.3.6.1.4.1.5427.1.389.6.9
+		  NAME 'mailboxRelatedObject'
+		  DESC 'Associated RFC 5321 mailbox for any entry'
+		  AUXILIARY
+		  MAY ( displayName $ mail $ intlMailAddr ) )
+		EOF
+
+	`04-add-database.sh`:
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		mkdir -p $DATABASE
+
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD <<EOF
+		dn: olcDatabase=mdb,cn=config
+		objectClass: olcBdbConfig
+		olcDatabase: mdb
+		olcRootDN: cn=$ADMIN,cn=config
+		olcDbDirectory: $DATABASE
+		olcSuffix: dc=matrixchina,dc=org
+		EOF
+
+	`05-add-users.sh`:
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		ldapadd -H $URL -D cn=$ADMIN,cn=config -w $PASSWORD <<EOF
+		dn: dc=matrixchina,dc=org
+		objectClass: dcObject
+		objectClass: organization
+		dc: matrixchina
+		o: Matrix China
+
+		dn: ou=people,dc=matrixchina,dc=org
+		objectClass: organizationalUnit
+		ou: people
+
+		dn: uid=foo,ou=people,dc=matrixchina,dc=org
+		objectClass: inetOrgPerson
+		uid: foo
+		userPassword: ...
+		cn: Foo
+		sn: Foo
+		mail: foo@matrixchina.org
+		displayName: Foo
+		EOF
+
+	`99-clean.sh`:
+
+	```
+		#!/bin/sh
+
+		source ./00-setenv.sh
+
+		rm -rf $CONF $DATABASE

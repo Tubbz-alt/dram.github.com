@@ -1,0 +1,5 @@
+article: Synapse的现状和未来
+
+	前两天，在Matrix HQ中有关于Synapse当前问题的一些{讨论}(https://view.matrix.org/room/!QtykxKocfZaZOUrTwp:matrix.org/$15306205848504iYOHU:disroot.org)，开始是由`disroot.org`准备关停Synapse服务而引发的。muppeth提到了Synpase的诸多问题，之后Matrix团队的Matthew做了{回应}(https://view.matrix.org/room/!QtykxKocfZaZOUrTwp:matrix.org/$1530623771676742SWPXI:matrix.org)。
+
+	由此可以看出，虽然Matrix社区已经在开发基于Go的全新服务端{Dendrite}(https://github.com/matrix-org/dendrite)，但Synapse还是会存在相当长的一段时间。
