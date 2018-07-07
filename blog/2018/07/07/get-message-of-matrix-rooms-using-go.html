@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>使用Go获取Matrix聊天室消息</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>使用Go获取Matrix聊天室消息</h1><time>07 Jul 2018</time>
+
+
+<p>以下是获取Matrix聊天室消息的示例代码。</p>
+<p>其中在调用<code>sync</code>接口时传入了过滤参数，指定特定的聊天室。如果不传入，则会返回所有聊天室的信息。</p>
+<p>另外也限定了返回的消息类型以及条目数，默认返回所有类型的最新10条消息。</p>
+<pre><code>package main
+
+import (
+	"crypto/tls"
+	"fmt"
+	matrix "github.com/matrix-org/gomatrix"
+	"net/http"
+)
+
+const (
+	server       = "https://..."
+	user_id      = "@...:..."
+	access_token = "..."
+	room_id      = "!...:..."
+)
+
+func main() {
+	http.DefaultTransport.(*http.Transport).TLSClientConfig = &amp;tls.Config{InsecureSkipVerify: true}
+
+	if cli, e := matrix.NewClient(server, user_id, access_token); e == nil {
+		url := cli.BuildURLWithQuery([]string{"sync"}, map[string]string{
+			"filter": `{
+				"room": {
+					"rooms": ["` + room_id + `"],
+					"timeline": {
+						"types": ["m.room.message"],
+						"limit": 20
+					}
+				}
+			}`,
+		})
+
+		var resp *matrix.RespSync
+
+		if _, e := cli.MakeRequest("GET", url, nil, &amp;resp); e == nil {
+			fmt.Println(resp.Rooms.Join[room_id].Timeline.Events)
+		} else {
+			fmt.Println("MakeRequest failed: ", e)
+		}
+	} else {
+		fmt.Println("NewClient failed: ", e)
+	}
+}</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

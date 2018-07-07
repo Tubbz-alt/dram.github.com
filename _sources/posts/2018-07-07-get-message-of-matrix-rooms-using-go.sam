@@ -1,0 +1,52 @@
+article: 使用Go获取Matrix聊天室消息
+
+	以下是获取Matrix聊天室消息的示例代码。
+
+	其中在调用`sync`接口时传入了过滤参数，指定特定的聊天室。如果不传入，则会返回所有聊天室的信息。
+
+	另外也限定了返回的消息类型以及条目数，默认返回所有类型的最新10条消息。
+
+	```
+		package main
+
+		import (
+			"crypto/tls"
+			"fmt"
+			matrix "github.com/matrix-org/gomatrix"
+			"net/http"
+		)
+
+		const (
+			server       = "https://..."
+			user_id      = "@...:..."
+			access_token = "..."
+			room_id      = "!...:..."
+		)
+
+		func main() {
+			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+
+			if cli, e := matrix.NewClient(server, user_id, access_token); e == nil {
+				url := cli.BuildURLWithQuery([]string{"sync"}, map[string]string{
+					"filter": `{
+						"room": {
+							"rooms": ["` + room_id + `"],
+							"timeline": {
+								"types": ["m.room.message"],
+								"limit": 20
+							}
+						}
+					}`,
+				})
+
+				var resp *matrix.RespSync
+
+				if _, e := cli.MakeRequest("GET", url, nil, &resp); e == nil {
+					fmt.Println(resp.Rooms.Join[room_id].Timeline.Events)
+				} else {
+					fmt.Println("MakeRequest failed: ", e)
+				}
+			} else {
+				fmt.Println("NewClient failed: ", e)
+			}
+		}
