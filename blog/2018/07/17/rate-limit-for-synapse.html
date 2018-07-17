@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Synapse的限速处理</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Synapse的限速处理</h1><time>17 Jul 2018</time>
+
+
+<p>关于Synapse的限速处理，主要的逻辑代码在<a href="https://github.com/matrix-org/synapse/blob/v0.32.2/synapse/handlers/_base.py#L56-L106">这一段</a>，包括以下几种情况：</p>
+<ol>
+<li>
+<p>不对App Service限速；</p>
+</li>
+<li>
+<p>在<code>ratelimit_override</code>数据库表中可以对个别用户做特殊配置；</p>
+</li>
+<li>
+<p>普通用户基于配置文件中的<code>rc_messages_per_second</code>和<code>rc_message_burst_count</code>限速。</p>
+</li>
+</ol>
+<p>例如以下SQL语句可以设置不对特定用户启用限速：</p>
+<pre><code>INSERT INTO ratelimit_override VALUES ('@USER:SERVER', NULL, NULL);</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

@@ -1,0 +1,12 @@
+article: Synapse的限速处理
+
+	关于Synapse的限速处理，主要的逻辑代码在{这一段}(https://github.com/matrix-org/synapse/blob/v0.32.2/synapse/handlers/_base.py#L56-L106)，包括以下几种情况：
+
+	1. 不对App Service限速；
+	2. 在`ratelimit_override`数据库表中可以对个别用户做特殊配置；
+	3. 普通用户基于配置文件中的`rc_messages_per_second`和`rc_message_burst_count`限速。
+
+	例如以下SQL语句可以设置不对特定用户启用限速：
+
+	```
+		INSERT INTO ratelimit_override VALUES ('@USER:SERVER', NULL, NULL);
