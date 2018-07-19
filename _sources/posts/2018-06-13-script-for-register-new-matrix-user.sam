@@ -1,5 +1,9 @@
 article: 注册Matrix用户的脚本
 
+	topic: 补遗
+
+		1. 最近，Matrix团队正在加入创建用户的Admin API，用以替换文中介绍的Shared Secret机制，`register_new_matrix_user`也相应地做了调整，详见{这里}(https://github.com/matrix-org/synapse/pull/3415)。—— 2018-07-19
+
 	在Synapse的{README}(https://github.com/matrix-org/synapse/blob/v0.31.1/README.rst)文档中，提及使用`register_new_matrix_user`脚本注册用户。
 
 	Synapse的默认配置文件没有启用在线注册功能，所以创建用户需要使用该脚本。脚本的代码可以查看{这里}(https://github.com/matrix-org/synapse/blob/v0.31.1/scripts/register_new_matrix_user)。
