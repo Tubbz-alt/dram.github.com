@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于Mercury的Grade</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于Mercury的Grade</h1><time>20 Jul 2018</time>
+
+
+<p>在编译安装Mercury时，可以选择需要启用哪些Grade，这一概念的详细说明，可以查看<a href="http://www.mercurylang.org/information/doc-latest/mercury_user_guide/Grades-and-grade-components.html">这里</a>。</p>
+<p>Mercury会针对每一套Grade编译独立的库，所以选择的Grade越多，编译时间越长。通过以下命令可以实现最小化安装：</p>
+<pre><code>./configure --enable-minimal-install --prefix=$HONE/mercury/rotd</code></pre>
+<p>或者直接指定需要启用的Grade：</p>
+<pre><code>./configure --enable-libgrades=hlc.gc --with-default-grade=hlc.gc --prefix=$HONE/mercury/rotd</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

@@ -1,0 +1,13 @@
+article: 关于Mercury的Grade
+
+	在编译安装Mercury时，可以选择需要启用哪些Grade，这一概念的详细说明，可以查看{这里}(http://www.mercurylang.org/information/doc-latest/mercury_user_guide/Grades-and-grade-components.html)。
+
+	Mercury会针对每一套Grade编译独立的库，所以选择的Grade越多，编译时间越长。通过以下命令可以实现最小化安装：
+
+	```
+		 ./configure --enable-minimal-install --prefix=$HONE/mercury/rotd
+
+	或者直接指定需要启用的Grade：
+
+	```
+		./configure --enable-libgrades=hlc.gc --with-default-grade=hlc.gc --prefix=$HONE/mercury/rotd
