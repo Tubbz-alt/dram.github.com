@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>从源码编译riot-web</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>从源码编译riot-web</h1><time>20 Jul 2018</time>
+
+
+<p>基于<a href="https://github.com/vector-im/riot-web/tree/v0.15.7#building-from-source">这里</a>的说明，可以从源码编译riot-web，以下简要罗列步骤：</p>
+<pre><code>% git clone https://github.com/vector-im/riot-web.git
+% cd riot-web
+% git checkout -b develop
+% scripts/fetch-develop.deps.sh
+% npm install
+% cp config.sample.json config.json
+% npm run dist</code></pre>
+<p>一个小tip，更改<code>scripts/fetch-develpp.deps.sh</code>脚本，在<code>git clone</code>命令追加<code>--depth 1</code>可以加快依赖库的下载速度。</p>
+<p>另外，通过以下命令可以直接运行riot-web服务：</p>
+<pre><code>cd dist
+tar xf riot-[...]-dirty.tar.gz
+cd riot-[...]-dirty
+python3 -m http.server</code></pre>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

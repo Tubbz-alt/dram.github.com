@@ -1,0 +1,22 @@
+article: 从源码编译riot-web
+
+	基于{这里}(https://github.com/vector-im/riot-web/tree/v0.15.7#building-from-source)的说明，可以从源码编译riot-web，以下简要罗列步骤：
+
+	```
+		% git clone https://github.com/vector-im/riot-web.git
+		% cd riot-web
+		% git checkout -b develop
+		% scripts/fetch-develop.deps.sh
+		% npm install
+		% cp config.sample.json config.json
+		% npm run dist
+
+	一个小tip，更改`scripts/fetch-develpp.deps.sh`脚本，在`git clone`命令追加`--depth 1`可以加快依赖库的下载速度。
+
+	另外，通过以下命令可以直接运行riot-web服务：
+
+	```
+		cd dist
+		tar xf riot-[...]-dirty.tar.gz
+		cd riot-[...]-dirty
+		python3 -m http.server
