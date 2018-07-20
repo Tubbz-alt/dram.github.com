@@ -5,9 +5,9 @@ article: 关于Mercury的Grade
 	Mercury会针对每一套Grade编译独立的库，所以选择的Grade越多，编译时间越长。通过以下命令可以实现最小化安装：
 
 	```
-		 ./configure --enable-minimal-install --prefix=$HONE/mercury/rotd
+		 ./configure --enable-minimal-install --prefix=$HOME/mercury/rotd
 
 	或者直接指定需要启用的Grade：
 
 	```
-		./configure --enable-libgrades=hlc.gc --with-default-grade=hlc.gc --prefix=$HONE/mercury/rotd
+		./configure --enable-libgrades=hlc.gc --with-default-grade=hlc.gc --prefix=$HOME/mercury/rotd
