@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Mercury的结构体字段名</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Mercury的结构体字段名</h1><time>22 Jul 2018</time>
+
+
+<p>在Mercury中，有一个挺特别的约束，就是在同一个模块中，两个类型的结构体字段名（构造器的有名参数）不能重复，原因是Mercury会自动基于字段名生成predicate，而同一模块中参数个数相同的predicate是不能重名的。</p>
+<p>但不同模块如果出现名字冲突，Mercury会基于参数类型做重载（overload）处理。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

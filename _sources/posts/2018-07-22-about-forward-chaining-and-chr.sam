@@ -1,0 +1,5 @@
+article: 关于Forward chaining和CHR
+
+	Forward chaining是规则引擎（例如CLIPS）的基础，而Prolog则是Backward chaining。不过，很多Prolog实现中支持CHR（Constraint Handling Rules），而{这个系统是Forward chaining}(https://stackoverflow.com/a/10467280/518063)的，所以CLIPS的程序模式应该可以在Prolog中实现。
+
+	另外，一个细节，SWI-Prolog的CHR系统支持{静态类型检查}(http://www.swi-prolog.org/pldoc/man?section=practical)，这或许可以有一些应用的场景。
