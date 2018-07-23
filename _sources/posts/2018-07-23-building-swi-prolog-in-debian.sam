@@ -1,0 +1,25 @@
+article: Debian中编译SWI-Prolog
+
+	在Linux中编译SWI-Prolog并不复杂，详细的说明可以参考{这里}(http://www.swi-prolog.org/build/unix.html)，以下列出主要的几个步骤。
+
+	首先准备编译环境和依赖包：
+
+	```
+		apt-get install --no-install-recommends build-essential libedit-dev libgmp-dev zlib1g-dev
+
+	之后就可以在源码目录下运行以下命令编译安装SWI-Prolog的基础程序：
+
+	```
+		./configure --prefix=$HOME/Logic/opt
+		make
+		make install
+
+	SWI-Prolog其他软件包的安装示例如下：
+
+	```
+		cd packages/
+		PKG="clib libedit" ./configure --prefix=$HOME/Logic/opt
+		make
+		make install
+
+	其中`clib`包需要一个可选依赖`libossp-uuid-dev`。
