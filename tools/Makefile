@@ -5,7 +5,7 @@ OBJECTS += $(foreach x,${EXTERNALS},external/fortran-$x/sources/$x.o)
 OBJECTS += sources/strings.o sources/cstrings.o
 OBJECTS += sources/render.o sources/sam.o sources/main.o
 LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
-LIBRARYS += $(shell pkg-config --libs glib-2.0 python-3.6)
+LIBRARYS += $(shell pkg-config --libs glib-2.0 python-3.5)
 
 .PHONY: build clean setup
 
