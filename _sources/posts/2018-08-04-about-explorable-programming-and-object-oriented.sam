@@ -1,0 +1,45 @@
+article: 关于可探索式编程语言以及面向对象
+
+	最为经典的可探索式语言包括Forth、Lisp和Smalltalk等，三者有一个共同的特点：运行环境中包含了完整的编译器。不过在编程范式上则分属三家：面向栈、函数式和面向对象。三者比较来说，Smalltalk对于可探索式的支持是最为充分的，这除了有强大的IDE支撑有关之外，和“面向对象”这一特性也存在关联。
+
+	抛开面向对象诸多的优劣势争论，其中一个显见的优点是“类”作为一种代码组织机制，将相关代码关联在一起（围绕一个“类”实现，包含实例方法和类方法）。这样的方式比模块化的方式更为紧密。举一个简单的例子，比如实现列表这一数据结构，函数式编程语言模块化的组织类似于：
+
+	```
+		List.create
+		List.head
+		List.tail
+		List.concat
+
+	而面向对象的组织则是：
+
+	```
+		List:
+			class method:
+				create
+			instance method:
+				head
+				tail
+				concat
+
+	可以看到，面向对象通过class method和instance method将代码进一步切分。另外，面向对象将运行态的“对象”和静态的“类”关联，这样在探索式编程中很容易查看对象支持哪些方法，以及可以通过哪些方式创建对象，这些在模块化形式中是不具备的。
+
+	从以上的讨论中可以发现，并没有涉及到面向对象中“继承”的特性。面向对象代码的复杂性，很大一部分是因为“继承”引入的，虽然由它带来了便捷的代码复用，但依然需要慎重考虑其存在的必要性。对此，{这篇文章}(https://www.tedinski.com/2018/02/20/an-oo-language-without-inheritance.html)可以一读，另外Wikipeida中{这一段}(link "https://en.wikipedia.org/wiki/Inheritance_(object-oriented_programming)#Issues_and_alternatives")也可以参考，还有{Role-oriented programming}(https://en.wikipedia.org/wiki/Role-oriented_programming)也可作了解。
+
+	单就代码复用来说，单纯基于类的机制就可以实现，不一定非要依赖inheritance，甚至traits或roles之类机制也并不需要。例如：
+
+	```
+		class Sequence:
+			method append(self : Extensible, item):
+				self.extend(1)
+				self.extend[self.length() + 1] = item
+
+		class List:
+			implements Extensisble
+
+			method extend(self):
+				self.capacity += 1
+
+			method append(self, item) = Sequence.append
+
+
+	以上示例中，只需要一行代码，就实现了在`List`类添加`append`方法。并没有增加实现复杂性，甚至代码可读性反而有所提高。而至于性能，编译器可以将这个间接调用优化去除。另外通过`interface`等机制，可以在类型检查中确保`List`包括`extend`方法，以保证`Sequence.append`可调用。
