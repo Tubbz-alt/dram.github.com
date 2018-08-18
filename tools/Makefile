@@ -1,30 +1,16 @@
 PROGRAM = sources/generate
-MODULES_DIR = modules
-EXTERNALS = exslt glib posix python xml xslt
-OBJECTS += $(foreach x,${EXTERNALS},external/fortran-$x/sources/$x.o)
-OBJECTS += sources/strings.o sources/cstrings.o
-OBJECTS += sources/render.o sources/sam.o sources/main.o
-LIBRARYS = -lgfortran -lexslt -lxml2 -lxslt
-LIBRARYS += $(shell pkg-config --libs glib-2.0 python-3.5)
+OBJECTS = sources/main.o sources/render.o sources/sam.o
+LIBRARIES = glib-2.0 libexslt libxslt python3
 
-.PHONY: build clean setup
+.PHONY: build clean
 
-build: setup ${PROGRAM}
+build: ${PROGRAM}
 
-external/%.o:
-	${MAKE} -C $(dir $@).. MODULES_DIR=$(abspath ${MODULES_DIR})
-
-%.o: %.f90
-	${CC} -pipe -Wall -J ${MODULES_DIR} -o $@ -c $^
+%.o: %.cpp
+	g++ -Wall $(shell pkg-config --cflags ${LIBRARIES}) -o $@ -c $^
 
 ${PROGRAM}: ${OBJECTS}
-	${CC} -pipe -Wl,-s -o $@ $^ ${LIBRARYS}
-
-setup: ${MODULES_DIR}
-
-${MODULES_DIR}:
-	mkdir -p $@
+	g++ $(shell pkg-config --libs ${LIBRARIES}) -o $@ $^
 
 clean:
-	for x in ${EXTERNALS}; do ${MAKE} -C external/fortran-$$x/ clean; done
-	rm -rf ${PROGRAM} ${OBJECTS} ${MODULES_DIR}
+	rm -rf ${PROGRAM} ${OBJECTS}
