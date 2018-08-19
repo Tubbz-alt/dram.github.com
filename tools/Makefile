@@ -1,6 +1,6 @@
 PROGRAM = sources/generate
 OBJECTS = sources/main.o sources/render.o sources/sam.o
-LIBRARIES = glib-2.0 libexslt libxslt python3
+LIBRARIES = libexslt libxslt python3
 
 .PHONY: build clean
 
@@ -10,7 +10,7 @@ build: ${PROGRAM}
 	g++ -Wall $(shell pkg-config --cflags ${LIBRARIES}) -o $@ -c $^
 
 ${PROGRAM}: ${OBJECTS}
-	g++ $(shell pkg-config --libs ${LIBRARIES}) -o $@ $^
+	g++ -o $@ $^ $(shell pkg-config --libs ${LIBRARIES}) -lstdc++fs
 
 clean:
 	rm -rf ${PROGRAM} ${OBJECTS}

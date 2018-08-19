@@ -1,3 +1,4 @@
+#include <experimental/filesystem>
 #include <experimental/optional>
 #include <fstream>
 #include <iostream>
@@ -8,7 +9,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include <glib.h>
 #include <libxml/tree.h>
 
 #include "render.hpp"
@@ -67,21 +67,13 @@ xmlDocPtr post_list(unsigned limit) {
 
 
 void generate_pages() {
-  std::vector<std::string> directories = {"blog/", "logo/"};
+  std::vector<std::experimental::filesystem::path> directories = {"blog", "logo"};
 
-  for (std::string directory : directories) {
-    GDir *dir = g_dir_open(("_sources/pages/" + directory).c_str(), 0, nullptr);
-
-    while (true) {
-      const gchar *p = g_dir_read_name(dir);
-
-      if (p == nullptr)
-	break;
-
-      std::string name{p};
-
-      std::string source = "_sources/pages/" + directory + name;
-      std::string target = directory + name.substr(0, name.size() - 4) + ".html";
+  for (std::experimental::filesystem::path directory : directories) {
+    for (std::experimental::filesystem::directory_entry entry : std::experimental::filesystem::directory_iterator("_sources/pages" / directory)) {
+      std::string source = entry.path();
+      std::experimental::filesystem::path path = entry.path();
+      std::string target = directory / path.replace_extension(".html").filename();
 
       if (source_modified(source, target)) {
 	std::experimental::optional<std::string> xml = sam_parse(source);
@@ -92,8 +84,6 @@ void generate_pages() {
 	}
       }
     }
-
-    g_dir_close(dir);
   }
 }
 
@@ -112,21 +102,15 @@ void sort_posts() {
 }
 
 int main(void) {
-  GDir *dir = g_dir_open("_sources/posts", 0, nullptr);
-
-  while (true) {
-    const gchar *p = g_dir_read_name(dir);
-
-    if (p == nullptr)
-      break;
-
-    std::string name{p};
-
+  for (std::experimental::filesystem::directory_entry entry : std::experimental::filesystem::directory_iterator("_sources/posts")) {
     struct post post;
 
-    post.source = "_sources/posts/" + name;
-    post.date = post.source.substr(sizeof("_sources/posts/") - 1, 10);
+    post.source = entry.path();
+
+    std::string name = entry.path().filename();
+    post.date = name.substr(0, 10);
     post.name = name.substr(11, name.size() - 15);
+
     post.target = "blog/"
       + post.date.substr(0, 4) // year
       + '/' + post.date.substr(5, 2) // month
@@ -140,8 +124,6 @@ int main(void) {
 
     posts.push_back(post);
   }
-
-  g_dir_close(dir);
 
   generate_posts();
   generate_pages();
