@@ -5,10 +5,6 @@
 #include <string>
 #include <vector>
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
 #include <libxml/tree.h>
 
 #include "render.hpp"
@@ -22,14 +18,16 @@ static std::vector<struct post> posts;
 
 
 bool source_modified(std::string source, std::string target) {
-  struct stat source_stat, target_stat;
+  std::experimental::filesystem::file_time_type source_time, target_time;
 
-  stat(source.c_str(), &source_stat);
+  source_time = std::experimental::filesystem::last_write_time(source);
 
-  if (stat(target.c_str(), &target_stat) == -1 && errno == ENOENT)
+  try {
+    target_time = std::experimental::filesystem::last_write_time(target);
+    return source_time > target_time;
+  } catch (...) {
     return true;
-
-  return source_stat.st_mtim.tv_sec > target_stat.st_mtim.tv_sec;
+  }
 }
 
 void generate_posts() {
