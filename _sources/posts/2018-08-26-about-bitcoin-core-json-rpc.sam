@@ -1,0 +1,18 @@
+article: 关于Bitcoin Core的JSON-RPC
+
+	Bitcoin Core的API基于JSON-RPC实现，具体的交互细节可以通过`strace`查看。例如：
+
+	```
+		strace -s 256 bitcoin-cli -regtest generate 1
+
+
+	其中`-regtest`是用于指定bitcoin-cli基于本地的Regression Testing网络操作。
+
+	在`strace`打印的日志中可以看到，`bitcoin-cli`发送的是HTTP POST请求，请求体内容为：
+
+	```
+		{"method": "generate", "params": [1], "id": 1}
+
+	具体请求体以及响应体的格式说明可以参考JSON-RPC的{标准文档}(https://www.jsonrpc.org/specification_v1)。
+
+	服务端的代码实现在{src/wallet/rpcwallet.cpp}(https://github.com/bitcoin/bitcoin/blob/v0.16.2/src/wallet/rpcwallet.cpp)中。通过一层层分析调用，可以找到核心的挖矿代码在src/rpc/mining.cpp的{generateBlocks}(https://github.com/bitcoin/bitcoin/blob/v0.16.2/src/rpc/mining.cpp#L106)函数中。

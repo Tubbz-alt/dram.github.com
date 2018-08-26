@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于Bitcoin Core的JSON-RPC</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于Bitcoin Core的JSON-RPC</h1><time>26 Aug 2018</time>
+
+
+<p>Bitcoin Core的API基于JSON-RPC实现，具体的交互细节可以通过<code>strace</code>查看。例如：</p>
+<pre><code>strace -s 256 bitcoin-cli -regtest generate 1</code></pre>
+<p>其中<code>-regtest</code>是用于指定bitcoin-cli基于本地的Regression Testing网络操作。</p>
+<p>在<code>strace</code>打印的日志中可以看到，<code>bitcoin-cli</code>发送的是HTTP POST请求，请求体内容为：</p>
+<pre><code>{"method": "generate", "params": [1], "id": 1}</code></pre>
+<p>具体请求体以及响应体的格式说明可以参考JSON-RPC的<a href="https://www.jsonrpc.org/specification_v1">标准文档</a>。</p>
+<p>服务端的代码实现在<a href="https://github.com/bitcoin/bitcoin/blob/v0.16.2/src/wallet/rpcwallet.cpp">src/wallet/rpcwallet.cpp</a>中。通过一层层分析调用，可以找到核心的挖矿代码在src/rpc/mining.cpp的<a href="https://github.com/bitcoin/bitcoin/blob/v0.16.2/src/rpc/mining.cpp#L106">generateBlocks</a>函数中。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
