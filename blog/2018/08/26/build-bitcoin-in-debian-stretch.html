@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Debian编译安装Bitcoin Core</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Debian编译安装Bitcoin Core</h1><time>26 Aug 2018</time>
+
+
+<p><a href="https://bitcoincore.org/">Bitcoin Core</a>的安装基本上和其他软件无异，以下主要罗列其依赖的包以及简单的编译步骤，详细的说明可以参考<a href="https://github.com/bitcoin/bitcoin/blob/v0.16.2/doc/build-unix.md">这里</a>。</p>
+<p>在Debian Stretch中的依赖包如下：</p>
+<pre><code>build-essential autoconf automake libdb++-dev libboost-all-dev libevent-dev libssl-dev libtool</code></pre>
+<p>编译步骤如下：</p>
+<pre><code>git clone https://github.com/bitcoin/bitcoin.git
+cd bitcoin/
+git checkout v0.16.2
+./autogen.sh
+./configure --prefix=/path/to/destination --with-incompatible-bdb
+make
+make install</code></pre>
+<p>注意，以上配置可能会导致wallet不兼容。如果需要考虑兼容性，可以安装libdb4.8版本，详见<a href="https://github.com/bitcoin/bitcoin/issues/3686">这里</a>的讨论。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

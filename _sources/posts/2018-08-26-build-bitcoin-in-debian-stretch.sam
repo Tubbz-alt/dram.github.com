@@ -1,0 +1,21 @@
+article: Debian编译安装Bitcoin Core
+
+	{Bitcoin Core}(https://bitcoincore.org/)的安装基本上和其他软件无异，以下主要罗列其依赖的包以及简单的编译步骤，详细的说明可以参考{这里}(https://github.com/bitcoin/bitcoin/blob/v0.16.2/doc/build-unix.md)。
+
+	在Debian Stretch中的依赖包如下：
+
+	```
+		build-essential autoconf automake libdb++-dev libboost-all-dev libevent-dev libssl-dev libtool
+
+	编译步骤如下：
+
+	```
+		git clone https://github.com/bitcoin/bitcoin.git
+		cd bitcoin/
+		git checkout v0.16.2
+		./autogen.sh
+		./configure --prefix=/path/to/destination --with-incompatible-bdb
+		make
+		make install
+
+	注意，以上配置可能会导致wallet不兼容。如果需要考虑兼容性，可以安装libdb4.8版本，详见{这里}(https://github.com/bitcoin/bitcoin/issues/3686)的讨论。
