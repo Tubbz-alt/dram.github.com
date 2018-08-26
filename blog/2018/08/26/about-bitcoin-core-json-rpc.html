@@ -2,6 +2,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于Bitcoin Core的JSON-RPC</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于Bitcoin Core的JSON-RPC</h1><time>26 Aug 2018</time>
 
 
+<section class="topic">
+<h2>补遗</h2>
+
+<ol>
+<li>
+<p>Regression Testing网络的默认监听端口是18443。—— 2018-08-26</p>
+</li>
+<li>
+<p>请求Bitcoin Core的JSON-RPC时需要携带认证信息，这可以在配置文件中指定，或者bitcoind在每次启动时会动态生成，存放在<code>$HOME/.bitcoin/regtest/.cookie</code>文件中。—— 2018-08-26</p>
+</li>
+</ol>
+</section>
 <p>Bitcoin Core的API基于JSON-RPC实现，具体的交互细节可以通过<code>strace</code>查看。例如：</p>
 <pre><code>strace -s 256 bitcoin-cli -regtest generate 1</code></pre>
 <p>其中<code>-regtest</code>是用于指定bitcoin-cli基于本地的Regression Testing网络操作。</p>
