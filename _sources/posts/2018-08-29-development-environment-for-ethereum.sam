@@ -1,0 +1,89 @@
+article: Ethereum开发环境
+
+	Ethereum有多个实现，比如Go-Ethereum、Aleth、Parity、Trinity等，另外周边的工具也非常丰富，这有利有弊，对于初学者来说，可能存在选择的困难。
+
+	以下整理的是基于Go-Ethereum、Solidity、Web3.py构建的Ethereum开发环境，可作为参考。
+
+
+	section: 编译Go-Ethereum
+
+
+		geth的编译比较简单，直接在代码目录运行以下命令即可，可执行文件路径为`build/bin/geth`：
+
+		```
+			make geth
+
+
+	section: 编译Solidity
+
+		因为Web3.py和开发版本的Solidity兼容性有问题，所以这里编译的是0.4.24版本，命令如下：
+
+		```
+			apt-get install libz3-dev
+			git checkout v0.4.24
+			mkdir build
+			( cd build && cmake .. && make )
+
+		编译完成后，可执行文件在`build/solc/solc`。
+
+	section: 安装Web3.py
+
+		以下通过venv安装Web3.py：
+
+		```
+			python3.6 -m venv pyenv
+			pyenv/bin/pip install wheel
+			pyenv/bin/pip install py-solc web3
+
+
+	section: 示例
+
+		以下是一个简单的合约：
+
+		```
+			pragma solidity ^0.4.0;
+
+			contract Customer {
+			        uint _balance;
+
+			        function Customer(uint balance) public {
+			                _balance = balance;
+			        }
+
+			        function deposit(uint amount) public {
+			                _balance = _balance + amount;
+			        }
+
+			        function getBalance() public view returns (uint) {
+			                return _balance;
+			        }
+			}
+
+
+		geth的开发服务可以通过`geth --dev`运行。之后利用以下Python脚本，可以完成合约的上传，代码中还包括合约函数调用相关的代码。
+
+		```
+			import solc
+			from web3.auto.gethdev import w3
+
+			if __name__ == "__main__":
+			    account = w3.eth.accounts[0]
+
+			    w3.personal.unlockAccount(account, "")
+
+			    interface = solc.compile_files(["example.sol"])["example.sol:Customer"]
+
+			    Customer = w3.eth.contract(
+			        abi=interface["abi"], bytecode=interface["bin"])
+
+			    receipt = w3.eth.waitForTransactionReceipt(
+			        Customer.constructor(0).transact({"from": account}))
+
+			    customer = Customer(address=receipt.contractAddress)
+
+			    print(customer.functions.getBalance().call())
+
+			    w3.eth.waitForTransactionReceipt(
+			        customer.functions.deposit(10).transact({"from": account}))
+
+			    print(customer.functions.getBalance().call())
