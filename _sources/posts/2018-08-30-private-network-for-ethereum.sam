@@ -1,0 +1,121 @@
+article: 构建Ethereum私有网络
+
+	虽然Ethereum主要用于公有链，但也可以构建私有网络。以下简单说明流程。另外可以参考官方的{文档}(https://github.com/ethereum/go-ethereum/wiki/Private-network)，以及{这篇}(https://media.consensys.net/how-to-build-a-private-ethereum-blockchain-fbf3904f337)和{这篇}(https://alanbuxton.wordpress.com/2017/07/19/first-steps-with-ethereum-private-networks-and-smart-contracts-on-ubuntu-16-04/)文章。
+
+	section: 创建账户
+
+		运行以下命令创建新的账户，命令会回显账户地址，同时会创建`geth-data`目录。
+
+		```
+			geth --datadir geth-data account new
+
+	section: 初始化
+
+		基于以下genesis块描述文件初始化数据，其中`<ACCOUNT-ADDRESS>`替换为上一步创建账户的地址，关于genesis块的详细介绍，可以看{这里}(https://arvanaghi.com/blog/explaining-the-genesis-block-in-ethereum/)。
+
+		```
+			{
+			    "config": {
+			        "chainId": 15,
+			        "homesteadBlock": 0,
+			        "eip155Block": 0,
+			        "eip158Block": 0
+			    },
+			    "difficulty": "20",
+			    "gasLimit": "2100000",
+			    "alloc": {
+			        "<ACCOUNT-ADDRESS>": {"balance": "30000000000000000000"}
+			    }
+			}
+
+		初始化的命令如下：
+
+		```
+			geth --datadir geth-data init genesis.json
+
+	section: 启动服务
+
+		通过以下命令可以启动服务，其中`--networkid`参数的作用，以及和genesis块描述文件中的`chainId`配置项是否存在关系，可以查看{这里}(https://ethereum.stackexchange.com/questions/37533/what-is-a-chainid-in-ethereum-how-is-it-different-than-networkid-and-how-is-it)的讨论。另外，`--nodiscover`是不尝试连接公有链网络。
+
+		```
+			geth --datadir geth-data --networkid 15 --nodiscover console
+
+		可以通过在终端输入以下命令确认服务是否正常：
+
+		```
+			> eth.accounts
+			> eth.getBalance(eth.accounts[0])
+
+		或者使用Web3.py确认：
+
+		```
+			import web3
+
+			w3 = web3.Web3(web3.Web3.IPCProvider("geth-data/geth.ipc"))
+			print(w3.eth.accounts)
+			print(w3.eth.getBalance(w3.eth.accounts[0]))
+
+	section: 多节点集群
+
+		Go-Ethereum的多节点集群可以通过`--bootnodes`直接指定节点构建。可以使用集群中的某一节点作为启动节点，也可以使用`bootnode`命令启动一个独立的节点。
+
+		通过以下命令启动boot节点（`bootnode`命令通过在代码库中`make all`编译生成）：
+
+		```
+			bootnode --genkey boot.key
+			bootnode --nodekey boot.key
+
+		命令执行后会回显节点地址，将其作为`--bootnodes`参数传入`geth`即可，注意需要将地址中的`[..]`替换为boot节点所在IP地址，另外不要追加`--nodiscover`参数，示例如下：
+
+		```
+			geth --datadir geth-data --networkid 15 console --bootnodes enode://...@...:30301
+
+	section: 挖矿
+
+		在Ethereum中，PoW的机制下，挖矿是必不可少的一个环节，transaction需要通过挖矿上链。
+
+		在初次挖矿时，会自动生成DAG文件（在`$HOME/.ethash/`目录），需要一定时间。可以通过在终端运行以下命令预先触发，具体可以看{这里}(https://github.com/ethereum/wiki/wiki/Mining#ethash-dag)的说明。
+
+		```
+			> miner.start(1)
+			> miner.stop()
+
+	section: 示例
+
+		以下示例和之前介绍的{例子}(link "/blog/2018/08/29/development-environment-for-ethereum.html")类似，只是需要增加挖矿的操作。方式有多种，可以在其他节点开启挖矿进程，也可以在本节点终端开启，或者像示例中一样直接在程序中动态开启。
+
+		```
+			import solc
+			import web3
+
+			if __name__ == "__main__":
+			    w3 = web3.Web3(web3.Web3.IPCProvider("geth-data/geth.ipc"))
+
+			    account = w3.eth.accounts[0]
+
+			    w3.personal.unlockAccount(account, "")
+
+			    w3.miner.start(1)
+
+			    interface = solc.compile_files(["example.sol"])["example.sol:Customer"]
+
+			    Customer = w3.eth.contract(
+			        abi=interface["abi"], bytecode=interface["bin"])
+
+			    receipt = w3.eth.waitForTransactionReceipt(
+			        Customer.constructor(0).transact({"from": account}))
+
+			    customer = Customer(address=receipt.contractAddress)
+
+			    print(customer.functions.getBalance().call())
+
+			    w3.eth.waitForTransactionReceipt(
+			        customer.functions.deposit(10).transact({"from": account}))
+
+			    print(customer.functions.getBalance().call())
+
+			    w3.miner.stop()
+
+	section: 总结
+
+		由于需要挖矿节点，所以如果用于开发，相对于搭建私有网络来说，`geth --dev`的模式更为简洁。
