@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>连接Ethereum测试网络</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>连接Ethereum测试网络</h1><time>31 Aug 2018</time>
+
+
+<p>Ethereum包括多个测试网络，具体可以看这里的<a href="https://github.com/ethereumbook/ethereumbook/blob/develop/ethereum-testnets.asciidoc">说明</a>，以下介绍如何连接Ropsten网络。</p>
+<p>Ropsten网络中的以太币是没有实际价值的，所以可以免费获取，例如访问<a href="https://faucet.ropsten.be/">这里</a>获取，或者直接使用以下命令。具体可以查看<a href="https://github.com/ethereumbook/ethereumbook/blob/develop/ethereum-testnets.asciidoc#ropsten">这里</a>的说明。</p>
+<pre><code>curl https://faucet.ropsten.be/donate/0x&lt;ACCOUNT-ADDRESS&gt;</code></pre>
+<p>在以上命令的响应中，可以看到<code>txhash</code>值，继而可以通过<code>https://ropsten.etherscan.io/tx/0x&lt;TX-HASH&gt;</code>查看该transaction的详情。</p>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

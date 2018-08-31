@@ -1,0 +1,11 @@
+article: 连接Ethereum测试网络
+
+	Ethereum包括多个测试网络，具体可以看这里的{说明}(https://github.com/ethereumbook/ethereumbook/blob/develop/ethereum-testnets.asciidoc)，以下介绍如何连接Ropsten网络。
+
+
+	Ropsten网络中的以太币是没有实际价值的，所以可以免费获取，例如访问{这里}(https://faucet.ropsten.be/)获取，或者直接使用以下命令。具体可以查看{这里}(https://github.com/ethereumbook/ethereumbook/blob/develop/ethereum-testnets.asciidoc#ropsten)的说明。
+
+	```
+		curl https://faucet.ropsten.be/donate/0x<ACCOUNT-ADDRESS>
+
+	在以上命令的响应中，可以看到`txhash`值，继而可以通过`https://ropsten.etherscan.io/tx/0x<TX-HASH>`查看该transaction的详情。

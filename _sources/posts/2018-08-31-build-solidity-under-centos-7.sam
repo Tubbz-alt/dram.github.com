@@ -1,0 +1,36 @@
+article: CentOS 7编译Solidity
+
+	Solidity依赖Boost v1.54之后的版本，在CentOS中的Boost不满足要求，需要考虑其他方法。以下是基于CentOS {SCL}(https://wiki.centos.org/SpecialInterestGroup/SCLo)仓库包的方案。
+
+	section: 启用SCL仓库
+
+		通过以下命令启用SCL仓库：
+
+		```
+			yum install centos-release-scl
+
+	section: 安装Boost
+
+		通过以下命令安装新版本Boost，由于Solidity需要static库文件，所以需要安装`static`版本。
+
+		```
+			yum install rh-mariadb102-boost-static
+
+	section: 安装CMake
+
+		通过以下命令安装CMake，并在任意`PATH`路径下设置软链接cmake到cmake3。
+
+		```
+			yum install cmake3
+			cd $HOME/bin
+			ln -s /usr/bin/cmake3 cmake
+
+	section: 编译Solidity
+
+		在Solidity代码目录，运行以下命令编译：
+
+		```
+			mkdir build
+			cd build
+			cmake3 .. -DBOOST_INCLUDEDIR=/opt/rh/rh-mariadb102/root/usr/include/ -DBOOST_LIBRARYDIR=/opt/rh/rh-mariadb102/root/usr/lib64/
+			make

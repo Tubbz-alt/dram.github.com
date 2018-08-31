@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>CentOS 7编译Solidity</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>CentOS 7编译Solidity</h1><time>31 Aug 2018</time>
+
+
+<p>Solidity依赖Boost v1.54之后的版本，在CentOS中的Boost不满足要求，需要考虑其他方法。以下是基于CentOS <a href="https://wiki.centos.org/SpecialInterestGroup/SCLo">SCL</a>仓库包的方案。</p>
+<section>
+<h2>启用SCL仓库</h2>
+
+<p>通过以下命令启用SCL仓库：</p>
+<pre><code>yum install centos-release-scl</code></pre>
+</section>
+<section>
+<h2>安装Boost</h2>
+
+<p>通过以下命令安装新版本Boost，由于Solidity需要static库文件，所以需要安装<code>static</code>版本。</p>
+<pre><code>yum install rh-mariadb102-boost-static</code></pre>
+</section>
+<section>
+<h2>安装CMake</h2>
+
+<p>通过以下命令安装CMake，并在任意<code>PATH</code>路径下设置软链接cmake到cmake3。</p>
+<pre><code>yum install cmake3
+cd $HOME/bin
+ln -s /usr/bin/cmake3 cmake</code></pre>
+</section>
+<section>
+<h2>编译Solidity</h2>
+
+<p>在Solidity代码目录，运行以下命令编译：</p>
+<pre><code>mkdir build
+cd build
+cmake3 .. -DBOOST_INCLUDEDIR=/opt/rh/rh-mariadb102/root/usr/include/ -DBOOST_LIBRARYDIR=/opt/rh/rh-mariadb102/root/usr/lib64/
+make</code></pre>
+</section>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
