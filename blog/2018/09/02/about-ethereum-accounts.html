@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>关于Ethereum账号</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>关于Ethereum账号</h1><time>02 Sep 2018</time>
+
+
+<p>Ethereum和Bitcoin其中一点不同是账号系统。在Bitcoin中，并没有账号的概念，比特币的归属是通过UTXO（Unspent Transaction Output）结合公私钥来确定的。而Ethereum是有账号系统的，包括外部账号以及合约账号，具体的介绍看Solidity的<a href="https://solidity.readthedocs.io/en/v0.4.24/introduction-to-smart-contracts.html#accounts">文档</a>比较详细，几个重点：</p>
+<ol>
+<li>
+<p>包括两类账号：外部账号和合约账号；</p>
+</li>
+<li>
+<p>外部账号由公私钥控制，合约账号由合约代码控制；</p>
+</li>
+<li>
+<p>外部账号地址基于公钥构建，合约账号地址在合约创建时基于创建人和交易数构建；</p>
+</li>
+<li>
+<p>外部账号和合约账号在EVM中基本等同；</p>
+</li>
+<li>
+<p>每一个账号可以存储256-bit到256-bit的键值对；</p>
+</li>
+<li>
+<p>每一个账号有余额信息。</p>
+</li>
+</ol>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

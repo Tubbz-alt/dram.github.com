@@ -1,0 +1,10 @@
+article: 关于Ethereum账号
+
+	Ethereum和Bitcoin其中一点不同是账号系统。在Bitcoin中，并没有账号的概念，比特币的归属是通过UTXO（Unspent Transaction Output）结合公私钥来确定的。而Ethereum是有账号系统的，包括外部账号以及合约账号，具体的介绍看Solidity的{文档}(https://solidity.readthedocs.io/en/v0.4.24/introduction-to-smart-contracts.html#accounts)比较详细，几个重点：
+
+	1. 包括两类账号：外部账号和合约账号；
+	2. 外部账号由公私钥控制，合约账号由合约代码控制；
+	3. 外部账号地址基于公钥构建，合约账号地址在合约创建时基于创建人和交易数构建；
+	4. 外部账号和合约账号在EVM中基本等同；
+	5. 每一个账号可以存储256-bit到256-bit的键值对；
+	6. 每一个账号有余额信息。
