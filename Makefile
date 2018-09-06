@@ -5,6 +5,9 @@ default: generate
 generate:
 	tools/sources/generate
 
+new:
+	read NAME; touch _sources/posts/$$(date +"%Y-%m-%d")-$${NAME}.sam
+
 serve:
 	python3 -m http.server
 
