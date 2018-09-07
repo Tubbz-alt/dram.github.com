@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>编译SML/NJ</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>编译SML/NJ</h1><time>06 Sep 2018</time>
+
+
+<p>以下主要介绍如何在64-bit Linux下编译SML/NJ，并给出一个“Hello World”示例。</p>
+<section>
+<h2>编译</h2>
+
+<p>编译的流程和命令如下：</p>
+<pre><code>mkdir smlnj
+cd smlnj
+curl -LO https://smlnj.org/dist/working/110.84/config.tgz
+tar xf config.tgz
+sed -i 's/^#request heap2asm/request heap2asm/' config/targets
+sed -i 's|http://smlnj.cs.uchicago.edu|https://smlnj.org|' config/srcarchiveurl
+config/install.sh
+sed -i 's/^CC=cc/CC="cc -m32"/' bin/heap2exec</code></pre>
+<p>其中对<code>bin/heap2exec</code>的修改是为了支持x86-64系统，否则会出现链接错误。根据<a href="https://www.smlnj.org/dist/working/110.84/110.84-README.html">这里</a>的说明，SML/NJ后续会直接支持64-bit，而不是当前32-bit兼容模式，所以之后这一改动就没有必要了。</p>
+</section>
+<section>
+<h2>示例</h2>
+
+<p>以下是一个简单的示例，用以说明SML/NJ生成可执行文件的流程，基于<a href="https://stackoverflow.com/a/5073129/5180632">这里</a>的讨论。</p>
+<p><code>hello.cm</code>代码如下：</p>
+<pre><code>Group is
+    hello.sml
+    $/basis.cm</code></pre>
+<p><code>hello.sml</code>代码如下：</p>
+<pre><code>structure Hello =
+struct
+
+fun print_line s = print (s ^ "\n")
+
+fun main (_, _) =
+    let
+        val _ = print_line "Hello, world."
+    in
+        0
+    end
+end</code></pre>
+<p>可执行文件编译命令如下：</p>
+<pre><code>smlnj/bin/ml-build hello.cm Hello.main
+smlnj/bin/heap2exec hello.x86-linux hello</code></pre>
+<p>其中生成的<code>hello.x86-linux</code>文件也可以通过以下命令直接运行：</p>
+<pre><code>smlnj/bin/sml @SMLload hello.x86-linux</code></pre>
+</section>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>

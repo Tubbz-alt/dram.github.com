@@ -1,0 +1,58 @@
+article: 编译SML/NJ
+
+	以下主要介绍如何在64-bit Linux下编译SML/NJ，并给出一个“Hello World”示例。
+
+	section: 编译
+
+		编译的流程和命令如下：
+
+		```
+			mkdir smlnj
+			cd smlnj
+			curl -LO https://smlnj.org/dist/working/110.84/config.tgz
+			tar xf config.tgz
+			sed -i 's/^#request heap2asm/request heap2asm/' config/targets
+			sed -i 's|http://smlnj.cs.uchicago.edu|https://smlnj.org|' config/srcarchiveurl
+			config/install.sh
+			sed -i 's/^CC=cc/CC="cc -m32"/' bin/heap2exec
+
+		其中对`bin/heap2exec`的修改是为了支持x86-64系统，否则会出现链接错误。根据{这里}(https://www.smlnj.org/dist/working/110.84/110.84-README.html)的说明，SML/NJ后续会直接支持64-bit，而不是当前32-bit兼容模式，所以之后这一改动就没有必要了。
+
+
+	section: 示例
+
+		以下是一个简单的示例，用以说明SML/NJ生成可执行文件的流程，基于{这里}(https://stackoverflow.com/a/5073129/5180632)的讨论。
+
+		`hello.cm`代码如下：
+
+		```
+			Group is
+			    hello.sml
+			    $/basis.cm
+
+		`hello.sml`代码如下：
+
+		```
+			structure Hello =
+			struct
+
+			fun print_line s = print (s ^ "\n")
+
+			fun main (_, _) =
+			    let
+			        val _ = print_line "Hello, world."
+			    in
+			        0
+			    end
+			end
+
+		可执行文件编译命令如下：
+
+		```
+			smlnj/bin/ml-build hello.cm Hello.main
+			smlnj/bin/heap2exec hello.x86-linux hello
+
+		其中生成的`hello.x86-linux`文件也可以通过以下命令直接运行：
+
+		```
+			smlnj/bin/sml @SMLload hello.x86-linux
