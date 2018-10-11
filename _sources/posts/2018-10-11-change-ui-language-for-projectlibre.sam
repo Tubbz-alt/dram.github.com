@@ -1,0 +1,11 @@
+article: 更改ProjectLibre的界面语言
+
+	在中文操作系统环境中，ProjectLibre默认使用中文显示界面元素。但是当前界面文字的中文翻译差强人意，所以建议还是使用英文界面。
+
+	但ProjectLibre并没有提供更改语言的UI，根据{这里}(http://www.projectlibre.com/discussion/how-change-language)的讨论，需要直接通过配置文件调整。
+
+	以下是在Windows中更改ProjectLibre语言设置的步骤：
+
+	1. 运行Windows命令行（打开Windows菜单，输入cmd，再按回车即可）；
+	2. 输入`mkdir .projectlibre`再回车，由此在`C:\Users\USERNAME\`路径下创建`.projectlibre`目录；
+	3. 输入`echo locale=en >.projectlibre/projectlibre.conf`再回车，由此创建`projectlibre.conf`配置文件，并写入`locale=en`。

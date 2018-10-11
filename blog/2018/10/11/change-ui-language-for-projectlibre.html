@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>更改ProjectLibre的界面语言</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>更改ProjectLibre的界面语言</h1><time>11 Oct 2018</time>
+
+
+<p>在中文操作系统环境中，ProjectLibre默认使用中文显示界面元素。但是当前界面文字的中文翻译差强人意，所以建议还是使用英文界面。</p>
+<p>但ProjectLibre并没有提供更改语言的UI，根据<a href="http://www.projectlibre.com/discussion/how-change-language">这里</a>的讨论，需要直接通过配置文件调整。</p>
+<p>以下是在Windows中更改ProjectLibre语言设置的步骤：</p>
+<ol>
+<li>
+<p>运行Windows命令行（打开Windows菜单，输入cmd，再按回车即可）；</p>
+</li>
+<li>
+<p>输入<code>mkdir .projectlibre</code>再回车，由此在<code>C:\Users\USERNAME\</code>路径下创建<code>.projectlibre</code>目录；</p>
+</li>
+<li>
+<p>输入<code>echo locale=en &gt;.projectlibre/projectlibre.conf</code>再回车，由此创建<code>projectlibre.conf</code>配置文件，并写入<code>locale=en</code>。</p>
+</li>
+</ol>
+</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
