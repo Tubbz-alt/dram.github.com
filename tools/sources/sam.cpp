@@ -25,16 +25,13 @@ std::optional<std::string> sam_parse(std::string path) {
       ("p = samparser.SamParser(); p.parse_file('" + path + "')").c_str(),
       Py_file_input, globals, nullptr);
 
-  PyObject *obj = PyRun_String("''.join(p.doc.serialize_xml())", Py_eval_input,
+  PyObject *obj = PyRun_String("b''.join(p.doc.serialize_xml())", Py_eval_input,
                                globals, nullptr);
 
   if (obj == nullptr) {
     PyErr_Print();
     return std::nullopt;
   } else {
-    Py_ssize_t len;
-    const char *p = PyUnicode_AsUTF8AndSize(obj, &len);
-    std::string str(p, len);
-    return std::optional<std::string>{str};
+    return std::optional<std::string>{PyBytes_AsString(obj)};
   }
 }
