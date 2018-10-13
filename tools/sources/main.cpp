@@ -94,20 +94,6 @@ void generate_pages() {
   }
 }
 
-void sort_posts() {
-  struct post p;
-
-  for (unsigned i = 0; i < posts.size(); ++i) {
-    for (unsigned j = i; j < posts.size(); ++j) {
-      if (posts[j].source > posts[i].source) {
-        p = posts[i];
-        posts[i] = posts[j];
-        posts[j] = p;
-      }
-    }
-  }
-}
-
 int main(void) {
   for (std::filesystem::directory_entry entry :
        std::filesystem::directory_iterator("_sources/posts")) {
@@ -135,7 +121,8 @@ int main(void) {
   generate_posts();
   generate_pages();
 
-  sort_posts();
+  std::sort(posts.begin(), posts.end(),
+            [](struct post a, struct post b) { return a.source > b.source; });
 
   render_home(post_list(10), "index.html");
   render_archive(post_list(std::nullopt), "blog/archive.html");
