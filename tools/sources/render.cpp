@@ -9,18 +9,8 @@
 
 static bool initialized = false;
 
-static xsltStylesheetPtr article_stylesheet, main_stylesheet,
-    archive_stylesheet, home_stylesheet;
-
 void render_initialize() {
   exsltDateRegister();
-
-  main_stylesheet = xsltParseStylesheetFile("tools/stylesheets/main.xsl"_xml);
-  article_stylesheet =
-      xsltParseStylesheetFile("tools/stylesheets/article.xsl"_xml);
-  home_stylesheet = xsltParseStylesheetFile("tools/stylesheets/home.xsl"_xml);
-  archive_stylesheet =
-      xsltParseStylesheetFile("tools/stylesheets/archive.xsl"_xml);
 
   initialized = true;
 }
@@ -39,10 +29,12 @@ void render_article(xmlDocPtr content, std::string output,
     params = {nullptr};
   }
 
-  xmlDocPtr p = xsltApplyStylesheet(article_stylesheet, content, &params[0]);
+  static xsltStylesheetPtr style =
+      xsltParseStylesheetFile("tools/stylesheets/article.xsl"_xml);
 
-  xsltRunStylesheetUser(main_stylesheet, p, nullptr, output.c_str(), nullptr,
-                        nullptr, nullptr, nullptr);
+  xmlDocPtr p = xsltApplyStylesheet(style, content, &params[0]);
+
+  render_main(p, output, std::nullopt);
 }
 
 void render_main(xmlDocPtr content, std::string output,
@@ -59,15 +51,21 @@ void render_main(xmlDocPtr content, std::string output,
     params = {nullptr};
   }
 
-  xsltRunStylesheetUser(main_stylesheet, content, &params[0], output.c_str(),
-                        nullptr, nullptr, nullptr, nullptr);
+  static xsltStylesheetPtr style =
+      xsltParseStylesheetFile("tools/stylesheets/main.xsl"_xml);
+
+  xsltRunStylesheetUser(style, content, &params[0], output.c_str(), nullptr,
+                        nullptr, nullptr, nullptr);
 }
 
 void render_home(xmlDocPtr posts, std::string output) {
   if (!initialized)
     render_initialize();
 
-  xmlDocPtr p = xsltApplyStylesheet(home_stylesheet, posts, nullptr);
+  static xsltStylesheetPtr style =
+      xsltParseStylesheetFile("tools/stylesheets/home.xsl"_xml);
+
+  xmlDocPtr p = xsltApplyStylesheet(style, posts, nullptr);
   render_main(p, output, "dram.me");
 }
 
@@ -75,6 +73,9 @@ void render_archive(xmlDocPtr posts, std::string output) {
   if (!initialized)
     render_initialize();
 
-  xmlDocPtr p = xsltApplyStylesheet(archive_stylesheet, posts, nullptr);
+  static xsltStylesheetPtr style =
+      xsltParseStylesheetFile("tools/stylesheets/archive.xsl"_xml);
+
+  xmlDocPtr p = xsltApplyStylesheet(style, posts, nullptr);
   render_main(p, output, "Archive");
 }
