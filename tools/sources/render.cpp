@@ -15,14 +15,12 @@ static xsltStylesheetPtr article_stylesheet, main_stylesheet,
 void render_initialize() {
   exsltDateRegister();
 
-  main_stylesheet =
-      xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/main.xsl");
+  main_stylesheet = xsltParseStylesheetFile("tools/stylesheets/main.xsl"_xml);
   article_stylesheet =
-      xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/article.xsl");
-  home_stylesheet =
-      xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/home.xsl");
+      xsltParseStylesheetFile("tools/stylesheets/article.xsl"_xml);
+  home_stylesheet = xsltParseStylesheetFile("tools/stylesheets/home.xsl"_xml);
   archive_stylesheet =
-      xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/archive.xsl");
+      xsltParseStylesheetFile("tools/stylesheets/archive.xsl"_xml);
 
   initialized = true;
 }
