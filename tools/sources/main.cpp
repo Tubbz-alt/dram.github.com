@@ -15,8 +15,6 @@ struct post {
   std::string date, source, target, name, title;
 };
 
-static std::vector<struct post> posts;
-
 bool source_modified(std::string source, std::string target) {
   std::filesystem::file_time_type source_time, target_time;
 
@@ -30,7 +28,7 @@ bool source_modified(std::string source, std::string target) {
   }
 }
 
-void generate_posts() {
+void generate_posts(const std::vector<struct post> &posts) {
   for (struct post p : posts) {
     if (source_modified(p.source, p.target)) {
       std::optional<std::string> xml = sam_parse(p.source);
@@ -42,7 +40,8 @@ void generate_posts() {
   }
 }
 
-xmlDocPtr post_list(std::optional<size_t> limit) {
+xmlDocPtr post_list(const std::vector<struct post> &posts,
+                    std::optional<size_t> limit) {
   xmlDocPtr doc = xmlNewDoc((const xmlChar *)"1.0");
   xmlNodePtr root = xmlNewNode(nullptr, (const xmlChar *)"posts");
   xmlDocSetRootElement(doc, root);
@@ -95,6 +94,8 @@ void generate_pages() {
 }
 
 int main(void) {
+  std::vector<struct post> posts;
+
   for (std::filesystem::directory_entry entry :
        std::filesystem::directory_iterator("_sources/posts")) {
     struct post post;
@@ -118,12 +119,12 @@ int main(void) {
     posts.push_back(post);
   }
 
-  generate_posts();
+  generate_posts(posts);
   generate_pages();
 
   std::sort(posts.begin(), posts.end(),
             [](struct post a, struct post b) { return a.source > b.source; });
 
-  render_home(post_list(10), "index.html");
-  render_archive(post_list(std::nullopt), "blog/archive.html");
+  render_home(post_list(posts, 10), "index.html");
+  render_archive(post_list(posts, std::nullopt), "blog/archive.html");
 }
