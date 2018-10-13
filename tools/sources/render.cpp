@@ -1,4 +1,4 @@
-#include <experimental/optional>
+#include <optional>
 #include <vector>
 
 #include <libexslt/exslt.h>
@@ -22,7 +22,7 @@ void render_initialize() {
   initialized = true;
 }
 
-void render_article(xmlDocPtr content, std::string output, std::experimental::optional<std::string> date) {
+void render_article(xmlDocPtr content, std::string output, std::optional<std::string> date) {
   if (!initialized)
     render_initialize();
 
@@ -41,7 +41,7 @@ void render_article(xmlDocPtr content, std::string output, std::experimental::op
 			nullptr, nullptr, nullptr, nullptr);
 }
 
-void render_main(xmlDocPtr content, std::string output, std::experimental::optional<std::string> title) {
+void render_main(xmlDocPtr content, std::string output, std::optional<std::string> title) {
   if (!initialized)
     render_initialize();
 

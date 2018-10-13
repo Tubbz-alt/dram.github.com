@@ -1,4 +1,4 @@
-#include <experimental/optional>
+#include <optional>
 #include <string>
 
 #include <Python.h>
@@ -23,7 +23,7 @@ void sam_initialize() {
   initialized = true;
 }
 
-std::experimental::optional<std::string> sam_parse(std::string path) {
+std::optional<std::string> sam_parse(std::string path) {
   if (!initialized)
     sam_initialize();
 
@@ -36,12 +36,12 @@ std::experimental::optional<std::string> sam_parse(std::string path) {
 
   if (obj == nullptr) {
     PyErr_Print();
-    return std::experimental::nullopt;
+    return std::nullopt;
   } else {
     Py_ssize_t len;
     const char *p = PyUnicode_AsUTF8AndSize(obj, &len);
     std::string str(p, len);
-    return std::experimental::optional<std::string>{str};
+    return std::optional<std::string>{str};
   }
 }
 

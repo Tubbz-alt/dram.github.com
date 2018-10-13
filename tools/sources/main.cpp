@@ -1,5 +1,5 @@
 #include <experimental/filesystem>
-#include <experimental/optional>
+#include <optional>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -33,7 +33,7 @@ bool source_modified(std::string source, std::string target) {
 void generate_posts() {
   for (struct post p : posts) {
     if (source_modified(p.source, p.target)) {
-      std::experimental::optional<std::string> xml = sam_parse(p.source);
+      std::optional<std::string> xml = sam_parse(p.source);
       if (xml) {
 	xmlDocPtr ptr = xmlParseMemory(xml.value().c_str(), xml.value().size());
 	render_article(ptr, p.target, p.date);
@@ -74,11 +74,11 @@ void generate_pages() {
       std::string target = directory / path.replace_extension(".html").filename();
 
       if (source_modified(source, target)) {
-	std::experimental::optional<std::string> xml = sam_parse(source);
+	std::optional<std::string> xml = sam_parse(source);
 
 	if (xml) {
 	  xmlDocPtr ptr = xmlParseMemory(xml.value().c_str(), xml.value().size());
-	  render_article(ptr, target, std::experimental::nullopt);
+	  render_article(ptr, target, std::nullopt);
 	}
       }
     }
