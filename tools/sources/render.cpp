@@ -7,18 +7,18 @@
 
 #include "render.hpp"
 
-static bool initialized = false;
+void ensure_extension_loaded() {
+  static bool loaded = false;
 
-void render_initialize() {
-  exsltDateRegister();
-
-  initialized = true;
+  if (!loaded) {
+    exsltDateRegister();
+    loaded = true;
+  }
 }
 
 void render_article(xmlDocPtr content, std::string output,
                     std::optional<std::string> date) {
-  if (!initialized)
-    render_initialize();
+  ensure_extension_loaded();
 
   std::string quoted;
   std::vector<const char *> params;
@@ -39,8 +39,7 @@ void render_article(xmlDocPtr content, std::string output,
 
 void render_main(xmlDocPtr content, std::string output,
                  std::optional<std::string> title) {
-  if (!initialized)
-    render_initialize();
+  ensure_extension_loaded();
 
   std::string quoted;
   std::vector<const char *> params;
@@ -59,8 +58,7 @@ void render_main(xmlDocPtr content, std::string output,
 }
 
 void render_home(xmlDocPtr posts, std::string output) {
-  if (!initialized)
-    render_initialize();
+  ensure_extension_loaded();
 
   static xsltStylesheetPtr style =
       xsltParseStylesheetFile("tools/stylesheets/home.xsl"_xml);
@@ -70,8 +68,7 @@ void render_home(xmlDocPtr posts, std::string output) {
 }
 
 void render_archive(xmlDocPtr posts, std::string output) {
-  if (!initialized)
-    render_initialize();
+  ensure_extension_loaded();
 
   static xsltStylesheetPtr style =
       xsltParseStylesheetFile("tools/stylesheets/archive.xsl"_xml);
