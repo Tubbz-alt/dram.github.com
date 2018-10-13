@@ -2,7 +2,7 @@ PROGRAM = sources/generate
 OBJECTS = sources/main.o sources/render.o sources/sam.o
 LIBRARIES = libexslt libxslt python3
 
-.PHONY: build clean
+.PHONY: build format clean
 
 build: ${PROGRAM}
 
@@ -11,6 +11,9 @@ build: ${PROGRAM}
 
 ${PROGRAM}: ${OBJECTS}
 	g++-8 -o $@ $^ $(shell pkg-config --libs ${LIBRARIES}) -lstdc++fs
+
+format:
+	clang-format -i $(wildcard sources/*.hpp sources/*.cpp)
 
 clean:
 	rm -rf ${PROGRAM} ${OBJECTS}
