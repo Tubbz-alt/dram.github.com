@@ -46,24 +46,25 @@ xmlDocPtr post_list(const std::vector<struct post> &posts,
   xmlNodePtr root = xmlNewNode(nullptr, (const xmlChar *)"posts");
   xmlDocSetRootElement(doc, root);
 
-  size_t count;
+  std::vector<struct post>::const_iterator end;
 
   if (limit)
-    count = std::min(limit.value(), posts.size());
+    end = posts.begin() + std::min(limit.value(), posts.size());
   else
-    count = posts.size();
+    end = posts.end();
 
-  for (unsigned i = 0; i < count; ++i) {
+  for (std::vector<struct post>::const_iterator post = posts.begin();
+       post != end; ++post) {
     xmlNodePtr node =
         xmlNewChild(root, nullptr, (const xmlChar *)"post", nullptr);
 
-    const xmlChar *p = xmlEncodeEntitiesReentrant(
-        doc, (const xmlChar *)posts[i].title.c_str());
+    const xmlChar *p =
+        xmlEncodeEntitiesReentrant(doc, (const xmlChar *)post->title.c_str());
     xmlNewChild(node, nullptr, (const xmlChar *)"title", p);
     xmlNewChild(node, nullptr, (const xmlChar *)"creation-date",
-                (const xmlChar *)posts[i].date.c_str());
+                (const xmlChar *)post->date.c_str());
     xmlNewChild(node, nullptr, (const xmlChar *)"uri",
-                (const xmlChar *)('/' + posts[i].target).c_str());
+                (const xmlChar *)('/' + post->target).c_str());
   }
 
   return doc;
