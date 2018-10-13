@@ -7,10 +7,10 @@ LIBRARIES = libexslt libxslt python3
 build: ${PROGRAM}
 
 %.o: %.cpp
-	g++ -Wall --std=c++17 $(shell pkg-config --cflags ${LIBRARIES}) -o $@ -c $^
+	g++-8 -Wall --std=c++17 $(shell pkg-config --cflags ${LIBRARIES}) -o $@ -c $^
 
 ${PROGRAM}: ${OBJECTS}
-	g++ -o $@ $^ $(shell pkg-config --libs ${LIBRARIES}) -lstdc++fs
+	g++-8 -o $@ $^ $(shell pkg-config --libs ${LIBRARIES}) -lstdc++fs
 
 clean:
 	rm -rf ${PROGRAM} ${OBJECTS}

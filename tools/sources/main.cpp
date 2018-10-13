@@ -1,4 +1,4 @@
-#include <experimental/filesystem>
+#include <filesystem>
 #include <optional>
 #include <fstream>
 #include <iostream>
@@ -18,12 +18,12 @@ static std::vector<struct post> posts;
 
 
 bool source_modified(std::string source, std::string target) {
-  std::experimental::filesystem::file_time_type source_time, target_time;
+  std::filesystem::file_time_type source_time, target_time;
 
-  source_time = std::experimental::filesystem::last_write_time(source);
+  source_time = std::filesystem::last_write_time(source);
 
   try {
-    target_time = std::experimental::filesystem::last_write_time(target);
+    target_time = std::filesystem::last_write_time(target);
     return source_time > target_time;
   } catch (...) {
     return true;
@@ -65,12 +65,12 @@ xmlDocPtr post_list(unsigned limit) {
 
 
 void generate_pages() {
-  std::vector<std::experimental::filesystem::path> directories = {"blog", "logo"};
+  std::vector<std::filesystem::path> directories = {"blog", "logo"};
 
-  for (std::experimental::filesystem::path directory : directories) {
-    for (std::experimental::filesystem::directory_entry entry : std::experimental::filesystem::directory_iterator("_sources/pages" / directory)) {
+  for (std::filesystem::path directory : directories) {
+    for (std::filesystem::directory_entry entry : std::filesystem::directory_iterator("_sources/pages" / directory)) {
       std::string source = entry.path();
-      std::experimental::filesystem::path path = entry.path();
+      std::filesystem::path path = entry.path();
       std::string target = directory / path.replace_extension(".html").filename();
 
       if (source_modified(source, target)) {
@@ -100,7 +100,7 @@ void sort_posts() {
 }
 
 int main(void) {
-  for (std::experimental::filesystem::directory_entry entry : std::experimental::filesystem::directory_iterator("_sources/posts")) {
+  for (std::filesystem::directory_entry entry : std::filesystem::directory_iterator("_sources/posts")) {
     struct post post;
 
     post.source = entry.path();
