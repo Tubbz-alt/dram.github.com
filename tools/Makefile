@@ -7,7 +7,7 @@ LIBRARIES = libexslt libxslt python3
 build: ${PROGRAM}
 
 %.o: %.cpp
-	g++ -Wall $(shell pkg-config --cflags ${LIBRARIES}) -o $@ -c $^
+	g++ -Wall --std=c++17 $(shell pkg-config --cflags ${LIBRARIES}) -o $@ -c $^
 
 ${PROGRAM}: ${OBJECTS}
 	g++ -o $@ $^ $(shell pkg-config --libs ${LIBRARIES}) -lstdc++fs
