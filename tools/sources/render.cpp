@@ -26,10 +26,13 @@ void render_article(xmlDocPtr content, std::string output, std::optional<std::st
   if (!initialized)
     render_initialize();
 
-  std::vector<const char *> params = {nullptr};
+  std::string quoted;
+  std::vector<const char *> params;
   if (date) {
-    params.insert(params.begin(), ('"' + date.value() + '"').c_str());
-    params.insert(params.begin(), "date");
+    quoted = '"' + date.value() + '"';
+    params = {"date", quoted.c_str(), nullptr};
+  } else {
+    params = {nullptr};
   }
 
   xmlDocPtr p = xsltApplyStylesheet(article_stylesheet, content, &params[0]);
@@ -45,11 +48,13 @@ void render_main(xmlDocPtr content, std::string output, std::optional<std::strin
   if (!initialized)
     render_initialize();
 
-  std::vector<const char *> params = {nullptr};
-
+  std::string quoted;
+  std::vector<const char *> params;
   if (title) {
-    params.insert(params.begin(), ('"' + title.value() + '"').c_str());
-    params.insert(params.begin(), "title");
+    quoted = '"' + title.value() + '"';
+    params = {"title", quoted.c_str(), nullptr};
+  } else {
+    params = {nullptr};
   }
 
   xsltRunStylesheetUser(main_stylesheet,
