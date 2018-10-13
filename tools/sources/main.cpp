@@ -1,7 +1,8 @@
+#include <algorithm>
 #include <filesystem>
-#include <optional>
 #include <fstream>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -42,13 +43,16 @@ void generate_posts() {
   }
 }
 
-xmlDocPtr post_list(unsigned limit) {
+xmlDocPtr post_list(std::optional<size_t> limit) {
   xmlDocPtr doc = xmlNewDoc((const xmlChar *)"1.0");
   xmlNodePtr root = xmlNewNode(nullptr, (const xmlChar *)"posts");
   xmlDocSetRootElement(doc, root);
 
-  unsigned count = limit;
-  if (limit == 0 || limit > posts.size())
+  size_t count;
+
+  if (limit)
+    count = std::min(limit.value(), posts.size());
+  else
     count = posts.size();
 
   for (unsigned i = 0; i < count; ++i) {
@@ -129,5 +133,5 @@ int main(void) {
   sort_posts();
 
   render_home(post_list(10), "index.html");
-  render_archive(post_list(0), "blog/archive.html");
+  render_archive(post_list(std::nullopt), "blog/archive.html");
 }
