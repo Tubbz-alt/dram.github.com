@@ -16,9 +16,9 @@ void sam_initialize() {
   PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
 
   PyRun_String("import sys;"
-	       "sys.path.append('tools/sam');"
-	       "import samparser",
-	       Py_file_input, globals, nullptr);
+               "sys.path.append('tools/sam');"
+               "import samparser",
+               Py_file_input, globals, nullptr);
 
   initialized = true;
 }
@@ -27,12 +27,12 @@ std::optional<std::string> sam_parse(std::string path) {
   if (!initialized)
     sam_initialize();
 
-  PyRun_String(("p = samparser.SamParser(); p.parse_file('"
-		+ path + "')").c_str(),
-	       Py_file_input, globals, nullptr);
+  PyRun_String(
+      ("p = samparser.SamParser(); p.parse_file('" + path + "')").c_str(),
+      Py_file_input, globals, nullptr);
 
-  PyObject *obj = PyRun_String("''.join(p.doc.serialize_xml())",
-			       Py_eval_input, globals, nullptr);
+  PyObject *obj = PyRun_String("''.join(p.doc.serialize_xml())", Py_eval_input,
+                               globals, nullptr);
 
   if (obj == nullptr) {
     PyErr_Print();
@@ -46,6 +46,6 @@ std::optional<std::string> sam_parse(std::string path) {
 }
 
 void sam_finalize() {
-    if (initialized)
-      Py_Finalize();
+  if (initialized)
+    Py_Finalize();
 }

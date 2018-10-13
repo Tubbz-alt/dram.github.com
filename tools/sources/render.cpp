@@ -2,27 +2,33 @@
 #include <vector>
 
 #include <libexslt/exslt.h>
-#include <libxslt/xslt.h>
 #include <libxslt/transform.h>
+#include <libxslt/xslt.h>
 
 #include "render.hpp"
 
 static bool initialized = false;
 
-static xsltStylesheetPtr article_stylesheet, main_stylesheet, archive_stylesheet, home_stylesheet;
+static xsltStylesheetPtr article_stylesheet, main_stylesheet,
+    archive_stylesheet, home_stylesheet;
 
 void render_initialize() {
   exsltDateRegister();
 
-  main_stylesheet = xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/main.xsl");
-  article_stylesheet = xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/article.xsl");
-  home_stylesheet = xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/home.xsl");
-  archive_stylesheet = xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/archive.xsl");
+  main_stylesheet =
+      xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/main.xsl");
+  article_stylesheet =
+      xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/article.xsl");
+  home_stylesheet =
+      xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/home.xsl");
+  archive_stylesheet =
+      xsltParseStylesheetFile((const xmlChar *)"tools/stylesheets/archive.xsl");
 
   initialized = true;
 }
 
-void render_article(xmlDocPtr content, std::string output, std::optional<std::string> date) {
+void render_article(xmlDocPtr content, std::string output,
+                    std::optional<std::string> date) {
   if (!initialized)
     render_initialize();
 
@@ -37,14 +43,12 @@ void render_article(xmlDocPtr content, std::string output, std::optional<std::st
 
   xmlDocPtr p = xsltApplyStylesheet(article_stylesheet, content, &params[0]);
 
-  xsltRunStylesheetUser(main_stylesheet,
-			p,
-			nullptr,
-			output.c_str(),
-			nullptr, nullptr, nullptr, nullptr);
+  xsltRunStylesheetUser(main_stylesheet, p, nullptr, output.c_str(), nullptr,
+                        nullptr, nullptr, nullptr);
 }
 
-void render_main(xmlDocPtr content, std::string output, std::optional<std::string> title) {
+void render_main(xmlDocPtr content, std::string output,
+                 std::optional<std::string> title) {
   if (!initialized)
     render_initialize();
 
@@ -57,11 +61,8 @@ void render_main(xmlDocPtr content, std::string output, std::optional<std::strin
     params = {nullptr};
   }
 
-  xsltRunStylesheetUser(main_stylesheet,
-			content,
-			&params[0],
-			output.c_str(),
-			nullptr, nullptr, nullptr, nullptr);
+  xsltRunStylesheetUser(main_stylesheet, content, &params[0], output.c_str(),
+                        nullptr, nullptr, nullptr, nullptr);
 }
 
 void render_home(xmlDocPtr posts, std::string output) {
