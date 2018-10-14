@@ -26,6 +26,6 @@ std::optional<std::string> sam_parse(std::string path) {
     PyErr_Print();
     return std::nullopt;
   } else {
-    return std::optional<std::string>{PyBytes_AsString(xml)};
+    return {PyBytes_AsString(xml)};
   }
 }
