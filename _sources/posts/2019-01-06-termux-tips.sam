@@ -1,0 +1,9 @@
+article: Termux技巧
+
+	Termux是一个轻量级的运行于Android中的Linux环境。由于不需要root权限，安装使用都比较方便。以下整理汇总Termux的一些技巧。
+
+	1. `音量上键+Q`开启特殊键快捷栏，可以输入Ctrl、Alt、Tab、Esc等特殊键。
+	2. 向左侧滑动特殊键快捷栏，可以输入中文。
+	3. 划入左侧隐藏栏，可以新建和选择窗口。同时还可以显示和隐藏键盘功能，另外后退键也可以隐藏虚拟键盘，在屏幕中三次点击也可以重新显示。
+	5. 在`$HOME/.termux/termux.properties`文件中配置`bell-character = ignore`可以禁用震动提示。
+	6. 运行`termux-setup-storage`创建`$HOME/storage/`符号链接，可以访问手机上的存储空间。
