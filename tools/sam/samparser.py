@@ -1,6 +1,5 @@
 import sys
 from statemachine import StateMachine
-from lxml import etree
 import xml.parsers.expat
 import html
 import argparse
@@ -691,12 +690,6 @@ class Block(ABC):
     html_tag = "div"
 
     def __init__(self, block_type, indent, attributes={}, content=None, citations=[], namespace=None):
-
-        # Test for a valid block block_type. Must be valid XML block_type.
-        try:
-            x = etree.Element(block_type)
-        except ValueError:
-            raise SAMParserStructureError('Invalid block name "{0}"'.format(block_type))
         self.block_type = block_type
         self.namespace = namespace
         self.content = content
@@ -2115,7 +2108,6 @@ class DocStructure:
         self.css = None
         self.javascript = None
         self._xml_serialization = None
-        self._etree = None
         self.expand_relative_paths = False
 
     def __str__(self):
@@ -2129,12 +2121,6 @@ class DocStructure:
         if not self._xml_serialization:
             self._xml_serialization = io.BytesIO(b''.join(self.serialize_xml()))
         return self._xml_serialization
-
-    @property
-    def etree(self):
-        if not self._etree:
-            self._etree = etree.parse(self.xml)
-        return self._etree
 
     @property
     def docstructure(self):
@@ -3662,63 +3648,6 @@ if __name__ == "__main__":
                 samParser.parse_file(inputfile)
                 outputfile = write_output(inputfile, '.xml', samParser.doc.serialize_xml)
 
-                if args.xsd:
-                    SAM_parser_info("Validating XML output using " + args.xsd)
-                    xmlschema = etree.XMLSchema(file=args.xsd)
-                    try:
-                        xmlschema.assertValid(samParser.doc.etree)
-                    except etree.DocumentInvalid as e:
-                        print('XSD SCHEMA ERROR {0} in {1}'.format(str(e), outputfile), file=sys.stderr)
-                        xsd_error_count += 1
-                    else:
-                        SAM_parser_info("Validation successful.")
-
-                if args.xslt:
-                    if not (args.transformedoutputfile or args.transformedoutputdir):
-                        raise SAMParserError(
-                            "A transformed output file or directory must be specified if an XSLT file is specified.")
-
-                    if args.transformedoutputdir:
-                        transformedfile = os.path.join(args.transformedoutputdir, os.path.splitext(
-                            os.path.basename(inputfile))[0] + args.transformedextension)
-                    else:
-                        transformedfile = args.transformedoutputfile
-                    try:
-                        transformer = etree.XSLT(etree.parse(args.xslt))
-                        try:
-                            if samParser.doc.expand_relative_paths:
-                                # We can use the internal tree because all paths have been expanded.
-                                transformed = transformer(samParser.doc.etree)
-                            else: # May be local paths so have to parse from disk.
-                                transformed = transformer(etree.parse(outputfile))
-                        except etree.XSLTError as e:
-                            print('XSLT TRANSFORMER ERROR {0} in {1}'.format(str(e), outputfile), file=sys.stderr)
-                            if transformer.error_log:
-                                SAM_parser_warning("Messages from the XSLT transformation of {0}:".format(outputfile))
-                                for entry in transformer.error_log:
-                                    print('message from line %s, col %s: %s' % (
-                                        entry.line, entry.column, entry.message), file=sys.stderr)
-                                    print('domain: %s (%d)' % (entry.domain_name, entry.domain), file=sys.stderr)
-                                    print('type: %s (%d)' % (entry.type_name, entry.type), file=sys.stderr)
-                                    print('level: %s (%d)' % (entry.level_name, entry.level), file=sys.stderr)
-                            raise SAMXSLTError(e)
-                        # For XSLT warnings that don't cause an exception
-                        if transformer.error_log:
-                            SAM_parser_warning("Messages from the XSLT transformation:")
-                            for entry in transformer.error_log:
-                                print('message from line %s, col %s: %s' % (
-                                    entry.line, entry.column, entry.message), file=sys.stderr)
-                                print('domain: %s (%d)' % (entry.domain_name, entry.domain), file=sys.stderr)
-                                print('type: %s (%d)' % (entry.type_name, entry.type), file=sys.stderr)
-                                print('level: %s (%d)' % (entry.level_name, entry.level), file=sys.stderr)
-                        if transformedfile:
-                            with open(transformedfile, "wb") as tf:
-                                tf.write(str(transformed).encode(encoding='utf-8'))
-
-                    except FileNotFoundError as e:
-                        raise SAMParserError(e.strerror + ' ' + e.filename)
-
-
             except SAMParserError as e:
                 sys.stderr.write('SAM parser ERROR: ' + str(e) + "\n")
                 parser_error_count += 1
@@ -3807,20 +3736,6 @@ if __name__ == "__main__":
 
     if args.expandrelativepaths:
         samParser.expand_relative_paths = True
-
-    if args.smartquotes:
-        with open(args.smartquotes, encoding="utf8") as sqf:
-            try:
-                substitution_sets = etree.parse(sqf)
-            except etree.XMLSyntaxError as e:
-                raise SAMParserError("Smart quotes file {0} contains XML error {1}: " + str(e))
-
-            for x in substitution_sets.iterfind(".//subset"):
-                subs = {}
-                for y in x.iterfind("sub"):
-                    r = re.compile(y.find("pattern").text)
-                    subs.update({r: y.find("replace").text})
-                smart_quote_sets.update({x.find("name").text: subs})
 
     args.func()
 

@@ -1,10 +1,12 @@
 #include <algorithm>
-#include <filesystem>
+#include <ctime>
 #include <fstream>
 #include <iostream>
 #include <optional>
 #include <string>
 #include <vector>
+
+#include <boost/filesystem.hpp>
 
 #include <libxml/tree.h>
 
@@ -16,12 +18,12 @@ struct post {
 };
 
 bool source_modified(std::string source, std::string target) {
-  std::filesystem::file_time_type source_time, target_time;
+  std::time_t source_time, target_time;
 
-  source_time = std::filesystem::last_write_time(source);
+  source_time = boost::filesystem::last_write_time(source);
 
   try {
-    target_time = std::filesystem::last_write_time(target);
+    target_time = boost::filesystem::last_write_time(target);
     return source_time > target_time;
   } catch (...) {
     return true;
@@ -67,15 +69,15 @@ xmlDocPtr post_list(const std::vector<struct post> &posts,
 }
 
 void generate_pages() {
-  std::vector<std::filesystem::path> directories = {"blog", "logo"};
+  std::vector<boost::filesystem::path> directories = {"blog", "logo"};
 
-  for (std::filesystem::path directory : directories) {
-    for (std::filesystem::directory_entry entry :
-         std::filesystem::directory_iterator("_sources/pages" / directory)) {
-      std::string source = entry.path();
-      std::filesystem::path path = entry.path();
+  for (boost::filesystem::path directory : directories) {
+    for (boost::filesystem::directory_entry entry :
+         boost::filesystem::directory_iterator("_sources/pages" / directory)) {
+      std::string source = entry.path().string();
+      boost::filesystem::path path = entry.path();
       std::string target =
-          directory / path.replace_extension(".html").filename();
+        (directory / path.replace_extension(".html").filename()).string();
 
       if (source_modified(source, target)) {
         std::optional<std::string> xml = sam_parse(source);
@@ -93,13 +95,13 @@ void generate_pages() {
 int main(void) {
   std::vector<struct post> posts;
 
-  for (std::filesystem::directory_entry entry :
-       std::filesystem::directory_iterator("_sources/posts")) {
+  for (boost::filesystem::directory_entry entry :
+       boost::filesystem::directory_iterator("_sources/posts")) {
     struct post post;
 
-    post.source = entry.path();
+    post.source = entry.path().string();
 
-    std::string name = entry.path().filename();
+    std::string name = entry.path().filename().string();
     post.date = name.substr(0, 10);
     post.name = name.substr(11, name.size() - 15);
 
