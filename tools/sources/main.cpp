@@ -77,7 +77,7 @@ void generate_pages() {
       std::string source = entry.path().string();
       boost::filesystem::path path = entry.path();
       std::string target =
-        (directory / path.replace_extension(".html").filename()).string();
+          (directory / path.replace_extension(".html").filename()).string();
 
       if (source_modified(source, target)) {
         std::optional<std::string> xml = sam_parse(source);
