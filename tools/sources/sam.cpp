@@ -1,11 +1,12 @@
-#include <optional>
 #include <string>
+
+#include <boost/optional.hpp>
 
 #include <Python.h>
 
 #include "sam.hpp"
 
-std::optional<std::string> sam_parse(std::string path) {
+boost::optional<std::string> sam_parse(std::string path) {
   static PyObject *parser = nullptr;
 
   if (parser == nullptr) {
@@ -24,8 +25,8 @@ std::optional<std::string> sam_parse(std::string path) {
 
   if (xml == nullptr) {
     PyErr_Print();
-    return std::nullopt;
+    return boost::none;
   } else {
-    return {PyBytes_AsString(xml)};
+    return {std::string{PyBytes_AsString(xml)}};
   }
 }

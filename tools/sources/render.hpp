@@ -1,8 +1,9 @@
 #ifndef RENDER_HPP
 #define RENDER_HPP
 
-#include <optional>
 #include <string>
+
+#include <boost/optional.hpp>
 
 #include <libxml/tree.h>
 
@@ -19,9 +20,9 @@ inline const xmlChar *operator"" _xml(const char *string, size_t) {
 }
 
 void render_article(xmlDocPtr content, std::string output,
-                    std::optional<std::string> date);
+                    boost::optional<std::string> date);
 void render_main(xmlDocPtr content, std::string output,
-                 std::optional<std::string> title);
+                 boost::optional<std::string> title);
 void render_home(xmlDocPtr posts, std::string output);
 void render_archive(xmlDocPtr posts, std::string output);
 

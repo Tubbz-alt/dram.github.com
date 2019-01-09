@@ -2,11 +2,11 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include <optional>
 #include <string>
 #include <vector>
 
 #include <boost/filesystem.hpp>
+#include <boost/optional.hpp>
 
 #include <libxml/tree.h>
 
@@ -33,7 +33,7 @@ bool source_modified(std::string source, std::string target) {
 void generate_posts(const std::vector<struct post> &posts) {
   for (struct post p : posts) {
     if (source_modified(p.source, p.target)) {
-      std::optional<std::string> xml = sam_parse(p.source);
+      boost::optional<std::string> xml = sam_parse(p.source);
       if (xml) {
         xmlDocPtr ptr = xmlParseMemory(xml.value().c_str(), xml.value().size());
         render_article(ptr, p.target, p.date);
@@ -43,7 +43,7 @@ void generate_posts(const std::vector<struct post> &posts) {
 }
 
 xmlDocPtr post_list(const std::vector<struct post> &posts,
-                    std::optional<size_t> limit) {
+                    boost::optional<size_t> limit) {
   xmlDocPtr doc = xmlNewDoc("1.0"_xml);
   xmlNodePtr root = xmlNewNode(nullptr, "posts"_xml);
   xmlDocSetRootElement(doc, root);
@@ -80,12 +80,12 @@ void generate_pages() {
           (directory / path.replace_extension(".html").filename()).string();
 
       if (source_modified(source, target)) {
-        std::optional<std::string> xml = sam_parse(source);
+        boost::optional<std::string> xml = sam_parse(source);
 
         if (xml) {
           xmlDocPtr ptr =
               xmlParseMemory(xml.value().c_str(), xml.value().size());
-          render_article(ptr, target, std::nullopt);
+          render_article(ptr, target, boost::none);
         }
       }
     }
@@ -125,5 +125,5 @@ int main(void) {
             [](struct post a, struct post b) { return a.source > b.source; });
 
   render_home(post_list(posts, 10), "index.html");
-  render_archive(post_list(posts, std::nullopt), "blog/archive.html");
+  render_archive(post_list(posts, boost::none), "blog/archive.html");
 }

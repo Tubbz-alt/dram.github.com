@@ -1,5 +1,6 @@
-#include <optional>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 #include <libexslt/exslt.h>
 #include <libxslt/transform.h>
@@ -17,7 +18,7 @@ void ensure_extension_loaded() {
 }
 
 void render_article(xmlDocPtr content, std::string output,
-                    std::optional<std::string> date) {
+                    boost::optional<std::string> date) {
   ensure_extension_loaded();
 
   std::string quoted;
@@ -34,11 +35,11 @@ void render_article(xmlDocPtr content, std::string output,
 
   xmlDocPtr p = xsltApplyStylesheet(style, content, &params[0]);
 
-  render_main(p, output, std::nullopt);
+  render_main(p, output, boost::none);
 }
 
 void render_main(xmlDocPtr content, std::string output,
-                 std::optional<std::string> title) {
+                 boost::optional<std::string> title) {
   ensure_extension_loaded();
 
   std::string quoted;
@@ -64,7 +65,7 @@ void render_home(xmlDocPtr posts, std::string output) {
       xsltParseStylesheetFile("tools/stylesheets/home.xsl"_xml);
 
   xmlDocPtr p = xsltApplyStylesheet(style, posts, nullptr);
-  render_main(p, output, "dram.me");
+  render_main(p, output, std::string{"dram.me"});
 }
 
 void render_archive(xmlDocPtr posts, std::string output) {
@@ -74,5 +75,5 @@ void render_archive(xmlDocPtr posts, std::string output) {
       xsltParseStylesheetFile("tools/stylesheets/archive.xsl"_xml);
 
   xmlDocPtr p = xsltApplyStylesheet(style, posts, nullptr);
-  render_main(p, output, "Archive");
+  render_main(p, output, std::string{"Archive"});
 }
