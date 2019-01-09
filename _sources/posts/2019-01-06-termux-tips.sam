@@ -1,5 +1,8 @@
 article: Termux技巧
 
+	topic: 补遗
+		1. Termux在下个版本将支持附加键快捷栏可{配置}(https://github.com/termux/termux-app/pull/788)。—— 2019-01-08
+
 	Termux是一个轻量级的运行于Android中的Linux环境。由于不需要root权限，安装使用都比较方便。以下整理汇总Termux的一些技巧。
 
 	1. `音量上键+Q`开启特殊键快捷栏，可以输入Ctrl、Alt、Tab、Esc等特殊键。
