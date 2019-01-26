@@ -46,10 +46,6 @@
     <pre><code><xsl:apply-templates/></code></pre>
   </xsl:template>
 
-  <xsl:template match="codeblock/text()">
-    <xsl:value-of select="substring(., 2, string-length() - 2)"/>
-  </xsl:template>
-
   <xsl:template match="phrase/annotation[@type='bold']">
     <strong><xsl:apply-templates/></strong>
   </xsl:template>
@@ -62,6 +58,15 @@
     <a>
       <xsl:attribute name="href">
         <xsl:value-of select="@specifically"/>
+      </xsl:attribute>
+      <xsl:apply-templates/>
+    </a>
+  </xsl:template>
+
+  <xsl:template match="xref">
+    <a>
+      <xsl:attribute name="href">
+        <xsl:value-of select="@href"/>
       </xsl:attribute>
       <xsl:apply-templates/>
     </a>

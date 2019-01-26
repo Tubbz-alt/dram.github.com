@@ -1,5 +1,6 @@
 #include <cctype>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -35,9 +36,8 @@ static ParseNodeResult parse_node(Source source);
 static ParseNodesResult parse_nodes(Source source);
 
 boost::optional<xmlDocPtr> lml_parse(std::string path) {
-  std::ifstream stream{path};
-
-  std::string source{std::istreambuf_iterator<char>{stream}, {}};
+  std::string source{
+      std::istreambuf_iterator<char>{std::ifstream{path}.rdbuf()}, {}};
 
   ParseNodesResult nodes = parse_nodes(source);
 
@@ -127,28 +127,25 @@ static ParseNodeResult parse_node(Source source) {
     Source rest = tag.rest;
     while (true) {
       ParseTextResult name = parse_word(skip_spaces(rest));
-      if (!name.value.empty() && name.value[0] == '-' && !name.rest.empty() &&
-          name.rest[0] == '[') {
-        ParseTextResult value = parse_value(name.rest);
-        attributes.push_back({name.value, value.value});
-        rest = value.rest.substr(1);
-      } else {
+      if (name.value.empty() || name.value[0] != '-' || name.rest.empty() ||
+          name.rest[0] != '[')
         break;
-      }
+      ParseTextResult value = parse_value(name.rest.substr(1));
+      attributes.push_back({name.value.substr(1), value.value});
+      rest = value.rest.substr(1);
     }
 
     ParseNodesResult nodes = parse_nodes(rest);
 
-    if (!nodes.rest.empty() && nodes.rest[0] == ']') {
-      Node node = xmlNewNode(nullptr, xml_string(tag.value));
-      for (Attribute attr : attributes)
-        xmlSetProp(node, xml_string(attr.name), xml_string(attr.value));
-      for (Node child : nodes.value)
-        xmlAddChild(node, child);
-      return {node, nodes.rest.substr(1)};
-    } else {
+    if (nodes.rest.empty() || nodes.rest[0] != ']')
       throw;
-    }
+
+    Node node = xmlNewNode(nullptr, xml_string(tag.value));
+    for (Attribute attr : attributes)
+      xmlSetProp(node, xml_string(attr.name), xml_string(attr.value));
+    for (Node child : nodes.value)
+      xmlAddChild(node, child);
+    return {node, nodes.rest.substr(1)};
   } else {
     std::string text;
     for (size_t i = 0; i < source.size(); ++i) {
