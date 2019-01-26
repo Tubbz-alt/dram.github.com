@@ -1,0 +1,24 @@
+[article
+  [title Termux中运行Kanboard]
+
+  [p 通过已经步骤可以在Termux中运行Kanboard：]
+
+  [ol
+    [li 安装[code php-apache]包；]
+    [li 从[xref -href[https://github.com/kanboard/kanboard/archive/v1.2.7.tar.gz] 这里]下载Kanboard源码并解压；]
+    [li
+      [p 在[code /data/data/com.termux/files/usr/etc/apache2/httpd.conf]中添加以下内容：]
+      [-codeblock LoadModule php7_module /data/data/com.termux/files/usr/libexec/apache2/libphp7.so
+
+<FilesMatch \.php$>
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+<VirtualHost 127.0.0.1:8080>
+    DocumentRoot "/data/data/com.termux/files/home/kanboard-1.2.7"
+    <Directory "/data/data/com.termux/files/home/kanboard-1.2.7">
+        DirectoryIndex index.php
+        Require all granted
+    </Directory>
+</VirtualHost>-]]
+    [li 运行[code httpd]。]]]

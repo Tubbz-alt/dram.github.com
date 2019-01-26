@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Termux中运行Kanboard</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Termux中运行Kanboard</h1><time>26 Jan 2019</time><p>通过已经步骤可以在Termux中运行Kanboard：</p><ol><li>安装<code>php-apache</code>包；</li><li>从<a href="https://github.com/kanboard/kanboard/archive/v1.2.7.tar.gz">这里</a>下载Kanboard源码并解压；</li><li><p>在<code>/data/data/com.termux/files/usr/etc/apache2/httpd.conf</code>中添加以下内容：</p><pre><code>LoadModule php7_module /data/data/com.termux/files/usr/libexec/apache2/libphp7.so
+
+&lt;FilesMatch \.php$&gt;
+    SetHandler application/x-httpd-php
+&lt;/FilesMatch&gt;
+
+&lt;VirtualHost 127.0.0.1:8080&gt;
+    DocumentRoot "/data/data/com.termux/files/home/kanboard-1.2.7"
+    &lt;Directory "/data/data/com.termux/files/home/kanboard-1.2.7"&gt;
+        DirectoryIndex index.php
+        Require all granted
+    &lt;/Directory&gt;
+&lt;/VirtualHost&gt;</code></pre></li><li>运行<code>httpd</code>。</li></ol></article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>
