@@ -6,7 +6,7 @@ generate:
 	tools/sources/generate
 
 new:
-	read NAME; touch _sources/posts/$$(date +"%Y-%m-%d")-$${NAME}.sam
+	read NAME; touch _sources/posts/$$(date +"%Y-%m-%d")-$${NAME}.lml
 
 serve:
 	python3 -m http.server
