@@ -1,0 +1,6 @@
+[article
+  [title C++文件读取]
+
+  [p 在C++读取文件的所有内容，有很多种方式。以下介绍的是在这个[xref -href[https://stackoverflow.com/a/2912614] SO问答]中提到的方案的基础上进一步简化的方案：]
+
+  [-codeblock std::string source{std::istreambuf_iterator<char>{std::ifstream{path}.rdbuf()}, {}};-]]
