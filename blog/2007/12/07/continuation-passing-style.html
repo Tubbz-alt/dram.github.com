@@ -35,4 +35,4 @@ cmap f (x:xs) = (\x k -&gt; f x : k) x (cmap f xs)
 cfilter p [] = []
 cfilter p (x:xs) = (\x k -&gt; if p x then x : k else k) x (cfilter p xs)</code></pre>
 <p>怎么有感觉不像 CPS 了呢？（主要是我还不知道在 Haskell 中怎么写没有参数的匿名函数呢！还是根本没有这概念？:P）</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

@@ -15,4 +15,4 @@
 <p>对象直接的依赖采用<a href="/blog/2017/02/23/loader-in-logtalk.html">加载器</a>处理。但这存在一个问题，当出现对象名称冲突时，这个机制无法解决。例如两个<code>lgt</code>文件中同时定义了<code>foo</code>对象，在单个程序中就无法同时使用这两个库。</p>
 <p>Prolog主流的模块系统虽然也可能出现名称冲突的问题（包括模块名冲突和谓词名冲突），但可以通过辅助模块包装规避。例如模块<code>a</code>和模块<code>b</code>同时定义了谓词<code>foo</code>，可以定义辅助模块<code>c</code>，封装<code>a</code>中的<code>foo</code>，之后模块<code>b</code>即使不使用模块名前缀机制，也可以间接使用<code>a</code>中的<code>foo</code>了。如果出现模块名冲突，也可以用类似的思路处理。</p>
 <p>由于Logtalk中所有对象名都是全局名字，不能像Prolog的名字那样在模块内局部化，所以无法使用类似的机制。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

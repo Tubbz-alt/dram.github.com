@@ -4,4 +4,4 @@
 
 <p>在利用Fortran对接APR时，发现一个问题，<code>apr_proc_create</code>的第一个参数是结构体<code>apr_proc_t</code>的指针，而不是双重指针。也就是说，该参数内存需要先由外围分配好，而不是由接口内部从pool中申请。</p>
 <p>这样这个接口在使用时就非常不方便，而且在Fortran对接时，如果不知道<code>apr_proc_t</code>结构体的大小，无法预先为其分配内存。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

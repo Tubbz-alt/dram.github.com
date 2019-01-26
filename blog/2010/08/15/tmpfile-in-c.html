@@ -18,4 +18,4 @@
 <p><code>mktemp()</code>函数用于生成一个不存在的文件名。这个函数现在已经不提倡使用，在POSIX.1-2008中甚至已经将其删除了。从glibc <code>mktemp(3)</code>中可以了解到，不提倡使用<code>mktemp()</code>的主要原因是<code>mktemp()</code>只是生成一个当前不存在的文件名，而没有直接创建该文件。而如果需要创建这个文件，那么在<code>mktemp()</code>和<code>creat()</code>之间可能这个临时文件被其它进程创建，从而导致文件创建失败。</p>
 <p><code>tmpnam()</code>函数有与<code>mktemp()</code>一样的问题，同时，当传入参数为NULL时，由于需要用到static变量，所以不是线程安全的。在POSIX.1-2008中已经不建议使用。</p>
 <p><code>tempnam()</code>与<code>tmpnam()</code>相似，只是参数更多，可控性更高。同样，在POSIX.1-2008中已不建议使用。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

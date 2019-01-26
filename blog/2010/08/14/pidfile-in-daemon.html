@@ -14,4 +14,4 @@
 <p>在NetBSD中，pidfile的创建工作是由daemon程序通过pidfile(3)库函数完成，而其它动作则是通过在/etc/rc.subr中的<code>run_rc_command</code>中执行。pidfile(3)函数主要完成1.2及1.3的动作。NetBSD相关代码可以在<a href="http://nxr.netbsd.org">这里</a>找到。</p>
 <p>FreeBSD与NetBSD相似，也是主要通过<code>run_rc_command</code>实现对daemon程序的管理。只是1.1功能FreeBSD通过<code>pidfile_open()</code>实现，内部使用了flopen(3)，相当于用flock(2)实现进程间的互斥。而1.2在FreeBSD中则是以<code>pidfile_write()</code>实现。另外，对于pidfile的清理工作，FreeBSD提供了<code>pidfile_remove()</code>，由于FreeBSD是通过flock机制实现互斥，而不是单纯通过文件是否存在判断，所以不需要严格地考虑删除问题，也就不需要用到atexit()了。FreeBSD的代码可以看<a href="http://svn.freebsd.org">这里</a>。</p>
 <p>而在Debian中是通过start-stop-daemon程序实现对pidfile的处理。start-stop-daemon中的pidfile是可选的，如果不建pidfile的话，它会类似于killall用文本匹配的方式查找进程。start-stop-daemon中的pidfile可以是由程序创建，也可以由start-stop-daemon建立。具体关于start-stop-daemon的说明可以看<a href="http://man.cx/start-stop-daemon%288%29">这里</a>。如是对具体实现感兴趣，可以在dbpkg源码包中找到。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

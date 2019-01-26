@@ -7,4 +7,4 @@
 <p>也尝试参考Lua的<a href="/blog/2017/10/04/about-popen-interface.html">思路</a>，将<code>popen</code>作为核心接口基于POSIX命令封装<a href="https://github.com/dram/clips-unnamed-library">常用功能</a>，但由于Cygwin启动进程的性能问题，结果并不理想。</p>
 <p>之后考虑和其他语言做深度整合，前期考虑的是Lua和Perl。Lua和CLIPS有类似的问题，因为将自身限制在ISO C的可实现范围，外部可交互性同样不理想，除非依赖第三方库。而Perl有两大分支，Perl 5和Perl 6，Perl 6还未成熟，且比较重，而Perl 5后期的发展存在不确定性。</p>
 <p>当前确定的方案是和<a href="https://tcl.tk/">Tcl</a>整合，体积较小，和系统交互性强，没有Lua和Perl的问题。另外Tcl的C接口非常完备，基于此尝试做了整合，暂命名为<a href="https://github.com/dram/clips-tcl">CLIPS-Tcl</a>。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

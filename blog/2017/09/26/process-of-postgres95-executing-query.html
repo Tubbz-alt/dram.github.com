@@ -60,4 +60,4 @@
 </li>
 </ul>
 <p>最后，再说一个细节，在<code>PQdisplayTuples</code>中（代码在<a href="https://github.com/postgres/postgres/blob/PG95-1_01/src/interfaces/libpq/fe-exec.c">interfaces/libpq/fe-exec.c</a>），会查询<code>PAGER</code>环境变量，直接调用<code>popen</code>启动该环境变量的值，以此显示结果。另外，还需要忽略<code>SIGPIPE</code>信号。这就是<code>PAGER</code>的典型用法，Git关于pager的<a href="https://github.com/git/git/blob/v2.14.1/pager.c">实现</a>则要复杂得多。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

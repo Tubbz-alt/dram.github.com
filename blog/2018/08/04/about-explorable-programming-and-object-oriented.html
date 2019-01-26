@@ -32,4 +32,4 @@ class List:
 
 	method append(self, item) = Sequence.append</code></pre>
 <p>以上示例中，只需要一行代码，就实现了在<code>List</code>类添加<code>append</code>方法。并没有增加实现复杂性，甚至代码可读性反而有所提高。而至于性能，编译器可以将这个间接调用优化去除。另外通过<code>interface</code>等机制，可以在类型检查中确保<code>List</code>包括<code>extend</code>方法，以保证<code>Sequence.append</code>可调用。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

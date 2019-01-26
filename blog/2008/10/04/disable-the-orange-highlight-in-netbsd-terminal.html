@@ -6,4 +6,4 @@
 <p>编辑<code>/usr/share/misc/termcap</code>，找到以<code>vt220</code>开头的行，然后将这一项中的<code>ue=\E[24m</code>和<code>us=\E[4m</code>这两个选项删除，别忘了对应的冒号（记得做备份哦，出问题了别来找我:P），然后保存退出。其实这两个选项是处理下划线的，NetBSD用橙色高亮取代下划线了。</p>
 <p>再在<code>/usr/share/misc/</code>目录下，利用<code>cap_mkdb termcap</code>来生成<code>termcap.db</code>文件，同样，最好先备份原来的<code>termcap.db</code>文件。</p>
 <p>或者也可以将相关项放在<code>~/.termcap</code>里。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

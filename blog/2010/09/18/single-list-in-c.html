@@ -8,4 +8,4 @@
 <p>最为直接的方法是在需要组织为链表的结构体中添加指向本身的指针，比如在struct user中添加<code>struct user *next</code>成员。这一方法会导致数据抽象并不完美，因为对于struct user来说，<code>*next</code>与它实现的数据抽象无关，同样链表的整体结构要依赖与它的数据。</p>
 <p>另一方式就是通过定义<code>struct user_list_node</code>，其中包含两个成员，一个是指向struct user的指针，另一个是指向<code>struct user_list_node</code>的指针。再定义一个<code>struct uer_list</code>指向链表头。这一方式的不足是对于使用<code>struct user_list</code>的代码，需要同时处理<code>struct user_list</code>及<code>struct user_list_node</code>两个结构，使得接口不大明朗。</p>
 <p>最后，可以借鉴Lisp中list的思想，将第二种方法中的<code>struct user_list</code>及<code>struct user_list_node</code>合并，这样，任何这个链表结点的指针都是一个完整的链表结构，是原链表的一个子链表。这个方式的不足是在不另外包裹一层结构体的情况下，无法方便地实现向链表尾部追加数据，而这其实也是Lisp中list的一个特点。</p>
-</article><footer><p>Copyright © 2007–2018 Xin Wang</p></footer></body></html>
+</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>
