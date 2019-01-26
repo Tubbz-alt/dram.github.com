@@ -7,6 +7,7 @@
 #include <libxslt/xslt.h>
 
 #include "render.hpp"
+#include "xml.hpp"
 
 void ensure_extension_loaded() {
   static bool loaded = false;

@@ -1,5 +1,5 @@
 PROGRAM = sources/generate
-OBJECTS = sources/main.o sources/render.o sources/sam.o
+OBJECTS = sources/lml.o sources/main.o sources/render.o sources/sam.o
 LIBRARIES = libexslt libxslt python3
 CFLAGS = -pipe -Wall --std=c++17 $(shell pkg-config --cflags ${LIBRARIES})
 LDFLAGS += -lboost_system -lboost_filesystem $(shell pkg-config --libs ${LIBRARIES})

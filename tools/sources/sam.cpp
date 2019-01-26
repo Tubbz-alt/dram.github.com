@@ -2,11 +2,13 @@
 
 #include <boost/optional.hpp>
 
+#include <libxml/tree.h>
+
 #include <Python.h>
 
 #include "sam.hpp"
 
-boost::optional<std::string> sam_parse(std::string path) {
+boost::optional<xmlDocPtr> sam_parse(std::string path) {
   static PyObject *parser = nullptr;
 
   if (parser == nullptr) {
@@ -27,6 +29,9 @@ boost::optional<std::string> sam_parse(std::string path) {
     PyErr_Print();
     return boost::none;
   } else {
-    return {std::string{PyBytes_AsString(xml)}};
+    char *buffer;
+    Py_ssize_t length;
+    PyBytes_AsStringAndSize(xml, &buffer, &length);
+    return {xmlParseMemory(buffer, length)};
   }
 }

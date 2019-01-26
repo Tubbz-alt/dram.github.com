@@ -10,8 +10,10 @@
 
 #include <libxml/tree.h>
 
+#include "lml.hpp"
 #include "render.hpp"
 #include "sam.hpp"
+#include "xml.hpp"
 
 struct post {
   std::string date, source, target, name, title;
@@ -33,10 +35,17 @@ bool source_modified(std::string source, std::string target) {
 void generate_posts(const std::vector<struct post> &posts) {
   for (struct post p : posts) {
     if (source_modified(p.source, p.target)) {
-      boost::optional<std::string> xml = sam_parse(p.source);
+      boost::optional<xmlDocPtr> xml = nullptr;
+
+      if (p.source.substr(p.source.size() - 4) == ".sam") {
+        xml = sam_parse(p.source);
+      } else if (p.source.substr(p.source.size() - 4) == ".lml") {
+        xml = lml_parse(p.source);
+      }
+
       if (xml) {
-        xmlDocPtr ptr = xmlParseMemory(xml.value().c_str(), xml.value().size());
-        render_article(ptr, p.target, p.date);
+        render_article(xml.value(), p.target, p.date);
+        xmlFreeDoc(xml.value());
       }
     }
   }
@@ -80,12 +89,11 @@ void generate_pages() {
           (directory / path.replace_extension(".html").filename()).string();
 
       if (source_modified(source, target)) {
-        boost::optional<std::string> xml = sam_parse(source);
+        boost::optional<xmlDocPtr> xml = sam_parse(source);
 
         if (xml) {
-          xmlDocPtr ptr =
-              xmlParseMemory(xml.value().c_str(), xml.value().size());
-          render_article(ptr, target, boost::none);
+          render_article(xml.value(), target, boost::none);
+          xmlFreeDoc(xml.value());
         }
       }
     }
@@ -112,8 +120,13 @@ int main(void) {
 
     std::ifstream in(post.source);
     std::getline(in, post.title);
+    if (post.title[0] == '[') {
+      std::getline(in, post.title);
+      post.title = post.title.substr(9, post.title.size() - 10);
+    } else {
+      post.title = post.title.substr(9, post.title.size() - 9);
+    }
     in.close();
-    post.title = post.title.substr(9, post.title.size() - 9);
 
     posts.push_back(post);
   }

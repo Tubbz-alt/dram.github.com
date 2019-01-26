@@ -5,6 +5,8 @@
 
 #include <boost/optional.hpp>
 
-boost::optional<std::string> sam_parse(std::string path);
+#include <libxml/tree.h>
+
+boost::optional<xmlDocPtr> sam_parse(std::string path);
 
 #endif
