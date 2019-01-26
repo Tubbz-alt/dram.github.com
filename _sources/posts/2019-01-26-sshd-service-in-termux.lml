@@ -1,0 +1,11 @@
+[article
+  [title Termux启用sshd服务]
+
+  [p 通过以下几个简单步骤，可以在Termux启用sshd服务，从而实现从外部连入手机：]
+
+  [ol
+    [li 安装[code openssh]包；]
+    [li 通过[code passwd]设置密码或者在[code $HOME/.ssh/authorized_keys]中加入公钥；]
+    [li 通过[code sshd -p PORT]启动服务。]]
+
+  [p 另外，手机的IP可以通过[code ip a]命令直接查看。]]
