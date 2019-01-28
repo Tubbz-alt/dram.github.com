@@ -1,10 +1,8 @@
 <?php
 
-$uri = $_SERVER['REQUEST_URI'];
-$path = substr($uri, 1) . ($uri[-1] == '/' ? 'index.html' : '');
-if (preg_match('/\.html$/', $path)) {
+if (preg_match('/\.html$/', $_SERVER['SCRIPT_NAME'])) {
     exec('tools/sources/generate');
-    echo file_get_contents($path);
+    echo file_get_contents(substr($_SERVER['SCRIPT_NAME'], 1));
 } else {
     return false;
 }
