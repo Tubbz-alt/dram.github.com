@@ -1,8 +1,12 @@
 <?php
 
-if (preg_match('/(\/|\.html)$/', $_SERVER['REQUEST_URI']))
-    error_log(shell_exec('make'));
-
-return false;
+$uri = $_SERVER['REQUEST_URI'];
+$path = substr($uri, 1) . ($uri[-1] == '/' ? 'index.html' : '');
+if (preg_match('/\.html$/', $path)) {
+    exec('tools/sources/generate');
+    echo file_get_contents($path);
+} else {
+    return false;
+}
 
 ?>
