@@ -9,7 +9,7 @@ new:
 	read NAME; touch _sources/posts/$$(date +"%Y-%m-%d")-$${NAME}.lml
 
 serve:
-	python3 -m http.server
+	php -S 127.0.0.1:8000 tools/sources/serve.php
 
 publish:
 	- git branch -D master
