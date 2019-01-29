@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/optional.hpp>
 
 #include <Python.h>
@@ -35,9 +37,10 @@ static ParseTextResult parse_word(Source source);
 static ParseNodeResult parse_node(Source source);
 static ParseNodesResult parse_nodes(Source source);
 
-boost::optional<xmlDocPtr> lml_parse(std::string path) {
+boost::optional<xmlDocPtr> lml_parse(boost::filesystem::path path) {
   std::string source{
-      std::istreambuf_iterator<char>{std::ifstream{path}.rdbuf()}, {}};
+      std::istreambuf_iterator<char>{boost::filesystem::ifstream{path}.rdbuf()},
+      {}};
 
   ParseNodesResult nodes = parse_nodes(source);
 

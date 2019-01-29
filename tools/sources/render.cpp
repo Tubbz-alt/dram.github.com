@@ -1,5 +1,6 @@
 #include <vector>
 
+#include <boost/filesystem.hpp>
 #include <boost/optional.hpp>
 
 #include <libexslt/exslt.h>
@@ -8,6 +9,9 @@
 
 #include "render.hpp"
 #include "xml.hpp"
+
+static void render_main(xmlDocPtr content, boost::filesystem::path output,
+                        boost::optional<std::string> title);
 
 void ensure_extension_loaded() {
   static bool loaded = false;
@@ -18,7 +22,7 @@ void ensure_extension_loaded() {
   }
 }
 
-void render_article(xmlDocPtr content, std::string output,
+void render_article(xmlDocPtr content, boost::filesystem::path output,
                     boost::optional<std::string> date) {
   ensure_extension_loaded();
 
@@ -39,8 +43,28 @@ void render_article(xmlDocPtr content, std::string output,
   render_main(p, output, boost::none);
 }
 
-void render_main(xmlDocPtr content, std::string output,
-                 boost::optional<std::string> title) {
+void render_home(xmlDocPtr posts, boost::filesystem::path output) {
+  ensure_extension_loaded();
+
+  static xsltStylesheetPtr style =
+      xsltParseStylesheetFile("tools/stylesheets/home.xsl"_xml);
+
+  xmlDocPtr p = xsltApplyStylesheet(style, posts, nullptr);
+  render_main(p, output, std::string{"dram.me"});
+}
+
+void render_archive(xmlDocPtr posts, boost::filesystem::path output) {
+  ensure_extension_loaded();
+
+  static xsltStylesheetPtr style =
+      xsltParseStylesheetFile("tools/stylesheets/archive.xsl"_xml);
+
+  xmlDocPtr p = xsltApplyStylesheet(style, posts, nullptr);
+  render_main(p, output, std::string{"Archive"});
+}
+
+static void render_main(xmlDocPtr content, boost::filesystem::path output,
+                        boost::optional<std::string> title) {
   ensure_extension_loaded();
 
   std::string quoted;
@@ -57,24 +81,4 @@ void render_main(xmlDocPtr content, std::string output,
 
   xsltRunStylesheetUser(style, content, &params[0], output.c_str(), nullptr,
                         nullptr, nullptr, nullptr);
-}
-
-void render_home(xmlDocPtr posts, std::string output) {
-  ensure_extension_loaded();
-
-  static xsltStylesheetPtr style =
-      xsltParseStylesheetFile("tools/stylesheets/home.xsl"_xml);
-
-  xmlDocPtr p = xsltApplyStylesheet(style, posts, nullptr);
-  render_main(p, output, std::string{"dram.me"});
-}
-
-void render_archive(xmlDocPtr posts, std::string output) {
-  ensure_extension_loaded();
-
-  static xsltStylesheetPtr style =
-      xsltParseStylesheetFile("tools/stylesheets/archive.xsl"_xml);
-
-  xmlDocPtr p = xsltApplyStylesheet(style, posts, nullptr);
-  render_main(p, output, std::string{"Archive"});
 }
