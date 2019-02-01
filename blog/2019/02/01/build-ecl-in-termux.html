@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Termux编译ECL</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Termux编译ECL</h1><time>01 Feb 2019</time><p>当前Termux的包仓库中还没有包含Common Lisp实现，不过ECL可以直接在Termux中编译，以下为主要步骤：</p><pre><code>git clone https://gitlab.com/embeddable-common-lisp/ecl.git
+cd ecl
+./configure --prefix=$HOME/.local --build=aarch64-linux-android --enable-gmp=included
+make
+make install </code></pre></article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>

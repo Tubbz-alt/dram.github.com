@@ -1,0 +1,8 @@
+[article
+  [title Termux编译ECL]
+  [p 当前Termux的包仓库中还没有包含Common Lisp实现，不过ECL可以直接在Termux中编译，以下为主要步骤：]
+  [-codeblock git clone https://gitlab.com/embeddable-common-lisp/ecl.git
+cd ecl
+./configure --prefix=$HOME/.local --build=aarch64-linux-android --enable-gmp=included
+make
+make install -]]
