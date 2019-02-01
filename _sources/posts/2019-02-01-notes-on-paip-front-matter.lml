@@ -1,0 +1,9 @@
+[article
+  [title PAIP读书笔记（前页）]
+  [p [xref -href[https://github.com/norvig/paip-lisp] Paradigms of Artificial Intelligence Programming]是一本经典的Lisp以及AI程序设计的书，最近想系统地阅读这本书，并在此做简单记录。]
+  [p 首先从[xref -href[https://github.com/norvig/paip-lisp/blob/master/docs/frontmatter.md] 前页]（front matter）开始。]
+  [p 前页内容不多，需要留意的有一下几个点：]
+  [ol
+    [li 主标题：人工智能编程范式，副标题：Common Lisp实例分析。从这主副标题中，就能看出本书的核心内容了，就是AI和Lisp。]
+    [li 出版日期为1992年，当时Common Lisp的标准化工作已经启动，但还未完成。另外，这本书的出版时间和CLtL2相比，后者更早些。]
+    [li 关键词：计算机编程、Common Lisp、人工智能。这同样体现了本书的主题。]]]
