@@ -121,4 +121,8 @@
   <xsl:template match="p">
     <p><xsl:apply-templates/></p>
   </xsl:template>
+
+  <xsl:template match="i">
+    <em><xsl:apply-templates/></em>
+  </xsl:template>
 </xsl:stylesheet>
