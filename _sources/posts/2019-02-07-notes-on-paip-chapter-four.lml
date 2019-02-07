@@ -1,0 +1,8 @@
+[article
+  [title PAIP读书笔记（第四章）]
+  [p 以下是阅读PAIP[xref -href[https://github.com/norvig/paip-lisp/blob/master/docs/chapter4.md] 第四章]部分的一些笔记：]
+  [ol
+    [li 解决问题的五个步骤：粗略的描述问题、精确的表述问题、程序实现、测试、分析和修复；]
+    [li [code mappend]可以用CL中的[code mapcan]替代；]
+    [li 当程序员想着偷懒，对某一问题做了简单处理，往往问题的种子也已埋下；]
+    [li GPS虽然可以应用到不同的问题域，但存在局限性，例如：无法穷尽多目标问题的解集、问题描述机制不灵活、无法解决信息不充分问题、无法解决多协同目标问题。]]]
