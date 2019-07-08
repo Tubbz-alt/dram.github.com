@@ -1,7 +1,7 @@
+#include <optional>
 #include <string>
 
 #include <boost/filesystem.hpp>
-#include <boost/optional.hpp>
 
 #include <libxml/tree.h>
 
@@ -9,7 +9,7 @@
 
 #include "sam.hpp"
 
-boost::optional<xmlDocPtr> sam_parse(boost::filesystem::path path) {
+std::optional<xmlDocPtr> sam_parse(boost::filesystem::path path) {
   static PyObject *parser = nullptr;
 
   if (parser == nullptr) {
@@ -28,7 +28,7 @@ boost::optional<xmlDocPtr> sam_parse(boost::filesystem::path path) {
 
   if (xml == nullptr) {
     PyErr_Print();
-    return boost::none;
+    return std::nullopt;
   } else {
     char *buffer;
     Py_ssize_t length;

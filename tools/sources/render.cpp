@@ -1,7 +1,7 @@
+#include <optional>
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <boost/optional.hpp>
 
 #include <libexslt/exslt.h>
 #include <libxslt/transform.h>
@@ -11,7 +11,7 @@
 #include "xml.hpp"
 
 static void render_main(xmlDocPtr content, boost::filesystem::path output,
-                        boost::optional<std::string> title);
+                        std::optional<std::string> title);
 
 void ensure_extension_loaded() {
   static bool loaded = false;
@@ -23,7 +23,7 @@ void ensure_extension_loaded() {
 }
 
 void render_article(xmlDocPtr content, boost::filesystem::path output,
-                    boost::optional<std::string> date) {
+                    std::optional<std::string> date) {
   ensure_extension_loaded();
 
   std::string quoted;
@@ -40,7 +40,7 @@ void render_article(xmlDocPtr content, boost::filesystem::path output,
 
   xmlDocPtr p = xsltApplyStylesheet(style, content, &params[0]);
 
-  render_main(p, output, boost::none);
+  render_main(p, output, std::nullopt);
 }
 
 void render_home(xmlDocPtr posts, boost::filesystem::path output) {
@@ -64,7 +64,7 @@ void render_archive(xmlDocPtr posts, boost::filesystem::path output) {
 }
 
 static void render_main(xmlDocPtr content, boost::filesystem::path output,
-                        boost::optional<std::string> title) {
+                        std::optional<std::string> title) {
   ensure_extension_loaded();
 
   std::string quoted;

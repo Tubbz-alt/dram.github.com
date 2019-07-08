@@ -2,13 +2,13 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
+#include <optional>
 #include <regex>
 #include <string>
 #include <vector>
 
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/optional.hpp>
 
 #include <libxml/tree.h>
 
@@ -39,7 +39,7 @@ bool source_modified(boost::filesystem::path source,
 void generate_posts(const std::vector<Post> &posts) {
   for (Post p : posts) {
     if (source_modified(p.source, p.target)) {
-      boost::optional<xmlDocPtr> xml = nullptr;
+      std::optional<xmlDocPtr> xml = nullptr;
 
       if (p.source.extension() == ".sam") {
         xml = sam_parse(p.source);
@@ -56,7 +56,7 @@ void generate_posts(const std::vector<Post> &posts) {
 }
 
 xmlDocPtr post_list(const std::vector<Post> &posts,
-                    boost::optional<size_t> limit) {
+                    std::optional<size_t> limit) {
   xmlDocPtr doc = xmlNewDoc("1.0"_xml);
   xmlNodePtr root = xmlNewNode(nullptr, "posts"_xml);
   xmlDocSetRootElement(doc, root);
@@ -93,7 +93,7 @@ void generate_pages() {
           directory / source.filename().replace_extension(".html");
 
       if (source_modified(source, target)) {
-        boost::optional<xmlDocPtr> xml = nullptr;
+        std::optional<xmlDocPtr> xml = nullptr;
 
         if (source.extension() == ".sam") {
           xml = sam_parse(source);
@@ -102,7 +102,7 @@ void generate_pages() {
         }
 
         if (xml) {
-          render_article(xml.value(), target, boost::none);
+          render_article(xml.value(), target, std::nullopt);
           xmlFreeDoc(xml.value());
         }
       }
@@ -148,5 +148,5 @@ int main(void) {
             [](Post a, Post b) { return a.source > b.source; });
 
   render_home(post_list(posts, 10), "index.html");
-  render_archive(post_list(posts, boost::none), "blog/archive.html");
+  render_archive(post_list(posts, std::nullopt), "blog/archive.html");
 }
