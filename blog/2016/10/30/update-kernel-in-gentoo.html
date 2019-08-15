@@ -1,108 +1,29 @@
 <?xml version="1.0"?>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>更新Gentoo内核</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>更新Gentoo内核</h1><time>30 Oct 2016</time>
-
-
-<p>在Gentoo日常更新维护中，最为繁琐的工作是对内核的更新，特别是在内核大版本更新后，需要重新生成配置文件。本文记录下主要流程，便于以后参考。</p>
-<section>
-<h2>更新源码</h2>
-
-<p><code>emerge</code>在更新<code>@world</code>时，会自动下载新版本内核代码，在安装完成之后，可以通过如下命令选择需要编译的内核：</p>
-<pre><code>eselect kernel list
-eselect kernel set {n}</code></pre>
-</section>
-<section>
-<h2>生成配置</h2>
-
-<p>配置文件的生成基于内核原生的menuconfig工具，首先切换工作目录到<code>/usr/src/linux/</code>目录，之后运行：</p>
-<pre><code>make menuconfig</code></pre>
-<p>之后开始最为繁重的配置调整过程，以下列举一些重点项，依菜单呈现的顺序排列。</p>
-<ol>
-<li>
-<p>选择压缩方式，不同的压缩方式影响最后内核的体积，以及开机加载和解压速度，例如选择XZ压缩：</p>
-<pre><code>General setup
-  Kernel compression mode (XZ)</code></pre>
-</li>
-<li>
-<p>选择是否启用审计功能，如果只是个人使用PC，可以考虑禁用：</p>
-<pre><code>General setup
-  Auditing support</code></pre>
-</li>
-<li>
-<p>选择是否启用IPv6，如无需支持IPv6环境，可禁用：</p>
-<pre><code>Networking support
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>更新Gentoo内核</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>更新Gentoo内核</h1><time>30 Oct 2016</time><section class="topic"><h2>补遗</h2><ol><li>Fallback user-helper invocation for firmware loading这项已经不需要了。—— 2019-08-15</li></ol></section><p>在Gentoo日常更新维护中，最为繁琐的工作是对内核的更新，特别是在内核大版本更新后，需要重新生成配置文件。本文记录下主要流程，便于以后参考。</p><section><h2>更新源码</h2><p><code>emerge</code>在更新<code>@world</code>时，会自动下载新版本内核代码，在安装完成之后，可以通过如下命令选择需要编译的内核：</p><pre><code>eselect kernel list
+eselect kernel set {n}</code></pre></section><section><h2>生成配置</h2><p>配置文件的生成基于内核原生的menuconfig工具，首先切换工作目录到<code>/usr/src/linux/</code>目录，之后运行：</p><pre><code>make menuconfig</code></pre><p>之后开始最为繁重的配置调整过程，以下列举一些重点项，依菜单呈现的顺序排列。</p><ol><li><p>选择压缩方式，不同的压缩方式影响最后内核的体积，以及开机加载和解压速度，例如选择XZ压缩：</p><pre><code>General setup
+  Kernel compression mode (XZ)</code></pre></li><li><p>选择是否启用审计功能，如果只是个人使用PC，可以考虑禁用：</p><pre><code>General setup
+  Auditing support</code></pre></li><li><p>选择是否启用IPv6，如无需支持IPv6环境，可禁用：</p><pre><code>Networking support
   Networking options
-    The IPv6 protocol</code></pre>
-</li>
-<li>
-<p>选择是否启用Netfilter，个人PC可以考虑禁用：</p>
-<pre><code>Networking support
+    The IPv6 protocol</code></pre></li><li><p>选择是否启用Netfilter，个人PC可以考虑禁用：</p><pre><code>Networking support
   Networking options
-    Network packet filtering framework (Netfilter)</code></pre>
-</li>
-<li>
-<p>无线网卡firmware加载功能：</p>
-<pre><code>Device Drivers
+    Network packet filtering framework (Netfilter)</code></pre></li><li><p>无线网卡firmware加载功能：</p><pre><code>Device Drivers
   Generic Driver Options
-    Fallback user-helper invocation for firmware loading</code></pre>
-</li>
-<li>
-<p>启用网卡驱动，可以清理掉非本系统的驱动：</p>
-<pre><code>Device Drivers
+    Fallback user-helper invocation for firmware loading</code></pre></li><li><p>启用网卡驱动，可以清理掉非本系统的驱动：</p><pre><code>Device Drivers
   Network device support
-    Eternet driver support</code></pre>
-</li>
-<li>
-<p>启用无线网卡驱动，由于<a href="https://forums.gentoo.org/viewtopic-p-7640140.html#7640140">固件问题</a>，需要将无线驱动编译为模块而非内置：</p>
-<pre><code>Device Drivers
+    Eternet driver support</code></pre></li><li><p>启用无线网卡驱动，由于<a href="https://forums.gentoo.org/viewtopic-p-7640140.html#7640140">固件问题</a>，需要将无线驱动编译为模块而非内置：</p><pre><code>Device Drivers
   Network device support
-    Wireless LAN</code></pre>
-</li>
-<li>
-<p>可以禁用一些与本系统无关的硬件驱动，例如：</p>
-<pre><code>Device Drivers
+    Wireless LAN</code></pre></li><li><p>可以禁用一些与本系统无关的硬件驱动，例如：</p><pre><code>Device Drivers
   Input device support
     Joysticks/Gamepads
     Tablets
     Touchscreens
-    Miscellaneous devices</code></pre>
-</li>
-<li>
-<p>设置内核启动时的企鹅LOGO：</p>
-<pre><code>Device Drivers
+    Miscellaneous devices</code></pre></li><li><p>设置内核启动时的企鹅LOGO：</p><pre><code>Device Drivers
   Graphics support
-    Bootup logo</code></pre>
-</li>
-<li>
-<p>声卡驱动：</p>
-<pre><code>Device Drivers
+    Bootup logo</code></pre></li><li><p>声卡驱动：</p><pre><code>Device Drivers
   Sound card support
-    Advanced Linux Sound Architecture</code></pre>
-</li>
-<li>
-<p>如果不需要访问网络文件系统，可以禁用：</p>
-<pre><code>File Systems
-  Network File Systems</code></pre>
-</li>
-</ol>
-<p>最后生成<code>.config</code>文件后，做下备份，如果只是小版本更新，可以沿用以前的配置，无需每次重新生成。</p>
-</section>
-<section>
-<h2>编译内核</h2>
-
-<p>使用如下命令编译内核，其中<code>--lvm</code>用于启用LVM的环境：</p>
-<pre><code>genkernel --lvm --kernel-config=/path/to/config all</code></pre>
-</section>
-<section>
-<h2>配置引导</h2>
-
-<p>以下以<code>lilo</code>为例说明引导的设置。</p>
-<p>编辑<code>/etc/lilo.conf</code>文件，内容类似以下示例，其中<code>append</code>内容是为支持LVM环境而设置：</p>
-<pre><code>image = /boot/kernel-genkernel-...
+    Advanced Linux Sound Architecture</code></pre></li><li><p>如果不需要访问网络文件系统，可以禁用：</p><pre><code>File Systems
+  Network File Systems</code></pre></li></ol><p>最后生成<code>.config</code>文件后，做下备份，如果只是小版本更新，可以沿用以前的配置，无需每次重新生成。</p></section><section><h2>编译内核</h2><p>使用如下命令编译内核，其中<code>--lvm</code>用于启用LVM的环境：</p><pre><code>genkernel --lvm --kernel-config=/path/to/config all</code></pre></section><section><h2>配置引导</h2><p>以下以<code>lilo</code>为例说明引导的设置。</p><p>编辑<code>/etc/lilo.conf</code>文件，内容类似以下示例，其中<code>append</code>内容是为支持LVM环境而设置：</p><pre><code>image = /boot/kernel-genkernel-...
         label = Gentoo
         initrd=/boot/initramfs-genkernel-...
         append="dolvm real_root=/dev/lvm/path"
-        read-only</code></pre>
-<p>之后运行以下命令，更新引导：</p>
-<pre><code>lilo</code></pre>
-</section>
-</article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>
+        read-only</code></pre><p>之后运行以下命令，更新引导：</p><pre><code>lilo</code></pre></section></article><footer><p>Copyright © 2007–2019 Xin Wang</p></footer></body></html>
