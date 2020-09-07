@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:html="http://www.w3.org/1999/xhtml"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="/css/main.css"/><link rel="shortcut icon" href="/images/favicon.png"/><title>Squeak V5.3中文支持</title></head><body><header><span id="site-name"><a href="/">dram.me</a></span><nav><ul><li><a href="/blog/about.html">About</a></li><li><a href="/logo/">LOGO</a></li></ul></nav></header><article><h1>Squeak V5.3中文支持</h1><time>07 Sep 2020</time><p>之前在<a href="/blog/2016/09/16/chinese-support-in-squeak.html">Squeak中文支持</a>中有讨论Squeak对于中文的支持，现在针对V5.3做一定更新完善。</p><section><h2>代码补丁</h2><p>为更好支持中文，需要对系统中的一些问题予以修正，以下补丁主要修正编码、字体支持相关问题。</p><section><h3>File List支持UTF-8文件显示</h3><p>调整File List工具对<code>.cs</code>文件和<code>.st</code>文件的编码处理。</p><pre><code>FileList compile: (
+	(FileList sourceCodeAt: #defaultEncoderFor:)
+		copyReplaceAll: 'MacRomanTextConverter' with: 'UTF8TextConverter'
+) classified: 'private'.</code></pre></section><section><h3>File In支持UTF-8文件导入</h3><p>在File In导入文件时，直接依UTF-8编码处理。</p><pre><code>MultiByteFileStream removeSelector: #fileIn.
+
+FileStream class compile: '
+fileIn: fullName
+	^ (MultiByteFileStream readOnlyFileNamed: fullName) converter: UTF8TextConverter new; fileIn
+' classified: '*System-Files'.</code></pre></section><section><h3>完善TTF字体导入</h3><p>在TTF文件<code>cmap</code>解析中，与<code>idDelta</code>相关的计算需要依<code>65536</code>取模，详见<a href="https://docs.microsoft.com/en-us/typography/opentype/spec/cmap">这里</a>的说明。</p><pre><code>TTFontReader compile: (
+	(TTFontReader sourceCodeAt: #decodeCmapFmtTable:)
+ 		copyReplaceAll: 'cmap at: i + 1 put: code' with: 'cmap at: i + 1  put: code \\ 65536'
+) classified: 'private'.</code></pre></section></section><section><h2>字体设置</h2><p>Squeak支持TTF和TTC字体导入，可供选择的中文字体有<a href="https://www.freedesktop.org/wiki/Software/CJKUnifonts/">UMing / UKai</a>、<a href="http://wenq.org/">文泉驿</a>、<a href="https://github.com/adobe-fonts/source-han-sans">思源黑体</a>（<a href="https://github.com/be5invis/source-han-sans-ttf">第三方TTF版本</a>）、<a href="https://github.com/adobe-fonts/source-han-mono">思源等宽</a>等，另外<a href="https://github.com/welai/glow-sans">未来荧黑</a>后续推出TTF版本后，也可以使用。</p><p>这里以文泉驿微米黑以及<a href="https://github.com/IBM/plex">IBM Plex</a>（当前不支持中文）为例，说明字体导入的方式（样式采用Trim (dark)）。</p><section><h3>文泉驿微米黑</h3><pre><code>(TTCFontDescription addFromTTFile:  'wqy-microhei.ttc') do: | TTCFont newTextStyleFromTT: each.
+
+(UserInterfaceTheme named: 'Trim (dark)')
+	set: #standardButtonFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+	set: #standardCodeFont to: (TTCFont family: 'WenQuanYiMicroHeiMono' size: 15);
+	set: #standardListFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+	set: #standardMenuFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+	set: #standardSystemFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+	set: #windowTitleFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+apply.</code></pre></section><section><h3>IBM Plex</h3><pre><code>(TTCFont newTextStyleFromTTFile: 'IBMPlexMono-Medium.ttf') addNewFontSize: 16.
+(TTCFont newTextStyleFromTTFile: 'IBMPlexSans-Medium.ttf') addNewFontSize: 16.
+(TTCFont newTextStyleFromTTFile: 'IBMPlexSans-Text.ttf') addNewFontSize: 16.
+
+(UserInterfaceTheme named: 'Trim (dark)')
+	set: #standardButtonFont to: (TTCFont family: 'IBMPlexSansText' size: 16);
+	set: #standardCodeFont to: (TTCFont family: 'IBMPlexMonoMedium' size: 16);
+	set: #standardListFont to: (TTCFont family: 'IBMPlexSansText' size: 16);
+	set: #standardMenuFont to: (TTCFont family: 'IBMPlexSansText' size: 16);
+	set: #standardSystemFont to: (TTCFont family: 'IBMPlexSansText' size: 16);
+	set: #windowTitleFont to: (TTCFont family: 'IBMPlexSansMedium' size: 16);
+apply.</code></pre></section></section><section><h2>其他</h2><a href="/data/2020-09-07-squeak-configuration.st">这里</a>是一份完整的Squeak初始配置示例代码。</section></article><footer><p>Copyright © 2007–2020 Wang Xin</p></footer></body></html>

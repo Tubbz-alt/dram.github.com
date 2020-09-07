@@ -1,0 +1,83 @@
+[article
+  [title Squeak V5.3中文支持]
+
+  [p 之前在[xref -href[/blog/2016/09/16/chinese-support-in-squeak.html] Squeak中文支持]中有讨论Squeak对于中文的支持，现在针对V5.3做一定更新完善。]
+
+  [section
+    [title 代码补丁]
+
+    [p 为更好支持中文，需要对系统中的一些问题予以修正，以下补丁主要修正编码、字体支持相关问题。]
+
+    [section
+      [title File List支持UTF-8文件显示]
+
+      [p 调整File List工具对[code .cs]文件和[code .st]文件的编码处理。]
+
+      [codeblock FileList compile: (
+	(FileList sourceCodeAt: #defaultEncoderFor:)
+		copyReplaceAll: 'MacRomanTextConverter' with: 'UTF8TextConverter'
+) classified: 'private'.]]
+
+    [section
+      [title File In支持UTF-8文件导入]
+
+      [p 在File In导入文件时，直接依UTF-8编码处理。]
+
+      [codeblock MultiByteFileStream removeSelector: #fileIn.
+
+FileStream class compile: '
+fileIn: fullName
+	^ (MultiByteFileStream readOnlyFileNamed: fullName) converter: UTF8TextConverter new; fileIn
+' classified: '*System-Files'.]]
+
+    [section
+      [title 完善TTF字体导入]
+
+      [p 在TTF文件[code cmap]解析中，与[code idDelta]相关的计算需要依[code 65536]取模，详见[xref -href[https://docs.microsoft.com/en-us/typography/opentype/spec/cmap] 这里]的说明。]
+
+      [codeblock TTFontReader compile: (
+	(TTFontReader sourceCodeAt: #decodeCmapFmtTable:)
+ 		copyReplaceAll: 'cmap at: i + 1 put: code' with: 'cmap at: i + 1  put: code \\ 65536'
+) classified: 'private'.]]]
+
+  [section
+    [title 字体设置]
+
+    [p Squeak支持TTF和TTC字体导入，可供选择的中文字体有[xref -href[https://www.freedesktop.org/wiki/Software/CJKUnifonts/] UMing / UKai]、[xref -href[http://wenq.org/] 文泉驿]、[xref -href[https://github.com/adobe-fonts/source-han-sans] 思源黑体]（[xref -href[https://github.com/be5invis/source-han-sans-ttf] 第三方TTF版本]）、[xref -href[https://github.com/adobe-fonts/source-han-mono] 思源等宽]等，另外[xref -href[https://github.com/welai/glow-sans] 未来荧黑]后续推出TTF版本后，也可以使用。]
+
+    [p 这里以文泉驿微米黑以及[xref -href[https://github.com/IBM/plex] IBM Plex]（当前不支持中文）为例，说明字体导入的方式（样式采用Trim (dark)）。]
+
+    [section
+      [title 文泉驿微米黑]
+
+      [codeblock (TTCFontDescription addFromTTFile:  'wqy-microhei.ttc') do: [:each | TTCFont newTextStyleFromTT: each].
+
+(UserInterfaceTheme named: 'Trim (dark)')
+	set: #standardButtonFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+	set: #standardCodeFont to: (TTCFont family: 'WenQuanYiMicroHeiMono' size: 15);
+	set: #standardListFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+	set: #standardMenuFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+	set: #standardSystemFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+	set: #windowTitleFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
+apply.]]
+
+    [section
+      [title IBM Plex]
+
+      [codeblock (TTCFont newTextStyleFromTTFile: 'IBMPlexMono-Medium.ttf') addNewFontSize: 16.
+(TTCFont newTextStyleFromTTFile: 'IBMPlexSans-Medium.ttf') addNewFontSize: 16.
+(TTCFont newTextStyleFromTTFile: 'IBMPlexSans-Text.ttf') addNewFontSize: 16.
+
+(UserInterfaceTheme named: 'Trim (dark)')
+	set: #standardButtonFont to: (TTCFont family: 'IBMPlexSansText' size: 16);
+	set: #standardCodeFont to: (TTCFont family: 'IBMPlexMonoMedium' size: 16);
+	set: #standardListFont to: (TTCFont family: 'IBMPlexSansText' size: 16);
+	set: #standardMenuFont to: (TTCFont family: 'IBMPlexSansText' size: 16);
+	set: #standardSystemFont to: (TTCFont family: 'IBMPlexSansText' size: 16);
+	set: #windowTitleFont to: (TTCFont family: 'IBMPlexSansMedium' size: 16);
+apply.]]]
+
+  [section
+    [title 其他]
+
+  [xref -href[/data/2020-09-07-squeak-configuration.st] 这里]是一份完整的Squeak初始配置示例代码。]]

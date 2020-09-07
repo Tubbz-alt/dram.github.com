@@ -41,7 +41,7 @@
         <xsl:copy-of select="/"></xsl:copy-of>
 
         <footer>
-          <p>Copyright &#169; 2007&#8211;<xsl:value-of select="date:year()"/> Xin Wang</p>
+          <p>Copyright &#169; 2007&#8211;<xsl:value-of select="date:year()"/> Wang Xin</p>
         </footer>
       </body>
     </html>

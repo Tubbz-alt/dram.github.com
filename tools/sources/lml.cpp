@@ -8,8 +8,6 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-#include <Python.h>
-
 #include "lml.hpp"
 #include "xml.hpp"
 
