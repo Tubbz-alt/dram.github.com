@@ -50,7 +50,7 @@ fileIn: fullName
     [section
       [title 文泉驿微米黑]
 
-      [codeblock (TTCFontDescription addFromTTFile:  'wqy-microhei.ttc') do: [:each | TTCFont newTextStyleFromTT: each].
+      [-codeblock (TTCFontDescription addFromTTFile:  'wqy-microhei.ttc') do: [:each | TTCFont newTextStyleFromTT: each].
 
 (UserInterfaceTheme named: 'Trim (dark)')
 	set: #standardButtonFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
@@ -59,7 +59,7 @@ fileIn: fullName
 	set: #standardMenuFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
 	set: #standardSystemFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
 	set: #windowTitleFont to: (TTCFont family: 'WenQuanYiMicroHei' size: 15);
-apply.]]
+apply.-]]
 
     [section
       [title IBM Plex]
